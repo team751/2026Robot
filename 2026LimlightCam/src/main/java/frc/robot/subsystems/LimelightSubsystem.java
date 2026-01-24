@@ -12,11 +12,14 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.HttpCamera;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.units.Unit;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import limelight.Limelight;
@@ -43,7 +46,7 @@ public class LimelightSubsystem extends SubsystemBase {
 
     limelight.getSettings()
       .withCameraOffset(new Pose3d(
-        0,
+        LimelightConstants.Limelight.xOffset.in(Units.Meters),
         LimelightConstants.Limelight.yOffset.in(Units.Meters),
         LimelightConstants.Limelight.zOffset.in(Units.Meters),
         new Rotation3d())
@@ -90,9 +93,13 @@ public class LimelightSubsystem extends SubsystemBase {
     return -1;
   }
 
-  private double lastPrintTime = 0.0;
-  private double[] bob = new double[0];
-  private String botPoseString = "[";
+  public Pose2d getBotPose() {
+    double[] botpose = table.getEntry("botpose_orb").getDoubleArray(new double[0]);
+
+    return new Pose2d(botpose[0],botpose[1],new Rotation2d(Units.Radians.convertFrom(botpose[5],Units.Degrees)));
+  }
+
+
 
   public void robotInit() {
     String limelightUrl = "http://10.7.51.200:5800";
@@ -100,26 +107,18 @@ public class LimelightSubsystem extends SubsystemBase {
     CameraServer.startAutomaticCapture(limlightCam);
   }
 
+  // private double lastPrintTime = 0.0;
   @Override
   public void periodic() {
 
-    double now = edu.wpi.first.wpilibj.Timer.getFPGATimestamp();
-    if (now - lastPrintTime >= 0.5) {
-      lastPrintTime = now;
-      double[] limelightBotPose = table.getEntry("botpose").getDoubleArray(bob);
-      for (int i = 0; i < limelightBotPose.length; i++) {
-        botPoseString += limelightBotPose[i] + ", ";
-      }
-      botPoseString += "]";
+    // double now = edu.wpi.first.wpilibj.Timer.getFPGATimestamp();
+    // if (now - lastPrintTime >= 0.5) {
+    //   lastPrintTime = now;
 
-      //System.out.println("Robot: " + botPoseString);
-      
+    //   System.out.println(this.getBotPose());
 
-      System.out.println(this.hasTarget());
-      System.out.println(this.getAprilTagId());
 
-      botPoseString = "";
-    }
+    // }
   }
 
   @Override

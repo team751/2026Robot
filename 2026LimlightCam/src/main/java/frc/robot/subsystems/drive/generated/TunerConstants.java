@@ -78,8 +78,15 @@ public class TunerConstants {
 									.withStatorCurrentLimitEnable(true));
 	private static final CANcoderConfiguration encoderInitialConfigs = new CANcoderConfiguration();
 	// Configs for the Pigeon 2; leave this null to skip applying Pigeon 2 configs
+	//private static final Pigeon2Configuration pigeonConfigs =
+	//		new Pigeon2Configuration().withMountPose(new MountPoseConfigs().withMountPoseYaw(91.76612091064453).withMountPoseRoll(178.90150451660156).withMountPosePitch(180));
+
 	private static final Pigeon2Configuration pigeonConfigs =
-			new Pigeon2Configuration().withMountPose(new MountPoseConfigs().withMountPoseYaw(180));
+			new Pigeon2Configuration().withMountPose(new MountPoseConfigs().withMountPoseYaw(-87.09540557861328).withMountPosePitch(0.4624914824962616).withMountPoseRoll(-179.29147338867188));
+	// New Yaw: -87.09540557861328
+	// New Pitch: 0.4624914824962616
+	// New Roll: -179.29147338867188
+
 
 	// CAN bus that the devices are located on;
 	// All swerve devices must share the same CAN bus
@@ -99,9 +106,8 @@ public class TunerConstants {
 	private static final Distance kWheelRadius =
 			Units.Inches.of(2); // TODO: CHANGE BASED ON MEASURED RADIUS
 
-	private static final boolean kInvertLeftSide = false;
-	private static final boolean kInvertRightSide = true;
-
+	private static final boolean kInvertLeftSide = true;
+	private static final boolean kInvertRightSide = false;
 	private static final int kPigeonId = 2;
 
 	// These are only used for simulation
@@ -144,11 +150,11 @@ public class TunerConstants {
 							.withDriveFrictionVoltage(kDriveFrictionVoltage);
 
 	// Front Left
-	private static final int kFrontLeftDriveMotorId = 13;
+	private static final int kFrontLeftDriveMotorId = 10;
 	private static final int kFrontLeftSteerMotorId = 11;
 	private static final int kFrontLeftEncoderId = 12;
-	private static final Angle kFrontLeftEncoderOffset = Units.Rotations.of(0.230957);
-	// 0.349609375
+	private static final Angle kFrontLeftEncoderOffset = Units.Rotations.of(0.415527488);
+	// 0.476074
 	private static final boolean kFrontLeftSteerMotorInverted = true;
 	private static final boolean kFrontLeftEncoderInverted = false;
 
@@ -156,11 +162,11 @@ public class TunerConstants {
 	private static final Distance kFrontLeftYPos = Units.Inches.of(10.375);
 
 	// Front Right
-	private static final int kFrontRightDriveMotorId = 19;
-	private static final int kFrontRightSteerMotorId = 17;
-	private static final int kFrontRightEncoderId = 18;
-	private static final Angle kFrontRightEncoderOffset = Units.Rotations.of(-0.332031244);
-	// 0.2353515625
+	private static final int kFrontRightDriveMotorId = 20;
+	private static final int kFrontRightSteerMotorId = 21;
+	private static final int kFrontRightEncoderId = 22;
+	private static final Angle kFrontRightEncoderOffset = Units.Rotations.of(0.474854);
+	// 0.416260
 	private static final boolean kFrontRightSteerMotorInverted = true;
 	private static final boolean kFrontRightEncoderInverted = false;
 
@@ -168,11 +174,11 @@ public class TunerConstants {
 	private static final Distance kFrontRightYPos = Units.Inches.of(-10.375);
 
 	// Back Left
-	private static final int kBackLeftDriveMotorId = 29;
-	private static final int kBackLeftSteerMotorId = 27;
-	private static final int kBackLeftEncoderId = 28;
-	private static final Angle kBackLeftEncoderOffset = Units.Rotations.of(0.220947244);
-	// -0.145263671875
+	private static final int kBackLeftDriveMotorId = 40;
+	private static final int kBackLeftSteerMotorId = 41;
+	private static final int kBackLeftEncoderId = 42;
+	private static final Angle kBackLeftEncoderOffset = Units.Rotations.of(0.472900488);
+	// -0.028809244
 	private static final boolean kBackLeftSteerMotorInverted = true;
 	private static final boolean kBackLeftEncoderInverted = false;
 
@@ -180,11 +186,11 @@ public class TunerConstants {
 	private static final Distance kBackLeftYPos = Units.Inches.of(10.375);
 
 	// Back Right
-	private static final int kBackRightDriveMotorId = 23;
-	private static final int kBackRightSteerMotorId = 21;
-	private static final int kBackRightEncoderId = 22;
-	private static final Angle kBackRightEncoderOffset = Units.Rotations.of(0.223633);
-	// -0.010009765625
+	private static final int kBackRightDriveMotorId = 30;
+	private static final int kBackRightSteerMotorId = 31;
+	private static final int kBackRightEncoderId = 32;
+	private static final Angle kBackRightEncoderOffset = Units.Rotations.of(-0.027100);
+	// 0.472168 
 	private static final boolean kBackRightSteerMotorInverted = true;
 	private static final boolean kBackRightEncoderInverted = false;
 
