@@ -17,7 +17,7 @@ public class ElevatorWristSim {
 	private static final double elevatorYPosition = 0;
 	private static final double elevatorWidth = 0;
 	private static final double elevatorHeight = 0;
-	private static final double elevatorMaxHeight = 0.0;
+	private static final double elevatorMaxHeight = 0;
 
 	private static final double elevatorS1MinHeight = 0.0;
 	private static final double elevatorS2MinHeight = 0.0;
