@@ -1,14 +1,10 @@
 package frc.robot.subsystems.drive;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.LimelightSubsystem;
-import frc.robot.subsystems.LimelightConstants;
-//import java.util.Optional;
-
+import frc.robot.subsystems.vision.LimelightSubsystem;
 
 public class Odometry extends SubsystemBase {
 	private static Odometry instance;
@@ -36,14 +32,8 @@ public class Odometry extends SubsystemBase {
 		drive.resetPose(newPose);
 	}
 
-	private double lastTime = 0.0;
-
     @Override
     public void periodic() {
-        double now = Timer.getFPGATimestamp();
-
-        // Add vision measurement FIRST
-        
         Pose2d visionPose = limelight.getBotPose();
         if (!(visionPose.getX() == 0.0 && visionPose.getY() == 0.0 && visionPose.getRotation().getDegrees() == 0.0)) {
 
@@ -55,21 +45,10 @@ public class Odometry extends SubsystemBase {
             drive.resetPose(composite);
         }
 
-
-        // THEN get the updated pose (after vision has been fused)
         robotPose = drive.getPose();
-
 
         field.setRobotPose(robotPose);
         field.setRobotPose(robotPose.getX(), robotPose.getY(), robotPose.getRotation());
         SmartDashboard.putData(field);
-
-        // Publish diagnostics
-    
-        if (now - lastTime > 0.5) {
-            lastTime = now;
-            //System.out.println("Odometry: x=" + robotPose.getX() + " y=" + robotPose.getY() + " | rotation=" + robotPose.getRotation());
-            //System.out.println(maybeVision.get());
-        }
     }
 }

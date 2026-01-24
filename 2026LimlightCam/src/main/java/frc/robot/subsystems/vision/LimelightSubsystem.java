@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems;
+package frc.robot.subsystems.vision;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -17,11 +17,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.units.Unit;
 import edu.wpi.first.units.Units;
-import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import limelight.Limelight;
 import limelight.networktables.LimelightResults;
 
@@ -29,12 +25,8 @@ public class LimelightSubsystem extends SubsystemBase {
 
   private NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
 
-  
-
   private static LimelightSubsystem instance;
   private final Limelight limelight;
-
-  private final Field2d field = new Field2d();
   
   public static LimelightSubsystem getInstance() {
     if (instance == null) instance = new LimelightSubsystem();
@@ -51,8 +43,6 @@ public class LimelightSubsystem extends SubsystemBase {
         LimelightConstants.Limelight.zOffset.in(Units.Meters),
         new Rotation3d())
     );
-
-    SmartDashboard.putData("Limelight Field", field);
   }
 
   public boolean hasTarget() {
