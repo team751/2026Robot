@@ -20,7 +20,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 
-// import org.ironmaple.simulation.SimulatedArena;
+import org.ironmaple.simulation.SimulatedArena;
 
 public class MapSimSwerveTelemetry {
 	private final double MaxSpeed;
@@ -161,7 +161,7 @@ public class MapSimSwerveTelemetry {
 			SmartDashboard.putData("Module " + i, m_moduleMechanisms[i]);
 		}
 
-		// algae.accept(SimulatedArena.getInstance().getGamePiecesArrayByType("Algae"));
-		// coral.accept(SimulatedArena.getInstance().getGamePiecesArrayByType("Coral"));
+		algae.accept(SimulatedArena.getInstance().getGamePiecesArrayByType("Algae"));
+		coral.accept(SimulatedArena.getInstance().getGamePiecesArrayByType("Fuel"));
 	}
 }

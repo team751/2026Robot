@@ -26,8 +26,10 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.subsystems.drive.generated.TunerConstants;
 import frc.robot.subsystems.drive.generated.TunerConstants.TunerSwerveDrivetrain;
-// import frc.robot.subsystems.simulation.MapleSimSwerveDrivetrain;
+import frc.robot.subsystems.simulation.MapleSimSwerveDrivetrain;
 import java.util.function.Supplier;
+import com.ctre.phoenix6.Utils;
+import edu.wpi.first.math.system.plant.DCMotor;
 
 public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem {
 	private static final double kSimLoopPeriod = 0.002; // 2 ms or 50hz
@@ -161,7 +163,7 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
 				SwerveConstants.robotConfig,
 				() -> false,
 				this);
-		// if (Utils.isSimulation()) startSimThread();
+		if (Utils.isSimulation()) startSimThread();
 
 		System.out.println("Swerve Starting!");
 	}
@@ -271,7 +273,7 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
 		// );
 	}
 
-	// public static MapleSimSwerveDrivetrain simDrivetrain = null;
+	public static MapleSimSwerveDrivetrain simDrivetrain = null;
 
 	@Override
 	public void resetPose(Pose2d pose) {
@@ -282,25 +284,25 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
 		super.resetPose(pose);
 	}
 
-	// private void startSimThread() {
-	// 	simDrivetrain =
-	// 		new MapleSimSwerveDrivetrain(
-	// 			Units.Seconds.of(kSimLoopPeriod),
-	// 			Units.Pounds.of(110),
-	// 			Units.Inches.of(30),
-	// 			Units.Inches.of(30),
-	// 			DCMotor.getKrakenX60Foc(1),
-	// 			DCMotor.getKrakenX60Foc(1),
-	// 			1.2,
-	// 			getModuleLocations(),
-	// 			getPigeon2(),
-	// 			getModules(),
-	// 			TunerConstants.FrontLeft,
-	// 			TunerConstants.FrontRight,
-	// 			TunerConstants.BackLeft,
-	// 			TunerConstants.BackRight);
+	private void startSimThread() {
+		simDrivetrain =
+			new MapleSimSwerveDrivetrain(
+				Units.Seconds.of(kSimLoopPeriod),
+				Units.Pounds.of(110),
+				Units.Inches.of(30),
+				Units.Inches.of(30),
+				DCMotor.getKrakenX60Foc(1),
+				DCMotor.getKrakenX60Foc(1),
+				1.2,
+				getModuleLocations(),
+				getPigeon2(),
+				getModules(),
+				TunerConstants.FrontLeft,
+				TunerConstants.FrontRight,
+				TunerConstants.BackLeft,
+				TunerConstants.BackRight);
 
-	// 	m_simNotifier = new Notifier(simDrivetrain::update);
-	// 	m_simNotifier.startPeriodic(kSimLoopPeriod);
-	// }
+		m_simNotifier = new Notifier(simDrivetrain::update);
+		m_simNotifier.startPeriodic(kSimLoopPeriod);
+	}
 }
