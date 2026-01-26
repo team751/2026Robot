@@ -20,30 +20,30 @@ import org.ironmaple.simulation.gamepieces.GamePieceProjectile;
  *
  * <p>The simulation will determine if the FUEL hits its target—the HUB.
  *
- * <p>The user can specify a callback using {@link #setHitNetCallBack(Runnable)}, which will be triggered when the FUEL
- * hits the HUB.
+ * <p>The user can specify a callback using {@link #setHitNetCallBack(Runnable)}, which will be
+ * triggered when the FUEL hits the HUB.
  */
 public class RebuiltFuelOnFly extends GamePieceProjectile {
 
-    public RebuiltFuelOnFly(
-            Translation2d robotPosition,
-            Translation2d shooterPositionOnRobot,
-            ChassisSpeeds chassisSpeeds,
-            Rotation2d shooterFacing,
-            Distance initialHeight,
-            LinearVelocity launchingSpeed,
-            Angle shooterAngle) {
-        super(
-                RebuiltFuelOnField.REBUILT_FUEL_INFO,
-                robotPosition,
-                shooterPositionOnRobot,
-                chassisSpeeds,
-                shooterFacing,
-                initialHeight,
-                launchingSpeed,
-                shooterAngle);
+	public RebuiltFuelOnFly(
+			Translation2d robotPosition,
+			Translation2d shooterPositionOnRobot,
+			ChassisSpeeds chassisSpeeds,
+			Rotation2d shooterFacing,
+			Distance initialHeight,
+			LinearVelocity launchingSpeed,
+			Angle shooterAngle) {
+		super(
+				RebuiltFuelOnField.REBUILT_FUEL_INFO,
+				robotPosition,
+				shooterPositionOnRobot,
+				chassisSpeeds,
+				shooterFacing,
+				initialHeight,
+				launchingSpeed,
+				shooterAngle);
 
-        super.withTouchGroundHeight(Inches.of(3).in(Meters));
-        super.enableBecomesGamePieceOnFieldAfterTouchGround();
-    }
+		super.withTouchGroundHeight(Inches.of(3).in(Meters));
+		super.enableBecomesGamePieceOnFieldAfterTouchGround();
+	}
 }
