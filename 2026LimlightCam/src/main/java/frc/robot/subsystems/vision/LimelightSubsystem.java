@@ -67,6 +67,15 @@ public class LimelightSubsystem extends SubsystemBase {
     return true;
   }
 
+  public boolean backHasTarget() {
+    double tv = limelightBackTable.getEntry("tv").getDouble(0.0);
+    if (tv < 1.0) {
+      return false;
+    }
+
+    return true;
+  }
+
 
   public Optional<Pose2d> getEstimatedPose() {
     return limelightFront.getData().getResults().map(LimelightResults::getBotPose2d);
@@ -107,16 +116,12 @@ public class LimelightSubsystem extends SubsystemBase {
     return new Pose2d(botpose[0], botpose[1], new Rotation2d(Units.Radians.convertFrom(botpose[5], Units.Degrees)));
   }
 
-  private Pose2d combineBotPose() {
-    return this.getBotPoseFront().relativeTo(getBotPoseBack());
-  }
-
-  public Pose2d getBotPoseFull() {
-    return this.combineBotPose();
-  }
-
-  public Pose2d getBotPosePt2() {
-    return this.getBotPoseFront().interpolate(getBotPoseBack(), 0.5);
+  public Pose2d getBotPoseInterpolated() {
+    if (backHasTarget()) {
+      return this.getBotPoseFront().interpolate(getBotPoseBack(), 0.5);
+    } else {
+       return this.getBotPoseFront();
+    }
   }
 
 

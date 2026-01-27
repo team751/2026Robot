@@ -34,7 +34,7 @@ public class Odometry extends SubsystemBase {
 
     @Override
     public void periodic() {
-        Pose2d visionPose = limelights.getBotPosePt2();
+        Pose2d visionPose = limelights.getBotPoseInterpolated();
         if (!(visionPose.getX() == 0.0 && visionPose.getY() == 0.0 && visionPose.getRotation().getDegrees() == 0.0)) {
 
             Pose2d composite = new Pose2d(visionPose.getTranslation(), drive.getRotation3d().toRotation2d());
