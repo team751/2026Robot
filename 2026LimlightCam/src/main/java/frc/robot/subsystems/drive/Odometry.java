@@ -9,13 +9,13 @@ import frc.robot.subsystems.vision.LimelightSubsystem;
 public class Odometry extends SubsystemBase {
 	private static Odometry instance;
 	private final SwerveSubsystem drive;
-	private final LimelightSubsystem limelight;
+	private final LimelightSubsystem limelights;
     private Field2d field = new Field2d();
 	private Pose2d robotPose;
 
 	public Odometry() {
 		this.drive = SwerveSubsystem.getInstance();
-		this.limelight = LimelightSubsystem.getInstance();
+		this.limelights = LimelightSubsystem.getInstance();
 		this.robotPose = new Pose2d();
 	}
 
@@ -34,7 +34,7 @@ public class Odometry extends SubsystemBase {
 
     @Override
     public void periodic() {
-        Pose2d visionPose = limelight.getBotPose();
+        Pose2d visionPose = limelights.getBotPosePt2();
         if (!(visionPose.getX() == 0.0 && visionPose.getY() == 0.0 && visionPose.getRotation().getDegrees() == 0.0)) {
 
             Pose2d composite = new Pose2d(visionPose.getTranslation(), drive.getRotation3d().toRotation2d());
