@@ -25,10 +25,10 @@ public class LimelightConstants {
         public static final String dashboardIp = "http://10.7.51.71:5801";
         public static final String name = "limelight-front";
         public static final double pipelineLatencySeconds = 0.0;
-        
-        public static final Distance zOffset = Units.Meters.of(0.07);
-        public static final Distance yOffset = Units.Meters.of(0.07);
-        public static final Distance xOffset = Units.Meters.of(0.025);
+    
+        public static final Distance zOffset = Units.Meters.of(0.235); // Up/Down
+        public static final Distance yOffset = Units.Meters.of(0.025); // Left/Right
+        public static final Distance xOffset = Units.Meters.of(-0.225); // Forward/Backward - Seems like for drivebase, going to the front is negative
         // Front Limelight doesn't need an offset since.. its.. like already facing forward??
         public static final Rotation3d rotationOffset = new Rotation3d(0,0,0);
     }
@@ -41,9 +41,9 @@ public class LimelightConstants {
         public static final String name = "limelight-back";
         public static final double pipelineLatencySeconds = 0.0;
 
-        public static final Distance zOffset = Units.Meters.of(0.0);
-        public static final Distance yOffset = Units.Meters.of(0.09);
-        public static final Distance xOffset = Units.Meters.of(0.025);
+        public static final Distance zOffset = Units.Meters.of(0.3); // Up/Down
+        public static final Distance yOffset = Units.Meters.of(0.025); // Left/Right
+        public static final Distance xOffset = Units.Meters.of(-0.135); // Forward/Backward
         // Back Limelight needs an offset of 180 :)
         public static final Rotation3d rotationOffset = new Rotation3d(0,0,Units.Radians.convertFrom(180, Units.Degrees));
     }
