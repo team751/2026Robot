@@ -5,10 +5,6 @@ import com.pathplanner.lib.config.RobotConfig;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
-// import com.pathplanner.lib.config.ModuleConfig;
-// import com.pathplanner.lib.config.RobotConfig;
-// import edu.wpi.first.math.geometry.Translation2d;
-// import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.units.Units;
 import frc.robot.subsystems.drive.generated.TunerConstants;
@@ -46,7 +42,6 @@ public class SwerveConstants {
 	
 	private static ModuleConfig moduleConfig =
 			new ModuleConfig(0.05, 10, 5, DCMotor.getKrakenX60Foc(1), 30400, 1);
-	// public static RobotConfig robotConfig = new RobotConfig(55, 5, moduleConfig, 0.8);
 	private static Translation2d[] moduleOffsets =
 			new Translation2d[] {
 				new Translation2d(-0.263525, 0.263525),

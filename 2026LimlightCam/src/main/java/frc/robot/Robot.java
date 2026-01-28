@@ -2,13 +2,8 @@ package frc.robot;
 
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.SignalLogger;
-// import com.pathplanner.lib.commands.PathfindingCommand;
-// import com.pathplanner.lib.pathfinding.LocalADStar;
-// import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
-import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -23,7 +18,29 @@ import frc.robot.util.ControlBoard;
 import frc.robot.subsystems.drive.Odometry;
 import frc.robot.subsystems.drive.SwerveSubsystem;
 
-
+/* TODO: Robot.java """Explanation"""
+ * Robot.java sets stuff up. It initializes all the subsystems and 
+ * everything that you need for the robot to function as intended
+ * 
+ * If you're new to FRC code or the team: Hi! Welcome to the software team
+ * its... fun... here... :D
+ * 
+ * Hopefully you know Java already (you probably won't understand most of the comments I've made if not),
+ * since I added a """ton""" of comments """explaining""" what everything does!
+ * 
+ * Before you go, I'll TRY to explain how everything works here!
+ * 
+ * So the way that most, if not ALL, robots are structured in FRC is with Subsystems!
+ * Subsystems are. well. What they say they are! They smaller systems that apart of
+ * the larger robot (system). For example, Intake or Climber are subsystems. 
+ * 
+ * This makes it wayyy easier to program and keeps the code organized (one(I) might say even TOO organized).
+ * These subsystems have their own code for setting up their motors and any electronic pieces that they
+ * might need to function properly.
+ * 
+ * This is still a WIP and will be continued later :)
+ * 
+ */
 
 
 public class Robot extends TimedRobot {
@@ -65,12 +82,6 @@ public class Robot extends TimedRobot {
     }
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
-
-    // Pathfinding.setPathfinder(
-    //   new LocalADStar()
-    // );
-
-    // scheduler.schedule(PathfindingCommand.warmupCommand());
   }
 
   @Override
@@ -79,12 +90,9 @@ public class Robot extends TimedRobot {
     try {
       scheduler.run();
     } catch (Throwable t) {
-      // Prevent an exception from CommandScheduler/Watchdog/Tracer from terminating
-      // robotPeriodic. Log the full stack to DriverStation for diagnosis.
       DriverStation.reportError("Unhandled exception in CommandScheduler: " + t.toString(), t.getStackTrace());
       t.printStackTrace();
     }
-    //SmartDashboard.putBoolean("Limelight has Target", LimelightSubsystem.getInstance().hasTarget());
 
     if (controlBoard != null) controlBoard.displayUI();
   }
@@ -132,9 +140,7 @@ public class Robot extends TimedRobot {
 
 
   @Override
-  public void teleopPeriodic() {
-    //edu.wpi.first.wpilibj2.command.CommandScheduler.getInstance().run();
-  }
+  public void teleopPeriodic() {}
 
 
 

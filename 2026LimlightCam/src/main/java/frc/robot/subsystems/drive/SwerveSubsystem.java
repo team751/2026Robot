@@ -28,6 +28,25 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.subsystems.drive.generated.TunerConstants;
 import frc.robot.subsystems.drive.generated.TunerConstants.TunerSwerveDrivetrain;
 
+/* TODO: SwerveDrive Subsystem Overview/Explanation
+ * SwerveDrive is the main file for controlling how the robot drives.
+ * Our robot is field centric, not robot centric. Field centric means
+ * that whenever you want to go forward (using the joystick) the robot will
+ * go forward in the direction YOU are facing, regardless of the robot's rotation.
+ * 
+ * Robot centric is much worse, since if you imagine your robot is facing to the left
+ * and you push forward on the joystick, the robot would actually go left, since 
+ * thats the front for the robot. 
+ * 
+ * Hopefully that was a good explanation .-.
+ * 
+ * 
+ * Anyways, this file sets that up and also sets up stuff for auton (talk to alexander for an explanation)
+ * I suggest you also take a look at generated/TunerConstants.java as well.
+ */
+
+
+
 public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem {
     private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
     private static final Rotation2d kRedAlliancePerspectiveRotation = Rotation2d.k180deg;
@@ -142,6 +161,7 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
                 );
         }
 
+        // Shows where SwerveDrive thinks the robot is positioned on the field.
         Pose2d pose = getPose();
         SmartDashboard.putNumber("Swerve/Pose x", pose.getX());
         SmartDashboard.putNumber("Swerve/Pose y", pose.getY());

@@ -6,8 +6,6 @@ package frc.robot.subsystems.vision;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import java.util.Optional;
-
 import frc.robot.subsystems.drive.SwerveSubsystem;
 import frc.robot.util.LimelightHelpers;
 
@@ -15,21 +13,20 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.HttpCamera;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import limelight.Limelight;
-import limelight.networktables.LimelightResults;
+/* TODO: Rough Overview of Vision/Limelight
+ * The Limelight/Vision subsystem is used to help determine
+ * where our robot is on the field. This is used in the
+ * Odometry.java file. 
+ * 
+ * Mainly, this file is a collection of methods to 
+ * help Odometry.java do its thing.
+ */
 
 public class LimelightSubsystem extends SubsystemBase {
   private final SwerveSubsystem drive = SwerveSubsystem.getInstance();
-
-  private NetworkTable limelightFrontTable = NetworkTableInstance.getDefault().getTable("limelight-front");
-  private NetworkTable limelightBackTable = NetworkTableInstance.getDefault().getTable("limelight-back");
  
   private static LimelightSubsystem instance;
   private final Limelight limelightFront;
@@ -41,10 +38,12 @@ public class LimelightSubsystem extends SubsystemBase {
   }
 
   private LimelightSubsystem() {
+    // Inits both limelights using their pre-set names
     limelightFront = new Limelight(LimelightConstants.LimelightFront.name);
 
     limelightBack = new Limelight(LimelightConstants.LimelightBack.name);
 
+    // Sets the settings for each limelight with their offset from the center of the robot
     limelightFront.getSettings()
       .withCameraOffset(new Pose3d(
         LimelightConstants.LimelightFront.xOffset.in(Units.Meters),
@@ -62,60 +61,38 @@ public class LimelightSubsystem extends SubsystemBase {
         );
   }
 
+  // TAG TARGETTING
+  private boolean frontHasTarget() {
+    // Using Limelight Helpers, get the TV (Valid Target) value.
+    return LimelightHelpers.getTV(LimelightConstants.LimelightFront.name);
+  }
+
+  private boolean backHasTarget() {
+    return LimelightHelpers.getTV(LimelightConstants.LimelightBack.name);
+  }
+
   public boolean hasTarget() {
     return frontHasTarget() && backHasTarget();
   }
 
-  public boolean frontHasTarget() {
-    double tv = limelightFrontTable.getEntry("tv").getDouble(0.0);
-    if (tv < 1.0) {
-      return false;
-    }
 
-    return true;
-  }
-
-  public boolean backHasTarget() {
-    double tv = limelightBackTable.getEntry("tv").getDouble(0.0);
-    if (tv < 1.0) {
-      return false;
-    }
-
-    return true;
-  }
-
-
-  public Optional<Pose2d> getEstimatedPose() {
-    return limelightFront.getData().getResults().map(LimelightResults::getBotPose2d);
-  }
-
-
+  // APRIL TAG ID
   public int getAprilTagId() {
-    NetworkTableEntry tidEntry = limelightFrontTable.getEntry("tid");
-
-    
-    double tid = tidEntry.getDouble(Double.NaN);
-    if (!Double.isNaN(tid) && tid >= 0) {
-      return (int) tid;
-    }
-
-    double[] tidArray = limelightFrontTable.getEntry("tid").getDoubleArray(new double[0]);
-    if (tidArray.length > 0) {
-      return (int) tidArray[0];
-    }
-
-    double t0 = limelightFrontTable.getEntry("tid0").getDouble(Double.NaN);
-    if (!Double.isNaN(t0)) {
-      return (int) t0;
-    }
-
-    return -1;
+    // Using LimelightHelpers, get the April Tag (fiducial) ID
+    return (int) LimelightHelpers.getFiducialID(LimelightConstants.LimelightFront.name);
   }
 
+
+  // ROBOT POSITION
   public Pose2d getBotPoseFront() {
+    // Sets the robot orientation before getting the robot position
     LimelightHelpers.SetRobotOrientation(LimelightConstants.LimelightBack.name, drive.getRotation3d().getZ(), 0.0, 0.0, 0.0, 0.0, 0.0);
+    
+    // Gets the current side (alliance)
     var alliance = DriverStation.getAlliance();
 
+    // If the alliance is red, get the robot position in the Red Alliance coordinates
+    // Otherwise get the robot position in the Blue Alliance coordinates
     if (alliance.get() == DriverStation.Alliance.Red) {
       return LimelightHelpers.getBotPoseEstimate_wpiRed_MegaTag2(LimelightConstants.LimelightFront.name).pose;
     } else {
@@ -132,25 +109,25 @@ public class LimelightSubsystem extends SubsystemBase {
     } else {
       return LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(LimelightConstants.LimelightBack.name).pose;
     }
-
-    // double[] botpose = limelightFrontTable.getEntry("botpose_orb").getDoubleArray(new double[0]);
-
-    // return new Pose2d(botpose[0], botpose[1], new Rotation2d(Units.Radians.convertFrom(botpose[5], Units.Degrees)));
   }
 
+  // Interpolates (averages) the front and back camera positions
   public Pose2d getBotPoseInterpolated() {
     if (backHasTarget() && frontHasTarget()) {
+      // If both cameras have a target, interpolate using the front camera robot pose as the base
       return this.getBotPoseFront().interpolate(getBotPoseBack(), 0.5);
-    } else if (backHasTarget()){
+    } else if (backHasTarget()) {
+      // If the only the back camera has a target, return the back camera's robot position
       return this.getBotPoseBack();
     } else {
+      // If only the front camera has a target, return the front camera's robot position
        return this.getBotPoseFront();
     }
   }
 
-
-
+  // INIT
   public void robotInit() {
+    // Sets up a camera server to display the two limelights stream on SmartDashboard (or Elastic if ur using that)
     String limelightFrontUrl = LimelightConstants.LimelightFront.streamIp;
     HttpCamera limelightFrontCam = new HttpCamera("Limelight", limelightFrontUrl);
     CameraServer.startAutomaticCapture(limelightFrontCam);
@@ -158,23 +135,10 @@ public class LimelightSubsystem extends SubsystemBase {
     String limelightBackUrl = LimelightConstants.LimelightBack.streamIp;
     HttpCamera limelightBackCam = new HttpCamera("Limelight 2", limelightBackUrl);
     CameraServer.startAutomaticCapture(limelightBackCam);
-
-    SmartDashboard.putBoolean("hamburger", false);
   }
 
-  // private double lastPrintTime = 0.0;
   @Override
-  public void periodic() {
-
-    // double now = edu.wpi.first.wpilibj.Timer.getFPGATimestamp();
-    // if (now - lastPrintTime >= 0.5) {
-    //   lastPrintTime = now;
-
-    //   System.out.println(this.getBotPose());
-
-
-    // }
-  }
+  public void periodic() {}
 
   @Override
   public void simulationPeriodic() {}

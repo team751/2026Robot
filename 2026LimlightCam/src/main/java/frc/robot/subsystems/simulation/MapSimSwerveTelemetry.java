@@ -20,6 +20,10 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 
 // import org.ironmaple.simulation.SimulatedArena;
+/*
+ * no clue what this file is actually used for, but ig we use it for swervedrive???
+ */
+
 
 public class MapSimSwerveTelemetry {
 	private final double MaxSpeed;
