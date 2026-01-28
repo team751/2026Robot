@@ -78,27 +78,39 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
         SwerveDrivetrainConstants drivetrainConstants, SwerveModuleConstants<?, ?, ?>... modules
     ) {
 
-        super(
-            drivetrainConstants, modules);
+        super(drivetrainConstants, modules);
         
+        CommandScheduler.getInstance().registerSubsystem(this);
+        
+        // Configure AutoBuilder HERE (remove from Robot.java)
         PathFollowingController controller = 
             new PPHolonomicDriveController(
-                new PIDConstants(7.51, 0.0, 0.0), new PIDConstants(1,0.0,0.0));
+                new PIDConstants(7.51, 0.0, 0.0),  // Translation PID
+                new PIDConstants(1, 0.0, 0.0)       // Rotation PID
+            );
         
-        CommandScheduler.getInstance().registerSubsystem(this);;
         AutoBuilder.configure(
-            this::getPose,
-            null,
-            this::getChassisSpeeds,
-            this::drive,
-            controller,
-            SwerveConstants.robotConfig,
-            () -> false,
-            this);
+            this::getPose,                  // Robot pose supplier
+            this::resetPose,                // Method to reset odometry
+            this::getChassisSpeeds,         // ChassisSpeeds supplier
+            this::drive,                    // Method to drive the robot (now accepts DriveFeedforwards)
+            controller,                     // Path following controller
+            SwerveConstants.robotConfig,    // RobotConfig
+            () -> {
+                // Boolean supplier for alliance color
+                var alliance = DriverStation.getAlliance();
+                if (alliance.isPresent()) {
+                    return alliance.get() == DriverStation.Alliance.Red;
+                }
+                return false;
+            },
+            this                            
+        );
         
         System.out.println("Swerve Starting!");
     }
 
+    // This method now accepts DriveFeedforwards as PathPlanner expects
     private void drive(ChassisSpeeds robotSpeeds, DriveFeedforwards feedForward) {
         this.setControl(m_pathApplyRobotSpeeds.withSpeeds(robotSpeeds));
     }
@@ -136,8 +148,6 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
         SmartDashboard.putNumber("Swerve/Rotation", pose.getRotation().getDegrees());
     }
 
-    
-
     public Pose2d getPose() {
         return getState().Pose;
     }
@@ -150,6 +160,4 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
     public void resetPose(Pose2d pose) {
         super.resetPose(pose);
     }
-
-
 }

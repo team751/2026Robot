@@ -1,5 +1,6 @@
 package frc.robot.subsystems.vision;
 
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Distance;
 
@@ -15,6 +16,7 @@ public class LimelightConstants {
         public static final Distance zOffset = Units.Meters.of(0.07);
         public static final Distance yOffset = Units.Meters.of(0.07);
         public static final Distance xOffset = Units.Meters.of(0.025);
+                public static final Rotation3d rotationOffset = new Rotation3d(0,0,0);
     }
 
     public static class LimelightBack {
@@ -28,5 +30,6 @@ public class LimelightConstants {
         public static final Distance zOffset = Units.Meters.of(0.0);
         public static final Distance yOffset = Units.Meters.of(0.09);
         public static final Distance xOffset = Units.Meters.of(0.025);
+        public static final Rotation3d rotationOffset = new Rotation3d(0,0,Units.Radians.convertFrom(180, Units.Degrees));
     }
 }

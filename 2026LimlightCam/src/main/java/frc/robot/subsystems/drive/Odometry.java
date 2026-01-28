@@ -50,5 +50,6 @@ public class Odometry extends SubsystemBase {
         field.setRobotPose(robotPose);
         field.setRobotPose(robotPose.getX(), robotPose.getY(), robotPose.getRotation());
         SmartDashboard.putData(field);
+		SmartDashboard.putBoolean("Interpolating?", limelights.hasTarget());
     }
 }

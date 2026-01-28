@@ -8,20 +8,25 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import java.util.Optional;
 
+import frc.robot.subsystems.drive.SwerveSubsystem;
+import frc.robot.util.LimelightHelpers;
+
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.HttpCamera;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import limelight.Limelight;
 import limelight.networktables.LimelightResults;
 
 public class LimelightSubsystem extends SubsystemBase {
+  private final SwerveSubsystem drive = SwerveSubsystem.getInstance();
 
   private NetworkTable limelightFrontTable = NetworkTableInstance.getDefault().getTable("limelight-front");
   private NetworkTable limelightBackTable = NetworkTableInstance.getDefault().getTable("limelight-back");
@@ -45,7 +50,7 @@ public class LimelightSubsystem extends SubsystemBase {
         LimelightConstants.LimelightFront.xOffset.in(Units.Meters),
         LimelightConstants.LimelightFront.yOffset.in(Units.Meters),
         LimelightConstants.LimelightFront.zOffset.in(Units.Meters),
-        new Rotation3d())
+        LimelightConstants.LimelightFront.rotationOffset)
     );
 
     limelightBack.getSettings()
@@ -53,13 +58,16 @@ public class LimelightSubsystem extends SubsystemBase {
         LimelightConstants.LimelightBack.xOffset.in(Units.Meters),
         LimelightConstants.LimelightBack.yOffset.in(Units.Meters),
         LimelightConstants.LimelightBack.zOffset.in(Units.Meters),
-        new Rotation3d())
+        LimelightConstants.LimelightBack.rotationOffset)
         );
   }
 
   public boolean hasTarget() {
-    double tv = limelightFrontTable.getEntry("tv").getDouble(0.0);
+    return frontHasTarget() && backHasTarget();
+  }
 
+  public boolean frontHasTarget() {
+    double tv = limelightFrontTable.getEntry("tv").getDouble(0.0);
     if (tv < 1.0) {
       return false;
     }
@@ -105,20 +113,36 @@ public class LimelightSubsystem extends SubsystemBase {
   }
 
   public Pose2d getBotPoseFront() {
-    double[] botpose = limelightFrontTable.getEntry("botpose_orb").getDoubleArray(new double[0]);
+    LimelightHelpers.SetRobotOrientation(LimelightConstants.LimelightBack.name, drive.getRotation3d().getZ(), 0.0, 0.0, 0.0, 0.0, 0.0);
+    var alliance = DriverStation.getAlliance();
 
-    return new Pose2d(botpose[0],botpose[1],new Rotation2d(Units.Radians.convertFrom(botpose[5],Units.Degrees)));
+    if (alliance.get() == DriverStation.Alliance.Red) {
+      return LimelightHelpers.getBotPoseEstimate_wpiRed_MegaTag2(LimelightConstants.LimelightFront.name).pose;
+    } else {
+      return LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(LimelightConstants.LimelightFront.name).pose;
+    }
   }
 
   public Pose2d getBotPoseBack() {
-    double[] botpose = limelightFrontTable.getEntry("botpose_orb").getDoubleArray(new double[0]);
+    LimelightHelpers.SetRobotOrientation(LimelightConstants.LimelightBack.name, drive.getRotation3d().getZ(), 0.0, 0.0, 0.0, 0.0, 0.0);
+    var alliance = DriverStation.getAlliance();
 
-    return new Pose2d(botpose[0], botpose[1], new Rotation2d(Units.Radians.convertFrom(botpose[5], Units.Degrees)));
+    if (alliance.get() == DriverStation.Alliance.Red) {
+      return LimelightHelpers.getBotPoseEstimate_wpiRed_MegaTag2(LimelightConstants.LimelightBack.name).pose;
+    } else {
+      return LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(LimelightConstants.LimelightBack.name).pose;
+    }
+
+    // double[] botpose = limelightFrontTable.getEntry("botpose_orb").getDoubleArray(new double[0]);
+
+    // return new Pose2d(botpose[0], botpose[1], new Rotation2d(Units.Radians.convertFrom(botpose[5], Units.Degrees)));
   }
 
   public Pose2d getBotPoseInterpolated() {
-    if (backHasTarget()) {
+    if (backHasTarget() && frontHasTarget()) {
       return this.getBotPoseFront().interpolate(getBotPoseBack(), 0.5);
+    } else if (backHasTarget()){
+      return this.getBotPoseBack();
     } else {
        return this.getBotPoseFront();
     }
@@ -134,6 +158,8 @@ public class LimelightSubsystem extends SubsystemBase {
     String limelightBackUrl = LimelightConstants.LimelightBack.streamIp;
     HttpCamera limelightBackCam = new HttpCamera("Limelight 2", limelightBackUrl);
     CameraServer.startAutomaticCapture(limelightBackCam);
+
+    SmartDashboard.putBoolean("hamburger", false);
   }
 
   // private double lastPrintTime = 0.0;
