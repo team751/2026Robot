@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
-
+import frc.robot.subsystems.drive.SwerveSubsystem;
 import org.ironmaple.simulation.SimulatedArena;
 
 public class MapSimSwerveTelemetry {
@@ -124,7 +124,7 @@ public class MapSimSwerveTelemetry {
 	/** Accept the swerve drive state and telemeterize it to SmartDashboard and SignalLogger. */
 	public void telemeterize(SwerveDriveState state) {
 		/* Telemeterize the swerve drive state */
-		// drivePose.set(SwerveSubsystem.simDrivetrain.mapleSimDrive.getSimulatedDriveTrainPose());
+		drivePose.set(SwerveSubsystem.simDrivetrain.mapleSimDrive.getSimulatedDriveTrainPose());
 		driveSpeeds.set(state.Speeds);
 		driveModuleStates.set(state.ModuleStates);
 		driveModuleTargets.set(state.ModuleTargets);
