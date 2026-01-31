@@ -52,8 +52,7 @@ public class MapSimSwerveTelemetry {
 		fieldPub = table.getDoubleArrayTopic("robotPose").publish();
 		fieldTypePub = table.getStringTopic(".type").publish();
 
-		coral = table.getStructArrayTopic("FieldSimulation/Coral", Pose3d.struct).publish();
-		algae = table.getStructArrayTopic("FieldSimulation/Algae", Pose3d.struct).publish();
+		Fuel = table.getStructArrayTopic("FieldSimulation/Fuel", Pose3d.struct).publish();
 	}
 
 	/* What to publish over networktables for telemetry */
@@ -118,8 +117,7 @@ public class MapSimSwerveTelemetry {
 	private final double[] m_moduleStatesArray = new double[8];
 	private final double[] m_moduleTargetsArray = new double[8];
 
-	private final StructArrayPublisher<Pose3d> coral;
-	private final StructArrayPublisher<Pose3d> algae;
+	private final StructArrayPublisher<Pose3d> Fuel;
 
 	/** Accept the swerve drive state and telemeterize it to SmartDashboard and SignalLogger. */
 	public void telemeterize(SwerveDriveState state) {
@@ -161,7 +159,6 @@ public class MapSimSwerveTelemetry {
 			SmartDashboard.putData("Module " + i, m_moduleMechanisms[i]);
 		}
 
-		algae.accept(SimulatedArena.getInstance().getGamePiecesArrayByType("Algae"));
-		coral.accept(SimulatedArena.getInstance().getGamePiecesArrayByType("Fuel"));
+		Fuel.accept(SimulatedArena.getInstance().getGamePiecesArrayByType("Fuel"));
 	}
 }
