@@ -104,14 +104,14 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
         // Configure AutoBuilder HERE (remove from Robot.java)
         PathFollowingController controller = 
             new PPHolonomicDriveController(
-                new PIDConstants(7.51, 0.0, 0.0),  // Translation PID
-                new PIDConstants(1, 0.0, 0.0)       // Rotation PID
+                new PIDConstants(5, 0.0, 0.0),  // Translation PID
+                new PIDConstants(5, 0.0, 0.0)       // Rotation PID
             );
         
         AutoBuilder.configure(
             this::getPose,                  // Robot pose supplier
             this::resetPose,                // Method to reset odometry
-            this::getChassisSpeeds,         // ChassisSpeeds supplier
+            this::getRobotRelativeSpeeds,         // ChassisSpeeds supplier
             this::drive,                    // Method to drive the robot (now accepts DriveFeedforwards)
             controller,                     // Path following controller
             SwerveConstants.robotConfig,    // RobotConfig
@@ -128,6 +128,10 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
         
         System.out.println("Swerve Starting!");
     }
+
+    public ChassisSpeeds getRobotRelativeSpeeds() {
+                return getKinematics().toChassisSpeeds(getState().ModuleStates);
+        }
 
     // This method now accepts DriveFeedforwards as PathPlanner expects
     private void drive(ChassisSpeeds robotSpeeds, DriveFeedforwards feedForward) {
