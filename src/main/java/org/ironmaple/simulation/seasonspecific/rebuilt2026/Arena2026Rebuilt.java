@@ -159,8 +159,8 @@ public class Arena2026Rebuilt extends SimulatedArena {
 
 		Settings settings = physicsWorld.getSettings();
 
-		// settings.setVelocityConstraintSolverIterations(3);
-		// settings.setPositionConstraintSolverIterations(2);
+		settings.setVelocityConstraintSolverIterations(10);
+		settings.setPositionConstraintSolverIterations(5);
 		settings.setMinimumAtRestTime(0.02);
 
 		physicsWorld.setSettings(settings);

@@ -132,7 +132,7 @@ public class MapSimSwerveTelemetry {
 		driveTimestamp.set(state.Timestamp);
 		driveOdometryFrequency.set(1.0 / state.OdometryPeriod);
 
-		/* Also write to log file */
+		/* Also write to log file*/
 		m_poseArray[0] = state.Pose.getX();
 		m_poseArray[1] = state.Pose.getY();
 		m_poseArray[2] = state.Pose.getRotation().getDegrees();
