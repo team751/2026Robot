@@ -94,7 +94,7 @@ public class TunerConstants {
 	//		new Pigeon2Configuration().withMountPose(new MountPoseConfigs().withMountPoseYaw(91.76612091064453).withMountPoseRoll(178.90150451660156).withMountPosePitch(180));
 
 	private static final Pigeon2Configuration pigeonConfigs =
-			new Pigeon2Configuration().withMountPose(new MountPoseConfigs().withMountPoseYaw(-87.09540557861328).withMountPosePitch(0.4624914824962616).withMountPoseRoll(-179.29147338867188));
+			new Pigeon2Configuration().withMountPose(new MountPoseConfigs().withMountPoseYaw(-180).withMountPosePitch(0.755).withMountPoseRoll(-180));
 	// New Yaw: -87.09540557861328
 	// New Pitch: 0.4624914824962616
 	// New Roll: -179.29147338867188

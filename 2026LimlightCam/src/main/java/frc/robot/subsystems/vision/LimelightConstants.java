@@ -28,7 +28,7 @@ public class LimelightConstants {
     
         public static final Distance zOffset = Units.Meters.of(0.235); // Up/Down
         public static final Distance yOffset = Units.Meters.of(0.025); // Left/Right
-        public static final Distance xOffset = Units.Meters.of(-0.225); // Forward/Backward - Seems like for drivebase, going to the front is negative
+        public static final Distance xOffset = Units.Meters.of(0.225); // Forward/Backward - Seems like for drivebase, going to the front is negative
         // Front Limelight doesn't need an offset since.. its.. like already facing forward??
         public static final Rotation3d rotationOffset = new Rotation3d(0,0,0);
     }

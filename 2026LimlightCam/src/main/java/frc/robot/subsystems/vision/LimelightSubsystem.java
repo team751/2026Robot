@@ -94,9 +94,17 @@ public class LimelightSubsystem extends SubsystemBase {
     // If the alliance is red, get the robot position in the Red Alliance coordinates
     // Otherwise get the robot position in the Blue Alliance coordinates
     if (alliance.get() == DriverStation.Alliance.Red) {
-      return LimelightHelpers.getBotPoseEstimate_wpiRed_MegaTag2(LimelightConstants.LimelightFront.name).pose;
+      if (!(LimelightHelpers.getBotPoseEstimate_wpiRed(LimelightConstants.LimelightFront.name).pose.getX() == 0 && LimelightHelpers.getBotPoseEstimate_wpiRed(LimelightConstants.LimelightFront.name).pose.getY() == 0)) {
+        return LimelightHelpers.getBotPoseEstimate_wpiRed(LimelightConstants.LimelightFront.name).pose;
+      } else {
+        return null;
+      }
     } else {
-      return LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(LimelightConstants.LimelightFront.name).pose;
+      if (!(LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name).pose.getX() == 0 && LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name).pose.getY() == 0)) {
+        return LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name).pose;
+      } else {
+        return null;
+      }
     }
   }
 
@@ -105,9 +113,17 @@ public class LimelightSubsystem extends SubsystemBase {
     var alliance = DriverStation.getAlliance();
 
     if (alliance.get() == DriverStation.Alliance.Red) {
-      return LimelightHelpers.getBotPoseEstimate_wpiRed_MegaTag2(LimelightConstants.LimelightBack.name).pose;
+      if (!(LimelightHelpers.getBotPoseEstimate_wpiRed(LimelightConstants.LimelightBack.name).pose.getX() == 0 && LimelightHelpers.getBotPoseEstimate_wpiRed(LimelightConstants.LimelightBack.name).pose.getY() == 0)) {
+        return LimelightHelpers.getBotPoseEstimate_wpiRed(LimelightConstants.LimelightBack.name).pose;
+      } else {
+        return null;
+      }
     } else {
-      return LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(LimelightConstants.LimelightBack.name).pose;
+      if (!(LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightBack.name).pose.getX() == 0 && LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightBack.name).pose.getY() == 0)) {
+        return LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightBack.name).pose;
+      } else {
+        return null;
+      }
     }
   }
 
