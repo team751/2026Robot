@@ -148,7 +148,7 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
 		// 999999), MapleSimSwerveDrivetrain.regulateModuleConstantsForSimulation(modules));
 		super(
 				drivetrainConstants,
-				/*MapleSimSwerveDrivetrain.regulateModuleConstantsForSimulation(*/ modules);
+				MapleSimSwerveDrivetrain.regulateModuleConstantsForSimulation(modules);
 		PathFollowingController controller =
 				new PPHolonomicDriveController(
 						new PIDConstants(7.51, 0.0, 0.0), new PIDConstants(1, 0.0, 0.0));
@@ -234,9 +234,9 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
 
 	public Pose2d getPose() {
 		return getState().Pose;
-		// return simDrivetrain == null
-		// 	? getState().Pose
-		// 	: simDrivetrain.mapleSimDrive.getSimulatedDriveTrainPose();
+		return simDrivetrain == null
+			? getState().Pose
+			: simDrivetrain.mapleSimDrive.getSimulatedDriveTrainPose();
 	}
 
 	// public void resetOdotoSim() {
@@ -277,10 +277,10 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
 
 	@Override
 	public void resetPose(Pose2d pose) {
-		// if (simDrivetrain != null) {
-		// simDrivetrain.mapleSimDrive.setSimulationWorldPose(pose);
-		// Timer.delay(0.05); // Wait for simulation to update
-		// }
+		if (simDrivetrain != null) {
+		simDrivetrain.mapleSimDrive.setSimulationWorldPose(pose);
+		Timer.delay(0.05); // Wait for simulation to update
+		}
 		super.resetPose(pose);
 	}
 
