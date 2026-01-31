@@ -118,6 +118,7 @@ public class IntakeSimulation extends BodyFixture {
                 targetedGamePieceType,
                 driveTrainSimulation,
                 getIntakeRectangle(driveTrainSimulation, width.in(Meters), lengthExtended.in(Meters), side),
+                //Length when extended: 0.685
                 capacity);
     }
 
@@ -169,7 +170,7 @@ public class IntakeSimulation extends BodyFixture {
         this.gamePiecesInIntakeCount = 0;
 
         if (capacity > 100) throw new IllegalArgumentException("capacity too large, max is 100");
-        this.capacity = capacity;
+        this.capacity = 30;
 
         this.gamePiecesToRemove = new ArrayDeque<>(capacity);
 

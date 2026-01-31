@@ -2,6 +2,7 @@ package frc.robot.subsystems.drive;
 
 import choreo.trajectory.SwerveSample;
 import com.ctre.phoenix6.SignalLogger;
+import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModule;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
@@ -15,6 +16,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -29,8 +31,6 @@ import frc.robot.subsystems.drive.generated.TunerConstants;
 import frc.robot.subsystems.drive.generated.TunerConstants.TunerSwerveDrivetrain;
 import frc.robot.subsystems.simulation.MapleSimSwerveDrivetrain;
 import java.util.function.Supplier;
-import com.ctre.phoenix6.Utils;
-import edu.wpi.first.math.system.plant.DCMotor;
 
 public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem {
 	private static final double kSimLoopPeriod = 0.002; // 2 ms or 50hz
@@ -234,10 +234,10 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
 	}
 
 	public Pose2d getPose() {
-		//return getState().Pose;
+		// return getState().Pose;
 		return simDrivetrain == null
-			? getState().Pose
-			: simDrivetrain.mapleSimDrive.getSimulatedDriveTrainPose();
+				? getState().Pose
+				: simDrivetrain.mapleSimDrive.getSimulatedDriveTrainPose();
 	}
 
 	// public void resetOdotoSim() {
@@ -279,29 +279,29 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
 	@Override
 	public void resetPose(Pose2d pose) {
 		if (simDrivetrain != null) {
-		simDrivetrain.mapleSimDrive.setSimulationWorldPose(pose);
-		Timer.delay(0.05); // Wait for simulation to update
+			simDrivetrain.mapleSimDrive.setSimulationWorldPose(pose);
+			Timer.delay(0.05); // Wait for simulation to update
 		}
 		super.resetPose(pose);
 	}
 
 	private void startSimThread() {
 		simDrivetrain =
-			new MapleSimSwerveDrivetrain(
-				Units.Seconds.of(kSimLoopPeriod),
-				Units.Pounds.of(110),
-				Units.Inches.of(30),
-				Units.Inches.of(30),
-				DCMotor.getKrakenX60Foc(1),
-				DCMotor.getKrakenX60Foc(1),
-				1.2,
-				getModuleLocations(),
-				getPigeon2(),
-				getModules(),
-				TunerConstants.FrontLeft,
-				TunerConstants.FrontRight,
-				TunerConstants.BackLeft,
-				TunerConstants.BackRight);
+				new MapleSimSwerveDrivetrain(
+						Units.Seconds.of(kSimLoopPeriod),
+						Units.Pounds.of(110),
+						Units.Inches.of(30),
+						Units.Inches.of(30),
+						DCMotor.getKrakenX60Foc(1),
+						DCMotor.getKrakenX60Foc(1),
+						1.2,
+						getModuleLocations(),
+						getPigeon2(),
+						getModules(),
+						TunerConstants.FrontLeft,
+						TunerConstants.FrontRight,
+						TunerConstants.BackLeft,
+						TunerConstants.BackRight);
 
 		m_simNotifier = new Notifier(simDrivetrain::update);
 		m_simNotifier.startPeriodic(kSimLoopPeriod);

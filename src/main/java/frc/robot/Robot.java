@@ -22,8 +22,6 @@ import frc.robot.subsystems.vision.LimelightSubsystem;
 import frc.robot.util.Constants;
 import frc.robot.util.ControlBoard;
 
-import org.ironmaple.simulation.SimulatedArena;
-
 public class Robot extends TimedRobot {
 	public static final CANBus riobus = new CANBus("rio");
 
@@ -166,6 +164,6 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void simulationPeriodic() {
-		//SimulatedArena.getInstance().simulationPeriodic();
+		// SimulatedArena.getInstance().simulationPeriodic();
 	}
 }
