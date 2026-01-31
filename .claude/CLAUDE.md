@@ -48,6 +48,16 @@ Uses CTRE's generated swerve (`TunerSwerveDrivetrain`) with:
 
 The swerve drivetrain is on a dedicated CAN bus named "Drivebus".
 
+### Simulation (MapleSim)
+
+Physics simulation uses MapleSim with Dyn4j physics engine in `org.ironmaple.simulation`:
+- `SimulatedArena` - Central physics world managing all simulated objects
+- `Arena2026Rebuilt` - Season-specific field with obstacles, hubs, outposts, and fuel game pieces
+- `MapleSimSwerveDrivetrain` - Bridges CTRE swerve with MapleSim physics
+- `IntakeSimulation` - Simulates game piece collection with contact detection
+
+Simulation runs on a separate Notifier thread at 500Hz. Game pieces are visualized via NetworkTables for AdvantageScope's 3D field view.
+
 ### Vendor Dependencies
 
 - **Phoenix 6** - CTRE motor controllers (TalonFX), CANcoders, Pigeon 2
