@@ -133,6 +133,7 @@ public class MapleSimSwerveDrivetrain {
 						Units.Meters.of(Units.Meters.convertFrom(12, Units.Inches)),
 						IntakeSide.FRONT,
 						30);
+		mapleSimIntake.startIntake();
 
 		SimulatedArena.overrideSimulationTimings(simPeriod, 1);
 		SimulatedArena.getInstance().addDriveTrainSimulation(mapleSimDrive);
