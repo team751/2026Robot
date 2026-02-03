@@ -79,6 +79,7 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
 
     private static SwerveSubsystem instance = null;
 
+    // Initializes the SwerveDrive subsystem
     public static SwerveSubsystem getInstance() {
         if (instance == null) {
             instance =
@@ -105,18 +106,18 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
         PathFollowingController controller = 
             new PPHolonomicDriveController(
                 new PIDConstants(0.5, 0.0, 0.0),  // Translation PID
-                new PIDConstants(0.3, 0.0, 0.0)       // Rotation PID
+                new PIDConstants(0.3, 0.0, 0.0)   // Rotation PID
             );
         
         AutoBuilder.configure(
-            this::getPose,                  // Robot pose supplier
-            this::resetPose,                // Method to reset odometry
-            this::getRobotRelativeSpeeds,         // ChassisSpeeds supplier
+            this::getPose,                  // Gives the Robot pose
+            this::resetPose,                // Method to reset odometry on autonomous start (we don't want this!)
+            this::getRobotRelativeSpeeds,   // Gives the ChassisSpeeds
             this::drive,                    // Method to drive the robot (now accepts DriveFeedforwards)
             controller,                     // Path following controller
             SwerveConstants.robotConfig,    // RobotConfig
             () -> {
-                // Boolean supplier for alliance color
+                // Boolean for alliance color
                 var alliance = DriverStation.getAlliance();
                 if (alliance.isPresent()) {
                     return alliance.get() == DriverStation.Alliance.Red;
@@ -130,8 +131,8 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
     }
 
     public ChassisSpeeds getRobotRelativeSpeeds() {
-                return getKinematics().toChassisSpeeds(getState().ModuleStates);
-        }
+        return getKinematics().toChassisSpeeds(getState().ModuleStates);
+    }
 
     // This method now accepts DriveFeedforwards as PathPlanner expects
     private void drive(ChassisSpeeds robotSpeeds, DriveFeedforwards feedForward) {
@@ -172,6 +173,7 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
         SmartDashboard.putNumber("Swerve/Rotation", pose.getRotation().getDegrees());
     }
 
+    // Gets the Robot odometry position
     public Pose2d getPose() {
         return getState().Pose;
     }
@@ -180,6 +182,7 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
         return getState().Speeds;
     }
 
+    // Resets the Robot odometry position
     @Override
     public void resetPose(Pose2d pose) {
         super.resetPose(pose);

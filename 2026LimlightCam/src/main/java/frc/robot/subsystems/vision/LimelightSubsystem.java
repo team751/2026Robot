@@ -32,13 +32,14 @@ public class LimelightSubsystem extends SubsystemBase {
   private final Limelight limelightFront;
   private final Limelight limelightBack;
   
+  // Initializes the Limlight Subsystem
   public static LimelightSubsystem getInstance() {
     if (instance == null) instance = new LimelightSubsystem();
     return instance;
   }
 
   private LimelightSubsystem() {
-    // Inits both limelights using their pre-set names
+    // Initializes both limelights using their pre-set names
     limelightFront = new Limelight(LimelightConstants.LimelightFront.name);
 
     limelightBack = new Limelight(LimelightConstants.LimelightBack.name);
@@ -108,6 +109,7 @@ public class LimelightSubsystem extends SubsystemBase {
     }
   }
 
+  // Same as getBotPoseFront() but for the back Limelight
   public Pose2d getBotPoseBack() {
     LimelightHelpers.SetRobotOrientation(LimelightConstants.LimelightBack.name, drive.getRotation3d().getZ(), 0.0, 0.0, 0.0, 0.0, 0.0);
     var alliance = DriverStation.getAlliance();
@@ -153,6 +155,10 @@ public class LimelightSubsystem extends SubsystemBase {
     CameraServer.startAutomaticCapture(limelightBackCam);
   }
 
+  // These two methods run whatever is inside them every 20ms(?) in TeleOp and simulation, respectively
+  // We don't use them, but they can be useful for debugging sometimes.
+  // Important to note that you will get an error if you try to print data out (using System.out.println())
+  // every 20ms, so try to buffer it with a timer or smth.
   @Override
   public void periodic() {}
 
