@@ -129,8 +129,8 @@ public class MapleSimSwerveDrivetrain {
 				IntakeSimulation.OverTheBumperIntake(
 						"Fuel",
 						mapleSimDrive,
-						Units.Meters.of(Units.Meters.convertFrom(30, Units.Inches)),
-						Units.Meters.of(Units.Meters.convertFrom(12, Units.Inches)),
+						Units.Meters.of(Units.Meters.convertFrom(10, Units.Inches)),
+						Units.Meters.of(Units.Meters.convertFrom(10, Units.Inches)),
 						IntakeSide.FRONT,
 						30);
 		mapleSimIntake.startIntake();
