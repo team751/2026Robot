@@ -39,6 +39,12 @@
           "data": {
             "pathName": "intakepart2"
           }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Score Intake"
+          }
         }
       ]
     }
