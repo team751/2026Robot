@@ -10,9 +10,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.vision.LimelightSubsystem;
 
 /* TODO: Rough overview of what Odometry.java does and how it works.
- * Odometry tells the driver where the robot is at all times.
+ * Odometry tells the driver (and the robot!) where the robot is at all times.
  * It's also VERY VERY useful for auton since during that period
- * the robot must know where it is to properly drive to each place
+ * the robot must know where it is to properly drive around
  * 
  * The robot can tell where it is via 2 ways: Limelights/Vision and Dead-Reckoning or using Motor Encoders
  * 
