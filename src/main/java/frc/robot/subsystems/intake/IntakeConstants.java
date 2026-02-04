@@ -1,3 +1,65 @@
 package frc.robot.subsystems.intake;
 
-public class IntakeConstants {}
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
+
+import frc.lib.CTREConfig;
+import frc.robot.Robot;
+
+public class IntakeConstants {
+	public static final double intakeSpeed = 12;
+	public static final double spitSpeed = 4;
+	public static final double extenderSpeed = 6;
+	public static final double retractorSpeed = -6;
+
+    public static final CTREConfig<TalonFX, TalonFXConfiguration> intakeMotorConfig =
+	new CTREConfig<>(TalonFXConfiguration::new);
+
+    static {
+	intakeMotorConfig.withName("Intake Motor").withCanID("TBS").withBus("TBD");
+
+	TalonFXConfiguration intakeConfig = intakeMotorConfig.config;
+	intakeConfig.Slot0.kP = 0; // Increase until speed oscillates
+	intakeConfig.Slot0.kI = 0; // Don't touch
+	intakeConfig.Slot0.kD = 0; // Increase until jitter
+	intakeConfig.Slot0.kS = 0; // Increase until just before motor starts moving
+	intakeConfig.Slot0.kA = 0; //
+	intakeConfig.Slot0.kV = 0; //
+	intakeConfig.Slot0.kG = 0; // Don't touch
+
+	intakeConfig.Feedback.RotorToSensorRatio = 1;
+	intakeConfig.Feedback.SensorToMechanismRatio = 1;
+
+	intakeConfig.CurrentLimits.StatorCurrentLimit = 120;
+	intakeConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+	intakeConfig.TorqueCurrent.PeakForwardTorqueCurrent = 40;
+	intakeConfig.TorqueCurrent.PeakReverseTorqueCurrent = -40;
+
+	intakeConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive; // Positive intake
+}
+public static final CTREConfig<TalonFX, TalonFXConfiguration> extenderMotorConfig =
+	new CTREConfig<>(TalonFXConfiguration::new);
+    
+    static {
+	extenderMotorConfig.withName("Extender Motor").withCanID(52);
+
+	TalonFXConfiguration extenderConfig = extenderMotorConfig.config;
+	extenderConfig.Slot0.kP = 0; // Increase until speed oscillates
+	extenderConfig.Slot0.kI = 0; // Don't touch
+	extenderConfig.Slot0.kD = 0; // Increase until jitter
+	extenderConfig.Slot0.kS = 0; // Increase until just before motor starts moving
+	extenderConfig.Slot0.kA = 0; //
+	extenderConfig.Slot0.kV = 0; //
+	extenderConfig.Slot0.kG = 0; // Don't touch
+	extenderConfig.Feedback.RotorToSensorRatio = 1;
+	extenderConfig.Feedback.SensorToMechanismRatio = 1;
+
+	extenderConfig.CurrentLimits.StatorCurrentLimit = 120;
+	extenderConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+	extenderConfig.TorqueCurrent.PeakForwardTorqueCurrent = 40;
+	extenderConfig.TorqueCurrent.PeakReverseTorqueCurrent = -40;
+
+	extenderConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive; // Positive intake
+}
+}
