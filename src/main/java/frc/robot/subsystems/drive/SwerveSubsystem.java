@@ -48,6 +48,7 @@ import frc.robot.subsystems.drive.generated.TunerConstants.TunerSwerveDrivetrain
 
 
 public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem {
+    // Rotation2d.kZero;
     private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
     private static final Rotation2d kRedAlliancePerspectiveRotation = Rotation2d.k180deg;
     private boolean m_hasAppliedOperatorPerspective = false;
@@ -123,10 +124,25 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
                 }
                 return false;
             },
-            this                            
+            this                           
         );
         
-        System.out.println("Swerve Starting!");
+    System.out.println("Swerve Starting!");
+
+    // Try to apply operator perspective as early as possible so a deploy (process restart)
+    // gets the same perspective as a full power-cycle. We also publish telemetry so we can
+    // see what perspective was applied on deploy vs power-cycle.
+    DriverStation.getAlliance()
+        .ifPresent(
+            allianceColor -> {
+                var rot = allianceColor == Alliance.Red
+                    ? kRedAlliancePerspectiveRotation
+                    : kBlueAlliancePerspectiveRotation;
+                setOperatorPerspectiveForward(rot);
+                m_hasAppliedOperatorPerspective = true;
+                SmartDashboard.putNumber("OperatorPerspectiveDeg", rot.getDegrees());
+                SmartDashboard.putString("OperatorPerspectiveAlliance", allianceColor.name());
+            });
     }
 
     public ChassisSpeeds getRobotRelativeSpeeds() {
@@ -156,11 +172,14 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
             DriverStation.getAlliance()
                 .ifPresent(
                     allianceColor -> {
-                        setOperatorPerspectiveForward(
+                        var rot =
                             allianceColor == Alliance.Red
                             ? kRedAlliancePerspectiveRotation
-                            : kBlueAlliancePerspectiveRotation);
+                            : kBlueAlliancePerspectiveRotation;
+                        setOperatorPerspectiveForward(rot);
                         m_hasAppliedOperatorPerspective = true;
+                        SmartDashboard.putNumber("OperatorPerspectiveDeg", rot.getDegrees());
+                        SmartDashboard.putString("OperatorPerspectiveAlliance", allianceColor.name());
                     }
                 );
         }

@@ -111,6 +111,21 @@ public class Odometry extends SubsystemBase {
 		SmartDashboard.putNumber("Pigeon Roll", drive.getPigeon2().getRoll().getValueAsDouble());
 		SmartDashboard.putNumber("Swerve Rotation", Math.toDegrees(drive.getRotation3d().getZ()));
 
+		// Debug telemetry: publish each swerve module's angle (deg) and wheel speed (m/s).
+		// This is useful to compare device/encoder state between a full power cycle and a code deploy.
+		try {
+			var state = drive.getState();
+			if (state != null && state.ModuleStates != null) {
+				for (int i = 0; i < state.ModuleStates.length; i++) {
+					SmartDashboard.putNumber("Module" + i + " Angle Deg", Math.toDegrees(state.ModuleStates[i].angle.getRadians()));
+					SmartDashboard.putNumber("Module" + i + " Speed m/s", state.ModuleStates[i].speedMetersPerSecond);
+				}
+			}
+		} catch (Exception e) {
+			// Don't allow telemetry to throw; provide minimal error info.
+			SmartDashboard.putString("ModuleStates/Error", e.toString());
+		}
+
         SmartDashboard.putData(field);
 
 		// Tells you in SmartDashboard (or Elastic if u use that) whether or not the code is interpolating apriltag positions
