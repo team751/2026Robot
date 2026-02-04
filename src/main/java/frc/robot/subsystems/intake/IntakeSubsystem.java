@@ -56,14 +56,6 @@ private void setExtenderMotor(double voltage) {
 	extenderMotor.setControl(extenderControl.withOutput(voltage));
 }
 
-	private void unsetAllRequests() {
-	requestedIdle = false;
-	requestedIntaking = false;
-	requestedSpitting = false;
-	requestedExtending = false;
-	requestedRetracting = false;
-}
-
 	@Override
 	public void periodic() {
 		IntakeState nextState = state;
@@ -93,7 +85,7 @@ private void setExtenderMotor(double voltage) {
 	}
 }
 
-	private void requestIntaking() {
+	public void requestIntaking() {
 		unsetAllRequests();
 		requestedIntaking = true;
 	}
@@ -113,4 +105,11 @@ private void setExtenderMotor(double voltage) {
 		unsetAllRequests();
 		requestedRetracting = true;
 	}
+	private void unsetAllRequests() {
+	requestedIdle = false;
+	requestedIntaking = false;
+	requestedSpitting = false;
+	requestedExtending = false;
+	requestedRetracting = false;
+}
 }
