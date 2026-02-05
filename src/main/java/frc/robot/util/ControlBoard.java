@@ -6,6 +6,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.lib.PS5Controller;
+import frc.robot.commands.IntakeCommand;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.drive.SwerveConstants;
 import frc.robot.subsystems.drive.SwerveSubsystem;
@@ -37,6 +38,9 @@ public class ControlBoard {
 
 	/* Subsystems */
 	private final Superstructure superstructure = Superstructure.getInstance();
+
+	/*Commands */
+	private final IntakeCommand intakeCommand = new IntakeCommand();
 
 	private final SwerveRequest.FieldCentric driveRequest =
 			new SwerveRequest.FieldCentric()
@@ -91,7 +95,11 @@ public class ControlBoard {
 		controller.rightBumper.whileTrue(
 				new StartEndCommand(() -> preciseControl = true, () -> preciseControl = false)
 						.withName("Precise Control Toggle")); // Fight me owen
+		/*Intake */
+		controller.leftTrigger.whileTrue(
+		intakeCommand);
 	}
+
 
 	private void configureOperatorBindings(PS5Controller controller) {}
 
