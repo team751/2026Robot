@@ -19,10 +19,10 @@ private final TalonFX extenderMotor = IntakeConstants.extenderMotorConfig.create
 private final VoltageOut intakeControl = new VoltageOut(0);
 private final VoltageOut extenderControl = new VoltageOut(0);
 	/* Limit Switches */
-  DigitalInput ExtendLimitSwitch2 = new DigitalInput("TBD");
-  DigitalInput ExtendLimitSwitch1 = new DigitalInput("TBD");
-  DigitalInput RetractLimitSwitch = new DigitalInput("TBD");
-  DigitalInput RetractLimitSwitch2 = new DigitalInput("TBD");
+   DigitalInput ExtendLimitSwitch2 = new DigitalInput("TBD");
+   DigitalInput ExtendLimitSwitch1 = new DigitalInput("TBD");
+   DigitalInput RetractLimitSwitch = new DigitalInput("TBD");
+   DigitalInput RetractLimitSwitch2 = new DigitalInput("TBD");
   
 
 	/* State Machine Logic */
@@ -62,7 +62,13 @@ private void setIntakeMotor(double voltage) {
 }
 private void setExtenderMotor(double voltage) {
 	extenderMotor.setControl(extenderControl.withOutput(voltage));
-}
+	// if (requestedExtending == true && (!ExtendLimitSwitch1.get() && !ExtendLimitSwitch2.get())) {
+	// 	requestedExtending = false;
+	// }
+	// if (requestedRetracting == true && (!RetractLimitSwitch.get() && !RetractLimitSwitch2.get())) {
+	// 	requestedRetracting = false;
+	// }
+	}
 
 	@Override
 	public void periodic() {
@@ -87,11 +93,11 @@ private void setExtenderMotor(double voltage) {
 		case EXTENDING -> setExtenderMotor(IntakeConstants.extenderSpeed);
 		case RETRACTING -> setExtenderMotor(IntakeConstants.retractorSpeed);
 	}
-	if (state == IntakeState.EXTENDING && (!ExtendLimitSwitch1.get() && !ExtendLimitSwitch2.get())) {
+	if (state == IntakeState.EXTENDING && (ExtendLimitSwitch1.get() && ExtendLimitSwitch2.get())) {
 		setExtenderMotor(0);
 		requestedExtending = false;
 	}
-	if (state == IntakeState.RETRACTING && (!RetractLimitSwitch.get() && !RetractLimitSwitch2.get())) {
+	if (state == IntakeState.RETRACTING && (RetractLimitSwitch.get() && RetractLimitSwitch2.get())) {
 		setExtenderMotor(0);
 		requestedRetracting = false;
 	}
