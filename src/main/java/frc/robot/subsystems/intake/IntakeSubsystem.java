@@ -2,6 +2,8 @@ package frc.robot.subsystems.intake;
 
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.lights.LightsSubsystem;
@@ -16,6 +18,12 @@ private final TalonFX extenderMotor = IntakeConstants.extenderMotorConfig.create
 	/* Control Signals */
 private final VoltageOut intakeControl = new VoltageOut(0);
 private final VoltageOut extenderControl = new VoltageOut(0);
+	/* Limit Switches */
+  DigitalInput ExtendLimitSwitch2 = new DigitalInput("TBD");
+  DigitalInput ExtendLimitSwitch1 = new DigitalInput("TBD");
+  DigitalInput RetractLimitSwitch = new DigitalInput("TBD");
+  DigitalInput RetractLimitSwitch2 = new DigitalInput("TBD");
+  
 
 	/* State Machine Logic */
 	private enum IntakeState {
@@ -72,21 +80,30 @@ private void setExtenderMotor(double voltage) {
 		switch (state) {
 		case IDLE -> {
 		setIntakeMotor(0);
+		setExtenderMotor(0);
 		}
 		case INTAKING -> setIntakeMotor(IntakeConstants.intakeSpeed);
 		case SPITTING -> setIntakeMotor(IntakeConstants.spitSpeed);
 		case EXTENDING -> setExtenderMotor(IntakeConstants.extenderSpeed);
 		case RETRACTING -> setExtenderMotor(IntakeConstants.retractorSpeed);
 	}
+	if (state == IntakeState.EXTENDING && (!ExtendLimitSwitch1.get() && !ExtendLimitSwitch2.get())) {
+		setExtenderMotor(0);
+		requestedExtending = false;
+	}
+	if (state == IntakeState.RETRACTING && (!RetractLimitSwitch.get() && !RetractLimitSwitch2.get())) {
+		setExtenderMotor(0);
+		requestedRetracting = false;
+	}
+	}
 	LightsSubsystem.getInstance().requestBlinking(state != IntakeState.IDLE);
 	SmartDashboard.putString("Intake/Intake State", state.toString());
 	SmartDashboard.putNumber("Intake/Intake Speed", intakeMotor.getVelocity().getValueAsDouble());
 	SmartDashboard.putNumber("Extender/Extender Speed", extenderMotor.getVelocity().getValueAsDouble());
 	}
-}
 
 	public void requestIntaking() {
-		unsetAllRequests();
+		requestedSpitting = false;
 		requestedIntaking = true;
 	}
 	public void requestIdle() {
@@ -94,11 +111,12 @@ private void setExtenderMotor(double voltage) {
 		requestedIdle = true;
 	}
 	public void requestSpitting() {
-		unsetAllRequests();
+		requestedIntaking = false;
 		requestedSpitting = true;
 	}
 	public void requestExtending() {
-		unsetAllRequests();
+		requestedRetracting = false;
+		requestedSpitting = false;
 		requestedExtending = true;
 	}
 	public void requestRetracting() {

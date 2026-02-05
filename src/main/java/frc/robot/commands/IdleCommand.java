@@ -4,20 +4,22 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 
-public class IntakeCommand extends Command {
+public class IdleCommand extends Command {
 private final IntakeSubsystem intakeSubsystem = IntakeSubsystem.getInstance();
 
-public IntakeCommand() {
+public IdleCommand() {
 	addRequirements(intakeSubsystem);
 }
 
 @Override
 public void initialize() {
-	intakeSubsystem.requestIntaking();
+	intakeSubsystem.requestIdle();
 }
 @Override
 public void end(boolean interrupted) {
-    intakeSubsystem.requestIdle();
+    intakeSubsystem.requestIntaking();
     intakeSubsystem.requestSpitting();
+	intakeSubsystem.requestExtending();
+	intakeSubsystem.requestRetracting();
 }
 }
