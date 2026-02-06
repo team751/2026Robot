@@ -1,0 +1,134 @@
+package frc.robot.subsystems.drive;
+
+import com.ctre.phoenix6.Utils;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.vision.LimelightSubsystem;
+
+/* TODO: Rough overview of what Odometry.java does and how it works.
+ * Odometry tells the driver where the robot is at all times.
+ * It's also VERY VERY useful for auton since during that period
+ * the robot must know where it is to properly drive to each place
+ * 
+ * The robot can tell where it is via 2 ways: Limelights/Vision and Dead-Reckoning or using Motor Encoders
+ * 
+ * Vision involves using Limelights to read AprilTags (glorified QR codes) to determine
+ * where the robot is. It does a whole bunch of math internally (that we dont care about)
+ * and then tells us where it thinks the robot is. Unfortunately, we cant always see 
+ * an AprilTag at all times. 
+ * 
+ * Dead-Reckoning, uses the Motor Encoders to determine where the robot is. 
+ * It measures every rotation of the wheels and the velocity to tell where it is
+ * relative to its last known position. Compared to Vision, this is a lot less accurate
+ * since the wheels can slip or we could get hit and move meaning our position is
+ * off and no longer accurate.
+ * 
+ * Luckily, we can add these two together to be very very accurate (more or less) as
+ * to where the robot is at all times! Whenever we see an AprilTag, we set our
+ * robot postition there. When we no longer see an AprilTag, our last known position is
+ * saved and SwerveDrive takes over with Dead-Reckoning to determine where we are until
+ * we see another AprilTag!
+ */
+
+public class Odometry extends SubsystemBase {
+	private static Odometry instance;
+	private final SwerveSubsystem drive;
+	private final LimelightSubsystem limelights;
+    private Field2d field = new Field2d();
+	private Pose2d robotPose;
+
+	public Odometry() {
+		this.drive = SwerveSubsystem.getInstance();
+		this.limelights = LimelightSubsystem.getInstance();
+		this.robotPose = new Pose2d();
+	}
+
+	public static Odometry getInstance() {
+		if (instance == null) instance = new Odometry();
+		return instance;
+	}
+
+	public Pose2d getPose() {
+		return robotPose;
+	}
+
+	public void resetPose(Pose2d newPose) {
+		drive.resetPose(newPose);
+	}
+
+    @Override
+    public void periodic() {
+		// Gets the interpolated value of each limelight (wont interpolate if only one april tag is present!)
+        Pose2d visionPose = limelights.getBotPoseInterpolated();
+
+		// If no april tags are present, do nothing pretty much
+        if (visionPose != null && !(visionPose.getX() == 0.0 && visionPose.getY() == 0.0 && visionPose.getRotation().getDegrees() == 0.0)) {
+			// Test field size: 4.572 m x 7.62 m
+			// 4572 7620
+			// 1500
+
+
+
+
+			// Gets the current timestamp
+			double time = Utils.getCurrentTimeSeconds();
+
+			// Adds the interpolated vision position to the Pigeon2 rotation into one Pose2d
+			// Rotation2d botRotation = new Rotation2d(drive.getRotation3d().getZ());
+            // Pose2d composite = new Pose2d(visionPose.getTranslation(), botRotation);
+
+			// Adds values to SmartDashboard (or Elastic if u use that)
+			// Shows where Odometry/Limelight thinks the robot is on the field
+            SmartDashboard.putNumber("Odometry/X", robotPose.getX());
+            SmartDashboard.putNumber("Odometry/Y", robotPose.getY());
+            SmartDashboard.putNumber("Odometry/Rotation", robotPose.getRotation().getDegrees());
+
+			// Add's two vision measure ments to SwerveDrive so that they can be filtered by it
+			if (limelights.getBotPoseFront() != null) {
+				drive.addVisionMeasurement(limelights.getBotPoseFront(), time);
+			}
+			if (limelights.getBotPoseBack() != null) {
+				drive.addVisionMeasurement(limelights.getBotPoseBack(), time);
+			}
+
+			// Sets SwerveDrive's robot position to the composited robot position
+            // drive.resetPose(composite);
+        }
+
+		// Sets the Odometry robotPose variable (for easy/more normal access to the robot position)
+        robotPose = drive.getPose();
+
+		// Puts a new field value into SmartDashboard (or Elastic if u use that)
+        field.setRobotPose(robotPose);
+        field.setRobotPose(robotPose.getX(), robotPose.getY(), robotPose.getRotation());
+
+		SmartDashboard.putNumber("Pigeon Yaw", drive.getPigeon2().getYaw().getValueAsDouble());
+		SmartDashboard.putNumber("Pigeon Pitch", drive.getPigeon2().getPitch().getValueAsDouble());
+		SmartDashboard.putNumber("Pigeon Roll", drive.getPigeon2().getRoll().getValueAsDouble());
+		SmartDashboard.putNumber("Swerve Rotation", Math.toDegrees(drive.getRotation3d().getZ()));
+
+		// Debug telemetry: publish each swerve module's angle (deg) and wheel speed (m/s).
+		// This is useful to compare device/encoder state between a full power cycle and a code deploy.
+		try {
+			var state = drive.getState();
+			if (state != null && state.ModuleStates != null) {
+				for (int i = 0; i < state.ModuleStates.length; i++) {
+					SmartDashboard.putNumber("Module" + i + " Angle Deg", Math.toDegrees(state.ModuleStates[i].angle.getRadians()));
+					SmartDashboard.putNumber("Module" + i + " Speed m/s", state.ModuleStates[i].speedMetersPerSecond);
+				}
+			}
+		} catch (Exception e) {
+			// Don't allow telemetry to throw; provide minimal error info.
+			SmartDashboard.putString("ModuleStates/Error", e.toString());
+		}
+
+        SmartDashboard.putData(field);
+
+		// Tells you in SmartDashboard (or Elastic if u use that) whether or not the code is interpolating apriltag positions
+		SmartDashboard.putBoolean("Interpolating?", limelights.hasTarget());
+    }
+}
