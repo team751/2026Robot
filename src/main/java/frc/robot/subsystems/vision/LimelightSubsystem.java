@@ -14,7 +14,6 @@ import edu.wpi.first.cscore.HttpCamera;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.units.Units;
-import edu.wpi.first.wpilibj.DriverStation;
 import limelight.Limelight;
 /* TODO: Rough Overview of Vision/Limelight
  * The Limelight/Vision subsystem is used to help determine

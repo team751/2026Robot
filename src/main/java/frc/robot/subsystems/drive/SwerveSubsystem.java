@@ -254,10 +254,9 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
     // Simulation support
     public static MapleSimSwerveDrivetrain simDrivetrain = null;
     private Notifier m_simNotifier = null;
-
+    private static final double kSimLoopPeriod = 0.005;
 
     private void startSimThread() {
-        final double kSimLoopPeriod = 0.005;
         simDrivetrain =
                 new MapleSimSwerveDrivetrain(
                         Units.Seconds.of(kSimLoopPeriod),
