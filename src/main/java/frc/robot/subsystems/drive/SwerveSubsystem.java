@@ -3,6 +3,7 @@ package frc.robot.subsystems.drive;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.SignalLogger;
+import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModule;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
@@ -17,9 +18,12 @@ import com.pathplanner.lib.util.DriveFeedforwards;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.Notifier;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -27,25 +31,7 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.subsystems.drive.generated.TunerConstants;
 import frc.robot.subsystems.drive.generated.TunerConstants.TunerSwerveDrivetrain;
-
-/* TODO: SwerveDrive Subsystem Overview/Explanation
- * SwerveDrive is the main file for controlling how the robot drives.
- * Our robot is field centric, not robot centric. Field centric means
- * that whenever you want to go forward (using the joystick) the robot will
- * go forward in the direction YOU are facing, regardless of the robot's rotation.
- * 
- * Robot centric is much worse, since if you imagine your robot is facing to the left
- * and you push forward on the joystick, the robot would actually go left, since 
- * thats the front for the robot. 
- * 
- * Hopefully that was a good explanation .-.
- * 
- * 
- * Anyways, this file sets that up and also sets up stuff for auton (talk to alexander for an explanation)
- * I suggest you also take a look at generated/TunerConstants.java as well.
- */
-
-
+import frc.robot.subsystems.simulation.MapleSimSwerveDrivetrain;
 
 public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem {
     // Rotation2d.kZero;
@@ -145,6 +131,9 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
                 // operator's forward stays consistent.
                 setOperatorPerspectiveAndAdjustPose(rot);
             });
+
+        // Start simulation thread if running in simulation
+        if (Utils.isSimulation()) startSimThread();
     }
 
     public ChassisSpeeds getRobotRelativeSpeeds() {
@@ -203,7 +192,9 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
     }
 
     public Pose2d getPose() {
-        return getState().Pose;
+        return simDrivetrain == null
+                ? getState().Pose
+                : simDrivetrain.mapleSimDrive.getSimulatedDriveTrainPose();
     }
 
     public ChassisSpeeds getChassisSpeeds() {
@@ -212,6 +203,10 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
 
     @Override
     public void resetPose(Pose2d pose) {
+        if (simDrivetrain != null) {
+            simDrivetrain.mapleSimDrive.setSimulationWorldPose(pose);
+            Timer.delay(0.05); // Wait for simulation to update
+        }
         super.resetPose(pose);
     }
 
@@ -254,5 +249,32 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
         SmartDashboard.putNumber("OperatorPerspectiveDeg", newRot.getDegrees());
         SmartDashboard.putString("OperatorPerspectiveAlliance",
                 DriverStation.getAlliance().isPresent() ? DriverStation.getAlliance().get().name() : "Unknown");
+    }
+
+    // Simulation support
+    public static MapleSimSwerveDrivetrain simDrivetrain = null;
+    private Notifier m_simNotifier = null;
+    private static final double kSimLoopPeriod = 0.005;
+
+    private void startSimThread() {
+        simDrivetrain =
+                new MapleSimSwerveDrivetrain(
+                        Units.Seconds.of(kSimLoopPeriod),
+                        Units.Pounds.of(110),
+                        Units.Inches.of(30),
+                        Units.Inches.of(30),
+                        DCMotor.getKrakenX60Foc(1),
+                        DCMotor.getKrakenX60Foc(1),
+                        1.2,
+                        getModuleLocations(),
+                        getPigeon2(),
+                        getModules(),
+                        TunerConstants.FrontLeft,
+                        TunerConstants.FrontRight,
+                        TunerConstants.BackLeft,
+                        TunerConstants.BackRight);
+
+        m_simNotifier = new Notifier(simDrivetrain::update);
+        m_simNotifier.startPeriodic(kSimLoopPeriod);
     }
 }

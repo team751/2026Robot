@@ -18,12 +18,9 @@ import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
-
-// import org.ironmaple.simulation.SimulatedArena;
-/*
- * no clue what this file is actually used for, but ig we use it for swervedrive???
- */
-
+import edu.wpi.first.math.geometry.Pose3d;
+import frc.robot.subsystems.drive.SwerveSubsystem;
+import org.ironmaple.simulation.SimulatedArena;
 
 public class MapSimSwerveTelemetry {
 	private final double MaxSpeed;
@@ -54,6 +51,8 @@ public class MapSimSwerveTelemetry {
 		table = inst.getTable("Field");
 		fieldPub = table.getDoubleArrayTopic("robotPose").publish();
 		fieldTypePub = table.getStringTopic(".type").publish();
+
+		Fuel = table.getStructArrayTopic("FieldSimulation/Fuel", Pose3d.struct).publish();
 	}
 
 	/* What to publish over networktables for telemetry */
@@ -118,10 +117,12 @@ public class MapSimSwerveTelemetry {
 	private final double[] m_moduleStatesArray = new double[8];
 	private final double[] m_moduleTargetsArray = new double[8];
 
+	private final StructArrayPublisher<Pose3d> Fuel;
+
 	/** Accept the swerve drive state and telemeterize it to SmartDashboard and SignalLogger. */
 	public void telemeterize(SwerveDriveState state) {
 		/* Telemeterize the swerve drive state */
-		// drivePose.set(SwerveSubsystem.simDrivetrain.mapleSimDrive.getSimulatedDriveTrainPose());
+		drivePose.set(SwerveSubsystem.simDrivetrain.mapleSimDrive.getSimulatedDriveTrainPose());
 		driveSpeeds.set(state.Speeds);
 		driveModuleStates.set(state.ModuleStates);
 		driveModuleTargets.set(state.ModuleTargets);
@@ -129,7 +130,7 @@ public class MapSimSwerveTelemetry {
 		driveTimestamp.set(state.Timestamp);
 		driveOdometryFrequency.set(1.0 / state.OdometryPeriod);
 
-		/* Also write to log file */
+		/* Also write to log file*/
 		m_poseArray[0] = state.Pose.getX();
 		m_poseArray[1] = state.Pose.getY();
 		m_poseArray[2] = state.Pose.getRotation().getDegrees();
@@ -158,7 +159,6 @@ public class MapSimSwerveTelemetry {
 			SmartDashboard.putData("Module " + i, m_moduleMechanisms[i]);
 		}
 
-		// algae.accept(SimulatedArena.getInstance().getGamePiecesArrayByType("Algae"));
-		// coral.accept(SimulatedArena.getInstance().getGamePiecesArrayByType("Coral"));
+		Fuel.accept(SimulatedArena.getInstance().getGamePiecesArrayByType("Fuel"));
 	}
 }

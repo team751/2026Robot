@@ -21,31 +21,6 @@ import frc.robot.subsystems.drive.SwerveSubsystem;
 import frc.robot.subsystems.vision.LimelightSubsystem;
 import frc.robot.util.ControlBoard;
 
-/* TODO: Robot.java """Explanation"""
- * Robot.java sets stuff up. It initializes all the subsystems and 
- * everything that you need for the robot to function as intended
- * 
- * If you're new to FRC code or the team: Hi! Welcome to the software team
- * its... fun... here... :D
- * 
- * Hopefully you know Java already (you probably won't understand most of the comments I've made if not),
- * since I added a """ton""" of comments """explaining""" what everything does!
- * 
- * Before you go, I'll TRY to explain how everything works here!
- * 
- * So the way that most, if not ALL, robots are structured in FRC is with Subsystems!
- * Subsystems are. well. What they say they are! They smaller systems that apart of
- * the larger robot (system). For example, Intake or Climber are subsystems. 
- * 
- * This makes it wayyy easier to program and keeps the code organized (one(I) might say even TOO organized).
- * These subsystems have their own code for setting up their motors and any electronic pieces that they
- * might need to function properly.
- * 
- * This is still a WIP and will be continued later :)
- * 
- */
-
-
 public class Robot extends TimedRobot {
   public static final CANBus riobus = new CANBus("rio");
 
