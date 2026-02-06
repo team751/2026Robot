@@ -44,7 +44,8 @@ public class ControlBoard {
 					.withRotationalDeadband(SwerveConstants.maxAngularSpeed * 0.1) // Add a 10% deadband
 					.withDriveRequestType(SwerveModule.DriveRequestType.OpenLoopVoltage)
 					.withSteerRequestType(SwerveModule.SteerRequestType.Position)
-					.withDesaturateWheelSpeeds(true);
+					.withDesaturateWheelSpeeds(true)
+					.withForwardPerspective(SwerveRequest.ForwardPerspectiveValue.OperatorPerspective);
 
 	private ControlBoard() {
 		DriverStation.silenceJoystickConnectionWarning(true);

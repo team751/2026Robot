@@ -5,8 +5,10 @@ import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.RobotConfig;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -138,9 +140,15 @@ public class Robot extends TimedRobot {
     LimelightSubsystem.getInstance();
   }
 
-
+  private Alliance alliance = DriverStation.getAlliance().get();
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    if (DriverStation.getAlliance().get() != alliance) {
+      swerve.resetPose(Pose2d.kZero);
+      alliance = DriverStation.getAlliance().get();
+    }
+
+  }
 
 
 
