@@ -93,8 +93,14 @@ public class TunerConstants {
 	//private static final Pigeon2Configuration pigeonConfigs =
 	//		new Pigeon2Configuration().withMountPose(new MountPoseConfigs().withMountPoseYaw(91.76612091064453).withMountPoseRoll(178.90150451660156).withMountPosePitch(180));
 
+	// Mount pose: Pigeon mounted right-side up with +X toward front of robot
+	// Calibrated via Phoenix Tuner X
 	private static final Pigeon2Configuration pigeonConfigs =
-			new Pigeon2Configuration().withMountPose(new MountPoseConfigs().withMountPoseYaw(-180).withMountPosePitch(0.755).withMountPoseRoll(-180));
+			new Pigeon2Configuration().withMountPose(
+				new MountPoseConfigs()
+					.withMountPoseYaw(1.066)
+					.withMountPosePitch(0.238)
+					.withMountPoseRoll(-0.978));
 	// New Yaw: -87.09540557861328
 	// New Pitch: 0.4624914824962616
 	// New Roll: -179.29147338867188
@@ -118,8 +124,8 @@ public class TunerConstants {
 	private static final Distance kWheelRadius =
 			Units.Inches.of(2); // TODO: CHANGE BASED ON MEASURED RADIUS
 
-	private static final boolean kInvertLeftSide = true;
-	private static final boolean kInvertRightSide = false;
+	private static final boolean kInvertLeftSide = false;
+	private static final boolean kInvertRightSide = true;
 	private static final int kPigeonId = 2;
 
 	// These are only used for simulation
