@@ -17,7 +17,8 @@ public class IntakeConstants {
 	new CTREConfig<>(TalonFXConfiguration::new);
 
     static {
-	intakeMotorConfig.withName("Intake Motor").withCanID("TBS").withBus("TBD");
+		//TODO: Find CAN ID and bus for intake motor
+	//intakeMotorConfig.withName("Intake Motor").withCanID("TBS").withBus("TBD");
 
 	TalonFXConfiguration intakeConfig = intakeMotorConfig.config;
 	intakeConfig.Slot0.kP = 0; // Increase until speed oscillates
