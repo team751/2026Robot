@@ -6,6 +6,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.RobotConfig;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -15,10 +16,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.lib.TunableParameter;
-import frc.robot.subsystems.vision.LimelightSubsystem;
-import frc.robot.util.ControlBoard;
 import frc.robot.subsystems.drive.Odometry;
 import frc.robot.subsystems.drive.SwerveSubsystem;
+import frc.robot.subsystems.vision.LimelightSubsystem;
+import frc.robot.util.ControlBoard;
 
 /* TODO: Robot.java """Explanation"""
  * Robot.java sets stuff up. It initializes all the subsystems and 
@@ -138,17 +139,19 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     LimelightSubsystem.getInstance();
-  }
 
-  private Alliance alliance = DriverStation.getAlliance().get();
-  @Override
-  public void teleopPeriodic() {
-    if (DriverStation.getAlliance().get() != alliance) {
-      swerve.resetPose(Pose2d.kZero);
-      alliance = DriverStation.getAlliance().get();
+    var rot = Rotation2d.kZero;
+    if (DriverStation.getAlliance().get() == Alliance.Red) {
+        rot = Rotation2d.k180deg;
     }
 
+  // Apply operator perspective and adjust odometry so "forward" remains consistent
+  // when switching alliances.
+  swerve.setOperatorPerspectiveAndAdjustPose(rot);
   }
+
+  @Override
+  public void teleopPeriodic() {}
 
 
 

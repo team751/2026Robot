@@ -52,6 +52,9 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
     private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
     private static final Rotation2d kRedAlliancePerspectiveRotation = Rotation2d.k180deg;
     private boolean m_hasAppliedOperatorPerspective = false;
+    // Tracks the currently-applied operator perspective rotation so we can adjust odometry
+    // when the perspective changes (keeps "forward" consistent when switching alliances).
+    private Rotation2d m_operatorPerspectiveRotation = Rotation2d.kZero;
 
 	private final SwerveRequest.SysIdSwerveSteerGains m_steerCharacterization =
         new SwerveRequest.SysIdSwerveSteerGains();
@@ -138,10 +141,9 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
                 var rot = allianceColor == Alliance.Red
                     ? kRedAlliancePerspectiveRotation
                     : kBlueAlliancePerspectiveRotation;
-                setOperatorPerspectiveForward(rot);
-                m_hasAppliedOperatorPerspective = true;
-                SmartDashboard.putNumber("OperatorPerspectiveDeg", rot.getDegrees());
-                SmartDashboard.putString("OperatorPerspectiveAlliance", allianceColor.name());
+                // Use helper that adjusts odometry pose when perspective changes so the
+                // operator's forward stays consistent.
+                setOperatorPerspectiveAndAdjustPose(rot);
             });
     }
 
@@ -169,19 +171,28 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
     @Override
     public void periodic() {
         if (!m_hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
-            DriverStation.getAlliance()
-                .ifPresent(
-                    allianceColor -> {
-                        var rot =
-                            allianceColor == Alliance.Red
-                            ? kRedAlliancePerspectiveRotation
-                            : kBlueAlliancePerspectiveRotation;
-                        setOperatorPerspectiveForward(rot);
-                        m_hasAppliedOperatorPerspective = true;
-                        SmartDashboard.putNumber("OperatorPerspectiveDeg", rot.getDegrees());
-                        SmartDashboard.putString("OperatorPerspectiveAlliance", allianceColor.name());
-                    }
-                );
+            if (DriverStation.getAlliance().isPresent()) {
+                var rot = kBlueAlliancePerspectiveRotation;
+                if (DriverStation.getAlliance().get() == Alliance.Red) {
+                    rot = kRedAlliancePerspectiveRotation;
+                }
+
+                setOperatorPerspectiveAndAdjustPose(rot);
+            }
+
+            // DriverStation.getAlliance()
+            //     .ifPresent(
+            //         allianceColor -> {
+            //             var rot =
+            //                 allianceColor == Alliance.Red
+            //                 ? kRedAlliancePerspectiveRotation
+            //                 : kBlueAlliancePerspectiveRotation;
+            //             setOperatorPerspectiveForward(rot);
+            //             m_hasAppliedOperatorPerspective = true;
+            //             SmartDashboard.putNumber("OperatorPerspectiveDeg", rot.getDegrees());
+            //             SmartDashboard.putString("OperatorPerspectiveAlliance", allianceColor.name());
+            //         }
+            //     );
         }
 
         // Shows where SwerveDrive thinks the robot is positioned on the field.
@@ -202,5 +213,46 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
     @Override
     public void resetPose(Pose2d pose) {
         super.resetPose(pose);
+    }
+
+    public void bigResetPose() {
+        this.resetPose(new Pose2d(0.0, 0.0, this.getPigeon2().getRotation2d()));
+    }
+
+    /**
+     * Set the operator perspective and rotate the odometry pose by the same delta so that
+     * "forward" from the operator's perspective stays consistent when the perspective
+     * (alliance) changes.
+     */
+    public void setOperatorPerspectiveAndAdjustPose(Rotation2d newRot) {
+        if (newRot == null) return;
+
+        // If no change, still apply underlying method but do nothing to pose
+        double eps = 1e-6;
+        double oldRad = m_operatorPerspectiveRotation.getRadians();
+        double newRad = newRot.getRadians();
+        if (Math.abs(newRad - oldRad) < eps) {
+            setOperatorPerspectiveForward(newRot);
+            m_hasAppliedOperatorPerspective = true;
+            return;
+        }
+
+        // Compute the delta rotation to apply to the existing pose
+        double delta = newRad - oldRad;
+        Rotation2d deltaRot = new Rotation2d(delta);
+
+        Pose2d currentPose = getPose();
+        Pose2d adjusted = new Pose2d(currentPose.getTranslation(), currentPose.getRotation().rotateBy(deltaRot));
+
+        // Apply the operator perspective and reset odometry to the adjusted pose
+        setOperatorPerspectiveForward(newRot);
+        resetPose(adjusted);
+
+        m_operatorPerspectiveRotation = newRot;
+        m_hasAppliedOperatorPerspective = true;
+
+        SmartDashboard.putNumber("OperatorPerspectiveDeg", newRot.getDegrees());
+        SmartDashboard.putString("OperatorPerspectiveAlliance",
+                DriverStation.getAlliance().isPresent() ? DriverStation.getAlliance().get().name() : "Unknown");
     }
 }
