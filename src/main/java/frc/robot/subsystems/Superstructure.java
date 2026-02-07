@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.drive.SwerveSubsystem;
+//import frc.robot.subsystems.shooter.ShooterSubsystem;
 
 public class Superstructure extends SubsystemBase {
     private static Superstructure instance = null;
@@ -14,6 +15,7 @@ public class Superstructure extends SubsystemBase {
     }
 
     private final SwerveSubsystem swerveSubsystem = SwerveSubsystem.getInstance();
+    //private final ShooterSubsystem shooterSubsystem = ShooterSubsystem.getInstance();
 
     boolean requestHome = false;
     boolean requestIdle = false;

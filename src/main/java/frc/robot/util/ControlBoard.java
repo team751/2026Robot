@@ -4,11 +4,13 @@ import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveModule;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.lib.PS5Controller;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.drive.SwerveConstants;
 import frc.robot.subsystems.drive.SwerveSubsystem;
+//import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.simulation.MapSimSwerveTelemetry;
 
 public class ControlBoard {
@@ -17,7 +19,8 @@ public class ControlBoard {
 	/* Controllers */
 	private PS5Controller driver = null;
 	private PS5Controller operator = null;
-
+	private SwerveSubsystem drive = SwerveSubsystem.getInstance();
+	//private ShooterSubsystem shooter = ShooterSubsystem.getInstance();
 	private boolean preciseControl = false;
 
 	private enum ControllerPreset {
@@ -58,7 +61,7 @@ public class ControlBoard {
 			driver = new PS5Controller(ControllerPreset.DRIVER.port());
 			configureBindings(ControllerPreset.DRIVER, driver);
 
-			SwerveSubsystem drive = SwerveSubsystem.getInstance();
+
 			drive.setDefaultCommand(drive.applyRequest(this::getDriverRequest));
 			if (Utils.isSimulation())
 				drive.registerTelemetry(new MapSimSwerveTelemetry(SwerveConstants.maxSpeed)::telemeterize);
@@ -92,6 +95,7 @@ public class ControlBoard {
 		controller.rightBumper.whileTrue(
 				new StartEndCommand(() -> preciseControl = true, () -> preciseControl = false)
 						.withName("Precise Control Toggle")); // Fight me owen
+		controller.circleButton.onTrue(new InstantCommand(() -> drive.bigResetPose()));
 	}
 
 	private void configureOperatorBindings(PS5Controller controller) {}
@@ -99,7 +103,7 @@ public class ControlBoard {
 	public SwerveRequest getDriverRequest() {
 		if (driver == null) return null;
 
-		double scale = preciseControl ? 0.5 : 1.0;
+		double scale = preciseControl ? 0.25 : 1.0;
 		double rotScale = preciseControl ? 0.50 : 1.0;
 
 		double x = driver.leftVerticalJoystick.getAsDouble();

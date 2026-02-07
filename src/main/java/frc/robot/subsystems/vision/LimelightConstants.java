@@ -42,9 +42,9 @@ public class LimelightConstants {
         public static final double pipelineLatencySeconds = 0.0;
 
         public static final Distance zOffset = Units.Meters.of(0.285); // Up/Down (+ up, - down)
-        public static final Distance yOffset = Units.Meters.of(0.29); // Left/Right (+ left, - right)
+        public static final Distance yOffset = Units.Meters.of(-0.29); // Left/Right (+ left, - right)
         public static final Distance xOffset = Units.Meters.of(-0.01); // Forward/Backward (- forward, + backward)
 
-        public static final Rotation3d rotationOffset = new Rotation3d(0,0,Units.Radians.convertFrom(-90, Units.Degrees)); // Left is - and right is + (degrees)
+        public static final Rotation3d rotationOffset = new Rotation3d(0,0,Units.Radians.convertFrom(90, Units.Degrees)); // Left is - and right is + (degrees)
     }
 }
