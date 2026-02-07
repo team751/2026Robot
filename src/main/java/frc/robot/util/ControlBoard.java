@@ -11,6 +11,7 @@ import static edu.wpi.first.units.Units.Radians;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.Unit;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -34,6 +35,7 @@ public class ControlBoard {
 	private PS5Controller operator = null;
 
 	private boolean preciseControl = false;
+	private double lastShotTime = 0.0; // Track last shot time for cooldown
 
 	private enum ControllerPreset {
 		DRIVER(0),
@@ -109,6 +111,19 @@ public class ControlBoard {
 
 		controller.rightTrigger.whileTrue(
 				Commands.run(() -> {
+					// Check cooldown - must wait 0.25 seconds between shots
+					double currentTime = Timer.getFPGATimestamp();
+					if (currentTime - lastShotTime < 0.3) {
+						return; // Still in cooldown period
+					}
+
+					// Attempt to obtain a game piece from the intake
+					// Exit early if no balls available - prevents spawning projectiles when empty
+					if (!SwerveSubsystem.simDrivetrain.mapleSimIntake.obtainGamePieceFromIntake()) {
+						return;
+					}
+
+					// Only create and launch projectile if we successfully obtained a ball
 					RebuiltFuelOnFly fuelOnFly = new RebuiltFuelOnFly(
 							// Specify the position of the chassis when the fuel is launched
 							SwerveSubsystem.simDrivetrain.mapleSimDrive.getSimulatedDriveTrainPose().getTranslation(),
@@ -121,12 +136,14 @@ public class ControlBoard {
 							// Initial height of the flying fuel
 							Meters.of(1),
 							// The launch speed is proportional to the RPM; assumed to be 16 meters/second at 6000 RPM
-							MetersPerSecond.of(6.7056),
+							MetersPerSecond.of(5),
 							// The angle at which the fuel is launched
 							Radians.of(1.0472));
-					SwerveSubsystem.simDrivetrain.mapleSimIntake.obtainGamePieceFromIntake();
-					SwerveSubsystem.simDrivetrain.mapleSimIntake.getGamePiecesAmount();
+
 					SimulatedArena.getInstance().addGamePieceProjectile(fuelOnFly);
+
+					// Update last shot time for cooldown tracking
+					lastShotTime = currentTime;
 				}));		
 	}
 
