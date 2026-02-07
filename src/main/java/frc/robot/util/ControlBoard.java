@@ -125,9 +125,8 @@ public class ControlBoard {
 							// The angle at which the fuel is launched
 							Radians.of(1.0472));
 					SwerveSubsystem.simDrivetrain.mapleSimIntake.obtainGamePieceFromIntake();
-					WaitCommand rampuptime = new WaitCommand(1); // Wait for the fuel to leave the intake before launching	
-					rampuptime.andThen(Commands.run(() -> SimulatedArena.getInstance().addGamePieceProjectile(fuelOnFly)));	
 					SwerveSubsystem.simDrivetrain.mapleSimIntake.getGamePiecesAmount();
+					SimulatedArena.getInstance().addGamePieceProjectile(fuelOnFly);
 				}));		
 	}
 
