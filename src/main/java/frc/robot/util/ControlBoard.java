@@ -13,6 +13,7 @@ import edu.wpi.first.units.Unit;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.lib.PS5Controller;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.drive.SwerveConstants;
@@ -123,8 +124,9 @@ public class ControlBoard {
 							MetersPerSecond.of(6.7056),
 							// The angle at which the fuel is launched
 							Radians.of(1.0472));
-					SwerveSubsystem.simDrivetrain.mapleSimIntake.obtainGamePieceFromIntake();		
-					SimulatedArena.getInstance().addGamePieceProjectile(fuelOnFly);
+					SwerveSubsystem.simDrivetrain.mapleSimIntake.obtainGamePieceFromIntake();
+					WaitCommand rampuptime = new WaitCommand(1); // Wait for the fuel to leave the intake before launching	
+					rampuptime.andThen(Commands.run(() -> SimulatedArena.getInstance().addGamePieceProjectile(fuelOnFly)));	
 					SwerveSubsystem.simDrivetrain.mapleSimIntake.getGamePiecesAmount();
 				}));		
 	}
