@@ -235,6 +235,7 @@ public class IntakeSimulation extends BodyFixture {
 	 */
 	public int getGamePiecesAmount() {
 		return gamePiecesInIntakeCount;
+		if (gamePiecesInIntakeCount < 0) 
 	}
 
 	/**
