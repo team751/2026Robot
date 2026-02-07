@@ -120,7 +120,7 @@ public class ControlBoard {
 							// Initial height of the flying fuel
 							Meters.of(1),
 							// The launch speed is proportional to the RPM; assumed to be 16 meters/second at 6000 RPM
-							MetersPerSecond.of(5),
+							MetersPerSecond.of(6.7056),
 							// The angle at which the fuel is launched
 							Radians.of(1.0472));
 					SwerveSubsystem.simDrivetrain.mapleSimIntake.obtainGamePieceFromIntake();		
