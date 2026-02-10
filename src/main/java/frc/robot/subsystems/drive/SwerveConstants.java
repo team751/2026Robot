@@ -41,7 +41,7 @@ public class SwerveConstants {
 
 	
 	private static ModuleConfig moduleConfig =
-			new ModuleConfig(0.05, 10, 5, DCMotor.getKrakenX60Foc(1), 30400, 1);
+			new ModuleConfig(0.05, 10, 1.0, DCMotor.getKrakenX60Foc(1), 30400, 1);
 	private static Translation2d[] moduleOffsets =
 			new Translation2d[] {
 				new Translation2d(-0.263525, 0.263525),

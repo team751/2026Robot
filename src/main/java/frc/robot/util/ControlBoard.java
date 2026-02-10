@@ -3,7 +3,12 @@ package frc.robot.util;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveModule;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.lib.PS5Controller;
@@ -23,6 +28,8 @@ public class ControlBoard {
 	//private ShooterSubsystem shooter = ShooterSubsystem.getInstance();
 	private boolean preciseControl = false;
 	private boolean brake = false;
+
+	private PIDController thing = new PIDController(0.15, 0, 0.003);
 
 	private enum ControllerPreset {
 		DRIVER(0),
@@ -53,7 +60,7 @@ public class ControlBoard {
 
 	private ControlBoard() {
 		DriverStation.silenceJoystickConnectionWarning(true);
-
+		thing.enableContinuousInput(-180, 180);
 		tryInit();
 	}
 
@@ -110,14 +117,20 @@ public class ControlBoard {
 
 		double scale = brake ? 0.0 : (preciseControl ? 0.25 : 1.0);
 		double rotScale = preciseControl ? 0.50 : 1.0;
-
+		
 		double x = driver.leftVerticalJoystick.getAsDouble();
 		double y = driver.leftHorizontalJoystick.getAsDouble();
-		double rot = driver.rightHorizontalJoystick.getAsDouble();
+		Pose2d robotPose = drive.getPose();
+		double angleDiff =  Math.toDegrees(Math.atan2(4.11-robotPose.getY(), 4-robotPose.getX()));
+		double rot = thing.calculate(robotPose.getRotation().getDegrees(), angleDiff) + driver.rightHorizontalJoystick.getAsDouble();
+		SmartDashboard.putNumber("pid thing", rot);
+		//driver.rightHorizontalJoystick.getAsDouble();
+
+
 		return driveRequest
 				.withVelocityX(0.6 * SwerveConstants.maxSpeed * x * scale)
 				.withVelocityY(0.6 * SwerveConstants.maxSpeed * y * scale)
-				.withRotationalRate(
-						0.8 * SwerveConstants.maxAngularSpeed * (Math.copySign(rot * rot, rot) * rotScale));
+				.withRotationalRate(rot);
+						//0.8 * SwerveConstants.maxAngularSpeed * (Math.copySign(rot * rot, rot) * rotScale));
 	}
 }
