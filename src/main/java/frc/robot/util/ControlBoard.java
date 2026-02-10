@@ -15,7 +15,6 @@ import frc.lib.PS5Controller;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.drive.SwerveConstants;
 import frc.robot.subsystems.drive.SwerveSubsystem;
-//import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.simulation.MapSimSwerveTelemetry;
 
 public class ControlBoard {
@@ -25,7 +24,6 @@ public class ControlBoard {
 	private PS5Controller driver = null;
 	private PS5Controller operator = null;
 	private SwerveSubsystem drive = SwerveSubsystem.getInstance();
-	//private ShooterSubsystem shooter = ShooterSubsystem.getInstance();
 	private boolean preciseControl = false;
 	private boolean brake = false;
 
