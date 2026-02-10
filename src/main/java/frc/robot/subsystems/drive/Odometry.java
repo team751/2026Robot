@@ -75,7 +75,8 @@ public class Odometry extends SubsystemBase {
 			drive.addVisionMeasurement(limelights.getBotPoseFront(), time);
 		}
 		if (limelights.getBotPoseBack() != null) {
-			drive.addVisionMeasurement(limelights.getBotPoseBack(), time);
+			Pose2d backPose = limelights.getBotPoseBack();
+			drive.addVisionMeasurement(new Pose2d(backPose.getTranslation(), drive.getRotation()), time);
 		}
 
 
