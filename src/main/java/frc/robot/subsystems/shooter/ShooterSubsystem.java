@@ -68,7 +68,10 @@ public void periodic() {
 
 	SmartDashboard.putString("Shooter/Shoot State", state.toString());
 	SmartDashboard.putNumber("Shooter/Back Speed", backMotor.getVelocity().getValueAsDouble());
+	SmartDashboard.putNumber("Shooter/Back Duty",backMotor.getDutyCycle().getValueAsDouble());
+
 	SmartDashboard.putNumber("Shooter/Flywheel Speed", flywheelMotor.getVelocity().getValueAsDouble());
+		SmartDashboard.putNumber("Shooter/Flywheel Duty", flywheelMotor.getDutyCycle().getValueAsDouble());
 }
 
 public void newShooterSpeed(double speed) {

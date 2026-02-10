@@ -88,9 +88,9 @@ public class ControlBoard {
 		// 	new StartEndCommand(() -> shooter.newShooterSpeed(controller.getRightTrigger()), () -> shooter.requestIdle())
 		// );
 
-		controller.rightTrigger.whileTrue(
-			new StartEndCommand(() -> System.out.println(controller.getRightTrigger()), () -> System.out.println("Stopped"))
-		);
+		// controller.rightTrigger.whileTrue(
+		// 	new StartEndCommand(() -> System.out.println(controller.getRightTrigger()), () -> System.out.println("Stopped"))
+		// );
 
 		
 	}

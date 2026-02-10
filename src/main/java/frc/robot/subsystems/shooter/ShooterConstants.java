@@ -3,6 +3,8 @@ package frc.robot.subsystems.shooter;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+
 import frc.lib.CTREConfig;
 import frc.robot.Robot;
 
@@ -25,6 +27,7 @@ public static final CTREConfig<TalonFX, TalonFXConfiguration> flywheelMotorConfi
 		flywheelConfig.Slot0.kG = 0; // Don't touch
 
 		flywheelConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+		flywheelConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 	}
 
 public static final CTREConfig<TalonFX, TalonFXConfiguration> backMotorConfig = 
@@ -44,6 +47,7 @@ static {
 	backConfig.Slot0.kG = 0; // Don't touch
 
 	backConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+	backConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 }
 
 }
