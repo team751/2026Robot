@@ -74,7 +74,7 @@ public class Odometry extends SubsystemBase {
 		// Add's two vision measure ments to SwerveDrive so that they can be filtered by it
 		//drive.setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 9999999));
 		if (limelights.getBotPoseFront() != null) {
-			drive.addVisionMeasurement(limelights.getBotPoseFront(), time);
+			drive.addVisionMeasurement(new Pose2d(limelights.getBotPoseFront().getTranslation(), drive.getRotation()), time);
 		}
 		if (limelights.getBotPoseBack() != null) {
 			Pose2d backPose = limelights.getBotPoseBack();
