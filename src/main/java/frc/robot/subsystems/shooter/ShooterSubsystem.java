@@ -35,7 +35,7 @@ public static ShooterSubsystem getInstance() {
 }
 
 private ShooterSubsystem() {
-	setShooterMotor(0);
+	setShooterMotor(0,0);
 }
 
 /**
@@ -43,9 +43,9 @@ private ShooterSubsystem() {
 *
 * @param voltage in volts
 */
-private void setShooterMotor(double voltage) {
-	flywheelMotor.setControl(flywheelControl.withOutput(voltage));
-	backMotor.setControl(backControl.withOutput(voltage));
+private void setShooterMotor(double voltage1, double voltage2) {
+	flywheelMotor.setControl(flywheelControl.withOutput(voltage1));
+	backMotor.setControl(backControl.withOutput(voltage2));
 }
 
 
@@ -60,8 +60,8 @@ public void periodic() {
 	unsetAllRequests();
 
 	switch (state) {
-		case IDLE -> setShooterMotor(0);
-		case SPINNING -> setShooterMotor(ShooterConstants.shooterSpeed);
+		case IDLE -> setShooterMotor(0,0);
+		case SPINNING -> setShooterMotor(ShooterConstants.flywheelSpeed, ShooterConstants.backSpeed);
 	}
 
 	}
@@ -74,8 +74,9 @@ public void periodic() {
 		SmartDashboard.putNumber("Shooter/Flywheel Duty", flywheelMotor.getDutyCycle().getValueAsDouble());
 }
 
-public void newShooterSpeed(double speed) {
-	ShooterConstants.shooterSpeed = speed;
+public void newShooterSpeed(double flySpeed, double backSpeed) {
+	ShooterConstants.flywheelSpeed = flySpeed;
+	ShooterConstants.backSpeed = backSpeed;
 	this.requestShoot();
 }
 
@@ -85,7 +86,7 @@ private void unsetAllRequests() {
 }
 
 public void requestIdle() {
-	newShooterSpeed(0);
+	newShooterSpeed(0,0);
 
 	unsetAllRequests();
 	requestedIdle = true;

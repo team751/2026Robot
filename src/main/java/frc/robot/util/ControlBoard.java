@@ -68,20 +68,28 @@ public class ControlBoard {
 
 	private void configureDriverBindings(PS5Controller controller) {
 		controller.triangleButton.whileTrue(
-			new StartEndCommand(() -> shooter.newShooterSpeed(1), () -> shooter.requestIdle())
+			new StartEndCommand(() -> shooter.newShooterSpeed(1,1), () -> shooter.requestIdle())
 			.withName("Shooter Shooty")
 		);
 
 		controller.dLeft.whileTrue(
-			new StartEndCommand(() -> shooter.newShooterSpeed(2), () -> shooter.requestIdle())
+			new StartEndCommand(() -> shooter.newShooterSpeed(2,2), () -> shooter.requestIdle())
 		);
 
 		controller.dUp.whileTrue(
-			new StartEndCommand(() -> shooter.newShooterSpeed(5), () -> shooter.requestIdle())
+			new StartEndCommand(() -> shooter.newShooterSpeed(5,5), () -> shooter.requestIdle())
 		);
         
 		controller.dRight.whileTrue(
-			new StartEndCommand(() -> shooter.newShooterSpeed(7), () -> shooter.requestIdle())
+			new StartEndCommand(() -> shooter.newShooterSpeed(7,7), () -> shooter.requestIdle())
+		);
+
+		controller.leftBumper.whileTrue(
+			new StartEndCommand(() -> shooter.newShooterSpeed(2, 0), () -> shooter.requestIdle())
+		);
+
+		controller.rightBumper.whileTrue(
+			new StartEndCommand(() -> shooter.newShooterSpeed(0, 2), () -> shooter.requestIdle())
 		);
 
 		// controller.rightTrigger.whileTrue(

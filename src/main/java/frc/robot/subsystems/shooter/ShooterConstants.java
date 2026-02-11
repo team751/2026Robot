@@ -9,7 +9,8 @@ import frc.lib.CTREConfig;
 import frc.robot.Robot;
 
 public class ShooterConstants {
-public static double shooterSpeed = 1; // 12
+public static double flywheelSpeed = 1; // 12
+public static double backSpeed = 1;
 
 public static final CTREConfig<TalonFX, TalonFXConfiguration> flywheelMotorConfig = 
 	new CTREConfig<>(TalonFXConfiguration::new);
