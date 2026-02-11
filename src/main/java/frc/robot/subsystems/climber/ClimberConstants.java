@@ -1,4 +1,4 @@
-package frc.robot.subsystems.shooter;
+package frc.robot.subsystems.climber;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -8,7 +8,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import frc.lib.CTREConfig;
 import frc.robot.Robot;
 
-public class ShooterConstants {
+public class ClimberConstants {
 public static double flywheelSpeed = 1; // 12
 public static double backSpeed = 1;
 

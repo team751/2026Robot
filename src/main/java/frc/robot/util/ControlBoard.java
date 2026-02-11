@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.lib.PS5Controller;
 //import frc.robot.subsystems.Superstructure;
-import frc.robot.subsystems.shooter.ShooterSubsystem;
+import frc.robot.subsystems.climber.ClimberSubsystem;
 
 public class ControlBoard {
 	private static ControlBoard instance;
@@ -13,7 +13,7 @@ public class ControlBoard {
 	/* Controllers */
 	private PS5Controller driver = null;
 	private PS5Controller operator = null;
-	private ShooterSubsystem shooter = ShooterSubsystem.getInstance();
+	private ClimberSubsystem climber = ClimberSubsystem.getInstance();
 
 	private enum ControllerPreset {
 		DRIVER(0),
@@ -67,39 +67,29 @@ public class ControlBoard {
 	}
 
 	private void configureDriverBindings(PS5Controller controller) {
-		controller.triangleButton.whileTrue(
-			new StartEndCommand(() -> shooter.newShooterSpeed(1,1), () -> shooter.requestIdle())
-			.withName("Shooter Shooty")
-		);
-
-		controller.dLeft.whileTrue(
-			new StartEndCommand(() -> shooter.newShooterSpeed(2,2), () -> shooter.requestIdle())
-		);
-
-		controller.dUp.whileTrue(
-			new StartEndCommand(() -> shooter.newShooterSpeed(5,5), () -> shooter.requestIdle())
-		);
-        
-		controller.dRight.whileTrue(
-			new StartEndCommand(() -> shooter.newShooterSpeed(7,7), () -> shooter.requestIdle())
-		);
-
-		controller.leftBumper.whileTrue(
-			new StartEndCommand(() -> shooter.newShooterSpeed(2, 0), () -> shooter.requestIdle())
-		);
-
-		controller.rightBumper.whileTrue(
-			new StartEndCommand(() -> shooter.newShooterSpeed(0, 2), () -> shooter.requestIdle())
-		);
-
-		// controller.rightTrigger.whileTrue(
-		// 	new StartEndCommand(() -> shooter.newShooterSpeed(controller.getRightTrigger()), () -> shooter.requestIdle())
+		// controller.triangleButton.whileTrue(
+		// 	new StartEndCommand(() -> /* COMMAND ON START */, () -> /* COMMAND ON END */)
+		// 	.withName("Shooter Shooty")
 		// );
+		// like lwk just kinda copy that lol, but in the COMMAND ON START and COMMAND ON END sections, put a method call
+		// ex:
+		// (in ClimberSubsystem.java)
+		// public static void moveUp() {
+		// 		motor.move();
+		// }
+		//
+		// (in ControlBoard.java)
+		// ...
+		// new StartEndCommand(() -> climber.moveUp(), () -> climber.stopMotors())
+		// ...
 
-		// controller.rightTrigger.whileTrue(
-		// 	new StartEndCommand(() -> System.out.println(controller.getRightTrigger()), () -> System.out.println("Stopped"))
-		// );
+		controller.leftTrigger.whileTrue(
+			new StartEndCommand(() -> climber.moveUp180(), () -> climber.stopMotors())
+		);
 
+		controller.rightTrigger.whileTrue(
+			new StartEndCommand(() -> climber.moveDown180(), () -> climber.stopMotors())
+		);
 		
 	}
 
