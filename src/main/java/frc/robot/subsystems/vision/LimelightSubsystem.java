@@ -2,6 +2,10 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
 package frc.robot.subsystems.vision;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -14,6 +18,7 @@ import edu.wpi.first.cscore.HttpCamera;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import limelight.Limelight;
 /* TODO: Rough Overview of Vision/Limelight
  * The Limelight/Vision subsystem is used to help determine
@@ -135,7 +140,11 @@ public class LimelightSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {}
+  @Override
+  public void periodic() {}
 
+  @Override
+  public void simulationPeriodic() {}
   @Override
   public void simulationPeriodic() {}
 }

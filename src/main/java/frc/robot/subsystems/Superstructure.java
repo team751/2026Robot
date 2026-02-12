@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import org.ironmaple.simulation.IntakeSimulation;
+
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -25,14 +27,26 @@ public class Superstructure extends SubsystemBase {
 
     boolean homedOnce = false;
     private double lastFPGATimestamp = 0.0;
+    boolean homedOnce = false;
+    private double lastFPGATimestamp = 0.0;
 
+    private Superstructure() {}
     private Superstructure() {}
 
     public static Superstructure getInstance() {
         if (instance == null) instance = new Superstructure();
         return instance;
     }
+    public static Superstructure getInstance() {
+        if (instance == null) instance = new Superstructure();
+        return instance;
+    }
 
+    @Override
+    public void periodic() {
+        double time = RobotController.getFPGATime();
+        SmartDashboard.putNumber("Superstructure/loopCycleTime", time - lastFPGATimestamp);
+        lastFPGATimestamp = time;
     @Override
     public void periodic() {
         double time = RobotController.getFPGATime();
@@ -45,7 +59,18 @@ public class Superstructure extends SubsystemBase {
             case IDLE -> {}
             default -> throw new IllegalArgumentException("wops");
         }
+        SuperstructureState nextState = systemState;
+        switch (systemState) {
+            case PRE_HOME -> {}
+            case IDLE -> {}
+            default -> throw new IllegalArgumentException("wops");
+        }
 
+        if (nextState != systemState) {
+            mStateStartTime = time;
+            systemState = nextState;
+        }
+    }
         if (nextState != systemState) {
             mStateStartTime = time;
             systemState = nextState;
@@ -56,10 +81,23 @@ public class Superstructure extends SubsystemBase {
         requestHome = false;
         requestIdle = false;
     }
+    public void unsetAllRequests() {
+        requestHome = false;
+        requestIdle = false;
+    }
 
     public void requestHome() {
         unsetAllRequests();
         requestHome = true;
+    }
+    public void requestHome() {
+        unsetAllRequests();
+        requestHome = true;
+    }
+
+    public void requestIdle() {
+        unsetAllRequests();
+        requestIdle = true;
     }
 
     public void requestIdle() {
