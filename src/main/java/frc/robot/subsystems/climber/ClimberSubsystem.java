@@ -1,33 +1,22 @@
 package frc.robot.subsystems.climber;
 
-
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionVoltage;
-import com.ctre.phoenix6.controls.TorqueCurrentFOC;
-import com.ctre.phoenix6.controls.VelocityDutyCycle;
-import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.InvertedValue;
-import com.ctre.phoenix6.signals.MotorAlignmentValue;
-import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.climber.ClimberConstants;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 public class ClimberSubsystem extends SubsystemBase {
+private final TalonFX leftClimber = new TalonFX(10);
+private final TalonFX rightClimber = new TalonFX(11);
 
 private final PositionVoltage positionRequest = new PositionVoltage(0);
 
 private static ClimberSubsystem instance;
-
-// State used to run a non-blocking "spin until position" behavior
-private boolean m_spinUntilTarget = false;
-private double m_spinTarget = 10.0;
 
 public static ClimberSubsystem getInstance() {
 	if (instance == null) instance = new ClimberSubsystem();
@@ -35,93 +24,65 @@ public static ClimberSubsystem getInstance() {
 }
 
 private ClimberSubsystem() {
-	// TalonFXConfiguration config = new TalonFXConfiguration();
-	// config.Slot0.kP = 1;
-	// config.Slot0.kI = 0.0;
-	// config.Slot0.kD = 0.3;
+	TalonFXConfiguration config = new TalonFXConfiguration();
+	config.Slot0.kP = 1.0;
+	config.Slot0.kI = 0.0;
+	config.Slot0.kD = 0.0;
 
-	// config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-	
+	leftClimber.getConfigurator().apply(config);
+	rightClimber.getConfigurator().apply(config);
 
-	// leftClimber.getConfigurator().apply(config);
-	// rightClimber.getConfigurator().apply(config);
-
-
-	//CommandScheduler.getInstance().registerSubsystem(this);
+	// Set neutral mode
+	// dont invert
 }
 
 @Override
 public void periodic() {
-	SmartDashboard.putNumber("Left Motor Pos", ClimberConstants.leftClimber.getPosition().getValueAsDouble());
-	SmartDashboard.putNumber("Right Motor Pos", ClimberConstants.rightClimber.getPosition().getValueAsDouble());
-
-	if (m_spinUntilTarget) {
-		SmartDashboard.putNumber("SpinUntil/Target", m_spinTarget);
-		if (ClimberConstants.leftClimber.getPosition().getValueAsDouble() >= m_spinTarget) {
-			stopMotors();
-			m_spinUntilTarget = false;
-			SmartDashboard.putBoolean("SpinUntil/Stopped", true);
-		} else {
-			SmartDashboard.putBoolean("SpinUntil/Stopped", false);
-		}
-	}
 
 }
 
-
-public void moveVerySlowly() {
-		ClimberConstants.leftClimber.setVoltage(0.5);
-		ClimberConstants.rightClimber.setVoltage(0.5);
-}
-
-public void motorSync() {
-	ClimberConstants.leftClimber.setControl(new DutyCycleOut(0.1));
-	ClimberConstants.rightClimber.setControl(new Follower(10, MotorAlignmentValue.Aligned));
-}
-
-public void spinUntil10() {
-	m_spinTarget = 10.0;
-	m_spinUntilTarget = true;
-	if (m_spinUntilTarget) {
-		ClimberConstants.leftClimber.setControl(new DutyCycleOut(0.1));
-		ClimberConstants.rightClimber.setControl(new Follower(10, MotorAlignmentValue.Aligned));
-	}
-}
-
-public void cancelSpinUntil() {
-	m_spinUntilTarget = false;
-	stopMotors();
-}
+// write a methods (think of a function, ask chatgpt if u dont get it) that:
+// moves the climber motors up to 180 degrees
+// moves the climber motors down to 180 degrees
+// stops the motors
 
 public void moveUp180(){
 
-	double currentPosition = ClimberConstants.leftClimber.getPosition().getValueAsDouble();
-	double targetPosition = currentPosition + 1.0;
+	double currentPosition = leftClimber.getPosition().getValueAsDouble();
+	double targetPosition = currentPosition + 0.6;
 
-	ClimberConstants.leftClimber.setControl(positionRequest.withPosition(targetPosition));
-	ClimberConstants.rightClimber.setControl(positionRequest.withPosition(targetPosition));
+	leftClimber.setControl(positionRequest.withPosition(targetPosition));
+	rightClimber.setControl(positionRequest.withPosition(targetPosition));
 
 }
 
 public void moveDown180(){
 
-	double currentPosition = ClimberConstants.leftClimber.getPosition().getValueAsDouble();
-	double targetPosition = currentPosition - 1.0;
+	double currentPosition = leftClimber.getPosition().getValueAsDouble();
+	double targetPosition = currentPosition - 0.6;
 
-	ClimberConstants.leftClimber.setControl(positionRequest.withPosition(targetPosition));
-	ClimberConstants.rightClimber.setControl(positionRequest.withPosition(targetPosition));
+	leftClimber.setControl(positionRequest.withPosition(targetPosition));
+	rightClimber.setControl(positionRequest.withPosition(targetPosition));
 
 }
 
 public void stopMotors(){
-	ClimberConstants.leftClimber.stopMotor();
-	ClimberConstants.rightClimber.stopMotor();
+	leftClimber.stopMotor();
+	rightClimber.stopMotor();
 }
 
 public void zeroClimber(){
-	ClimberConstants.leftClimber.setPosition(0);
-	ClimberConstants.rightClimber.setPosition(0);
+	leftClimber.setPosition(0);
+	rightClimber.setPosition(0);
 }
 
+public void moveUpManual(){
+	leftClimber.set(0.3);
+	rightClimber.set(0.3);
+}
 
+public void moveDownManual(){
+	leftClimber.set(-0.3);
+	rightClimber.set(-0.3);
+}
 }

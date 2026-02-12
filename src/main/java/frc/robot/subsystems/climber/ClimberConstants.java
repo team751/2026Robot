@@ -5,44 +5,49 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import frc.lib.CTREConfig;
+import frc.robot.Robot;
+
 public class ClimberConstants {
-public static double flywheelSpeed = 1; // 12
-public static double backSpeed = 1;
+public static double extendSpeed = 0.6;
+public static double retractSpeed = -0.6; 
 
-public static final TalonFX leftClimber = new TalonFX(10);
-public static final TalonFX rightClimber = new TalonFX(11);
+public static final CTREConfig<TalonFX, TalonFXConfiguration> climberMotorConfig = 
+	new CTREConfig<>(TalonFXConfiguration::new);
 
-private static TalonFXConfiguration leftClimberConfig = new TalonFXConfiguration();
-private static TalonFXConfiguration rightClimberConfig = new TalonFXConfiguration();
+	static {
+		climberMotorConfig.withName("Climber Motor").withCanID(11).withBus(Robot.riobus);
+		TalonFXConfiguration climberConfig = climberMotorConfig.config;
+		climberConfig.Slot0.kP = 0.1; // Increase until speed oscillates
+		climberConfig.Slot0.kI = 0; // Don't touch
+		climberConfig.Slot0.kD = 0; // Increase until jitter
+		climberConfig.Slot0.kS = 0; // Increase until just before motor starts moving
+		climberConfig.Slot0.kA = 0; //
+		climberConfig.Slot0.kV = 0; //
+		climberConfig.Slot0.kG = 0; // Don't touch
+
+		climberConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+		climberConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+	}
+
+public static final CTREConfig<TalonFX, TalonFXConfiguration> backMotorConfig = 
+	new CTREConfig<>(TalonFXConfiguration::new);
 
 static {
-    leftClimberConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    leftClimberConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+	backMotorConfig.withName("Back Motor").withCanID(10).withBus(Robot.riobus);
 
-    leftClimberConfig.Slot0.kP = 0.0;
-    leftClimberConfig.Slot0.kI = 0.0; // Scary spooky value dont touch it
-    leftClimberConfig.Slot0.kD = 0.0;
+	TalonFXConfiguration backConfig = backMotorConfig.config;
 
-    leftClimberConfig.Slot0.kS = 0.0;
-    leftClimberConfig.Slot0.kV = 0.0;
-    leftClimberConfig.Slot0.kG = 0.0;
-    leftClimberConfig.Slot0.kA = 0.0;
-}
+	backConfig.Slot0.kP = 0.1; // Increase until speed oscillates
+	backConfig.Slot0.kI = 0; // Don't touch haha im gunna touch it lol
+	backConfig.Slot0.kD = 0; // Increase until jitter
+	backConfig.Slot0.kS = 0; // Increase until just before motor starts moving
+	backConfig.Slot0.kA = 0; //
+	backConfig.Slot0.kV = 0; //
+	backConfig.Slot0.kG = 0; // Don't touch
 
-static {
-//      Could be important, was apart of something before
-// 		flywheelMotorConfig.withName("Flywheel Motor").withCanID(11).withBus(Robot.riobus);
-    rightClimberConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    rightClimberConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-
-    rightClimberConfig.Slot0.kP = 0.0;
-    rightClimberConfig.Slot0.kI = 0.0; // Scary spooky value dont touch it
-    rightClimberConfig.Slot0.kD = 0.0;
-
-    rightClimberConfig.Slot0.kS = 0.0;
-    rightClimberConfig.Slot0.kV = 0.0;
-    rightClimberConfig.Slot0.kG = 0.0;
-    rightClimberConfig.Slot0.kA = 0.0;
+	backConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+	backConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 }
 
 }
