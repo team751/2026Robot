@@ -26,6 +26,11 @@ public static final CTREConfig<TalonFX, TalonFXConfiguration> climberMotorConfig
 		climberConfig.Slot0.kV = 0; //
 		climberConfig.Slot0.kG = 0; // Don't touch
 
+		climberConfig.CurrentLimits.StatorCurrentLimit = 120;
+		climberConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+		climberConfig.TorqueCurrent.PeakForwardTorqueCurrent = 40;
+		climberConfig.TorqueCurrent.PeakReverseTorqueCurrent = -40;
+
 		climberConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 		climberConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 	}
@@ -45,6 +50,11 @@ static {
 	backConfig.Slot0.kA = 0; //
 	backConfig.Slot0.kV = 0; //
 	backConfig.Slot0.kG = 0; // Don't touch
+
+	backConfig.CurrentLimits.StatorCurrentLimit = 120;
+	backConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+	backConfig.TorqueCurrent.PeakForwardTorqueCurrent = 40;
+	backConfig.TorqueCurrent.PeakReverseTorqueCurrent = -40;
 
 	backConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 	backConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
