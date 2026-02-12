@@ -12,11 +12,12 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.subsystems.drive.SwerveSubsystem;
 import frc.robot.util.LimelightHelpers;
-
+import frc.robot.util.LimelightHelpers.PoseEstimate;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.HttpCamera;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import limelight.Limelight;
@@ -86,30 +87,46 @@ public class LimelightSubsystem extends SubsystemBase {
     return (int) LimelightHelpers.getFiducialID(LimelightConstants.LimelightFront.name);
   }
 
+  public double getAprilTagDistance(String name) {
+    // Using LimelightHelpers, get the nearest April Tag (fiducial) ID
+    Pose3d pose = LimelightHelpers.getTargetPose3d_CameraSpace(name);
+    
+    return Math.round(pose.getTranslation().getNorm());
+  }
+
 
   // ROBOT POSITION
   public Pose2d getBotPoseFront() {
     // Sets the robot orientation before getting the robot position
-    LimelightHelpers.SetRobotOrientation(LimelightConstants.LimelightBack.name, drive.getRotation3d().getZ(), 0.0, 0.0, 0.0, 0.0, 0.0);
-
+    LimelightHelpers.SetRobotOrientation(LimelightConstants.LimelightFront.name, drive.getPose().getRotation().getDegrees(), 0.0, 0.0, 0.0, 0.0, 0.0);
+    PoseEstimate poseEstimate = null;
+    if (getAprilTagDistance(LimelightConstants.LimelightFront.name) > 1.0) {
+      poseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(LimelightConstants.LimelightFront.name);
+    }else{
+      poseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name);
+    }
     // If theres no april tag seen return null
-    if (LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name).pose.getX() == 0.0 && LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name).pose.getY() == 0.0) {
+    if (poseEstimate.pose.getX() == 0.0 && poseEstimate.pose.getY() == 0.0) {
       return null;
     }
     
-    return LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name).pose;
+    return poseEstimate.pose;
   }
 
   public Pose2d getBotPoseBack() {
-    // Sets the robot orientation before getting the robot position
-    LimelightHelpers.SetRobotOrientation(LimelightConstants.LimelightBack.name, drive.getRotation3d().getZ(), 0.0, 0.0, 0.0, 0.0, 0.0);
-    
+    LimelightHelpers.SetRobotOrientation(LimelightConstants.LimelightBack.name, drive.getPose().getRotation().getDegrees(), 0.0, 0.0, 0.0, 0.0, 0.0);
+    PoseEstimate poseEstimate = null;
+    if (getAprilTagDistance(LimelightConstants.LimelightBack.name) > 1.0) {
+      poseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(LimelightConstants.LimelightBack.name);
+    }else{
+      poseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightBack.name);
+    }
     // If theres no april tag seen return null
-    if (LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightBack.name).pose.getX() == 0.0 && LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightBack.name).pose.getY() == 0.0) {
+    if (poseEstimate.pose.getX() == 0.0 && poseEstimate.pose.getY() == 0.0) {
       return null;
     }
     
-    return LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightBack.name).pose;
+    return poseEstimate.pose;
   }
 
   // Interpolates (averages) the front and back camera positions

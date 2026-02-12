@@ -122,7 +122,7 @@ public class TunerConstants {
 	private static final double kDriveGearRatio = 6.746031746031747;
 	private static final double kSteerGearRatio = 21.428571428571427;
 	private static final Distance kWheelRadius =
-			Units.Inches.of(2); // TODO: CHANGE BASED ON MEASURED RADIUS
+			Units.Inches.of(2.1); // TODO: CHANGE BASED ON MEASURED RADIUS
 
 	private static final boolean kInvertLeftSide = false;
 	private static final boolean kInvertRightSide = true;
