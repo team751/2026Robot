@@ -10,7 +10,14 @@ import static edu.wpi.first.units.Units.Radians;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.Unit;
+
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -20,7 +27,6 @@ import frc.lib.PS5Controller;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.drive.SwerveConstants;
 import frc.robot.subsystems.drive.SwerveSubsystem;
-//import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.simulation.MapSimSwerveTelemetry;
 
 import org.ironmaple.simulation.IntakeSimulation;
@@ -28,17 +34,30 @@ import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.ironmaple.simulation.seasonspecific.rebuilt2026.RebuiltFuelOnFly;
 import frc.robot.subsystems.simulation.MapleSimSwerveDrivetrain;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 
 public class ControlBoard {
 	private static ControlBoard instance;
+	/*public void setRobotRotationByAlliance(){
+        if (DriverStation.getAlliance().isPresent()) {
+            var rot = kBlueAlliancePerspectiveRotation;
+            if (DriverStation.getAlliance().get() == Alliance.Red) {
+                rot = kRedAlliancePerspectiveRotation;
+            }
+            resetPose(new Pose2d(0, 0, rot));
+            setOperatorPerspectiveAndAdjustPose(rot);
+        }
+    } */
 
 	/* Controllers */
 	private PS5Controller driver = null;
 	private PS5Controller operator = null;
 	private SwerveSubsystem drive = SwerveSubsystem.getInstance();
-	//private ShooterSubsystem shooter = ShooterSubsystem.getInstance();
 	private boolean preciseControl = false;
 	private double lastShotTime = 0.0; // Track last shot time for cooldown
+	private boolean autoAim = false;
+
+	private PIDController autoAimController = new PIDController(0.21, 0, 0.015);
 
 	private enum ControllerPreset {
 		DRIVER(0),
@@ -69,7 +88,7 @@ public class ControlBoard {
 
 	private ControlBoard() {
 		DriverStation.silenceJoystickConnectionWarning(true);
-
+		autoAimController.enableContinuousInput(-180, 180);
 		tryInit();
 	}
 
@@ -112,6 +131,10 @@ public class ControlBoard {
 		controller.rightBumper.whileTrue(
 				new StartEndCommand(() -> preciseControl = true, () -> preciseControl = false)
 						.withName("Precise Control Toggle")); // Fight me owen
+		controller.leftBumper.whileTrue(
+				new StartEndCommand(() -> autoAim = true, () -> autoAim = false)
+						.withName("Brake Toggle")); // Fight me sender
+
 
 		controller.rightTrigger.whileTrue(
 				Commands.run(() -> {
@@ -149,7 +172,7 @@ public class ControlBoard {
 					// Update last shot time for cooldown tracking
 					lastShotTime = currentTime;
 				}));		
-		controller.circleButton.onTrue(new InstantCommand(() -> drive.bigResetPose()));
+		controller.circleButton.onTrue(new InstantCommand(() -> drive.setRobotRotationByAlliance()));
 	}
 
 	private void configureOperatorBindings(PS5Controller controller) {}
@@ -159,14 +182,22 @@ public class ControlBoard {
 
 		double scale = preciseControl ? 0.25 : 1.0;
 		double rotScale = preciseControl ? 0.50 : 1.0;
-
+		
 		double x = driver.leftVerticalJoystick.getAsDouble();
 		double y = driver.leftHorizontalJoystick.getAsDouble();
-		double rot = driver.rightHorizontalJoystick.getAsDouble();
+
+		double rawStickRot = driver.rightHorizontalJoystick.getAsDouble();
+		double rot = rotScale * SwerveConstants.maxAngularSpeed * (Math.copySign(rawStickRot * rawStickRot, rawStickRot));
+
+		if (autoAim){
+			Pose2d robotPose = drive.getPose();
+			double angleDiff =  Math.toDegrees(Math.atan2(4.11-robotPose.getY(), 4-robotPose.getX()));
+			rot = autoAimController.calculate(robotPose.getRotation().getDegrees(), angleDiff);
+		}
+
 		return driveRequest
 				.withVelocityX(0.6 * SwerveConstants.maxSpeed * x * scale)
 				.withVelocityY(0.6 * SwerveConstants.maxSpeed * y * scale)
-				.withRotationalRate(
-						0.8 * SwerveConstants.maxAngularSpeed * (Math.copySign(rot * rot, rot) * rotScale));
+				.withRotationalRate(rot);
 	}
 }
