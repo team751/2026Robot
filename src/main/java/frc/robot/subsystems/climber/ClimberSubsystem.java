@@ -13,11 +13,12 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.climber.ClimberConstants;
+//import frc.robot.subsystems.climber.ClimberConstants;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 public class ClimberSubsystem extends SubsystemBase {
@@ -42,6 +43,8 @@ private ClimberSubsystem() {
 	config.Slot0.kP = 1;
 	config.Slot0.kI = 0.0;
 	config.Slot0.kD = 0.3;
+
+	config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 	
 
 	leftClimber.getConfigurator().apply(config);
@@ -59,16 +62,18 @@ public void periodic() {
 	SmartDashboard.putNumber("Left Motor Pos", leftClimber.getPosition().getValueAsDouble());
 	SmartDashboard.putNumber("Right Motor Pos", rightClimber.getPosition().getValueAsDouble());
 
+	SmartDashboard.putNumber("SpinUntil/Target", m_spinTarget);
+	SmartDashboard.putBoolean("SpinUntil/Init",m_spinUntilTarget);
 	// If requested, run the spin-until-target logic non-blocking so callers don't have to loop.
 	if (m_spinUntilTarget) {
 		double pos = leftClimber.getPosition().getValueAsDouble();
-		SmartDashboard.putNumber("Target", m_spinTarget);
+		SmartDashboard.putNumber("SpinUntil/Target", m_spinTarget);
 		if (pos >= m_spinTarget) {
 			stopMotors();
 			m_spinUntilTarget = false;
-			SmartDashboard.putBoolean("Stopped", true);
+			SmartDashboard.putBoolean("SpinUntil/Stopped", true);
 		} else {
-			SmartDashboard.putBoolean("Stopped", false);
+			SmartDashboard.putBoolean("SpinUntil/Stopped", false);
 		}
 	}
 
@@ -93,8 +98,10 @@ public void spinUntil10() {
 	// Start a non-blocking spin that will stop when the left encoder reaches 10 rotations.
 	m_spinTarget = 10.0;
 	m_spinUntilTarget = true;
-	leftClimber.setControl(new DutyCycleOut(0.1));
-	rightClimber.setControl(new Follower(10, MotorAlignmentValue.Aligned));
+	if (m_spinUntilTarget) {
+		leftClimber.setControl(new DutyCycleOut(0.1));
+		rightClimber.setControl(new Follower(10, MotorAlignmentValue.Aligned));
+	}
 }
 
 /** Cancel an ongoing spin-until operation (if any) and stop the motors. */
@@ -132,9 +139,6 @@ public void zeroClimber(){
 	leftClimber.setPosition(0);
 	rightClimber.setPosition(0);
 }
-// Alias for existing method name some callers may expect: start spinning until 10 rotations then stop.
-public void stopUntil10() {
-    spinUntil10();
-}
+
 
 }
