@@ -88,7 +88,7 @@ public class ControlBoard {
 		);
 
 		controller.rightTrigger.whileTrue(
-			new StartEndCommand(() -> climber.moveDown180(); () -> climber.stopMotors())
+			new StartEndCommand(() -> climber.moveDown180(), () -> climber.stopMotors())
 		);
 		
 	}
