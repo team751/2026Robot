@@ -2,8 +2,6 @@ package frc.robot.subsystems.drive;
 
 import java.util.function.Supplier;
 
-import java.util.function.Supplier;
-
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
@@ -11,13 +9,11 @@ import com.ctre.phoenix6.swerve.SwerveModule;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
-
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.controllers.PathFollowingController;
 import com.pathplanner.lib.util.DriveFeedforwards;
-
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -38,13 +34,6 @@ import frc.robot.subsystems.drive.generated.TunerConstants.TunerSwerveDrivetrain
 import frc.robot.subsystems.simulation.MapleSimSwerveDrivetrain;
 
 public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem {
-    // Rotation2d.kZero;
-    private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
-    private static final Rotation2d kRedAlliancePerspectiveRotation = Rotation2d.k180deg;
-    private boolean m_hasAppliedOperatorPerspective = false;
-    // Tracks the currently-applied operator perspective rotation so we can adjust odometry
-    // when the perspective changes (keeps "forward" consistent when switching alliances).
-    private Rotation2d m_operatorPerspectiveRotation = Rotation2d.kZero;
     // Rotation2d.kZero;
     private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
     private static final Rotation2d kRedAlliancePerspectiveRotation = Rotation2d.k180deg;
@@ -75,32 +64,9 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
             new SwerveRequest.ApplyRobotSpeeds()
                 .withSteerRequestType(SwerveModule.SteerRequestType.Position)
                 .withDriveRequestType(SwerveModule.DriveRequestType.Velocity);
-        new SwerveRequest.SysIdSwerveSteerGains();
-
-
-    private final SysIdRoutine m_sysIdRoutineSteer = new SysIdRoutine(
-            new SysIdRoutine.Config(
-                null,
-                Units.Volts.of(7),
-                null,
-                state -> SignalLogger.writeString("SysIdSteer_State", state.toString())
-                ),
-                new SysIdRoutine.Mechanism(
-                    volts -> setControl(
-                        m_steerCharacterization.withVolts(volts)
-                    ),
-                    null,
-                    this));
-    
-    private final SwerveRequest.ApplyRobotSpeeds m_pathApplyRobotSpeeds = 
-            new SwerveRequest.ApplyRobotSpeeds()
-                .withSteerRequestType(SwerveModule.SteerRequestType.Position)
-                .withDriveRequestType(SwerveModule.DriveRequestType.Velocity);
 
     private final SysIdRoutine m_sysIdRoutineToApply = m_sysIdRoutineSteer;
-    private final SysIdRoutine m_sysIdRoutineToApply = m_sysIdRoutineSteer;
 
-    private static SwerveSubsystem instance = null;
     private static SwerveSubsystem instance = null;
 
     public static SwerveSubsystem getInstance() {
@@ -116,81 +82,7 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
         }
         return instance;
     }
-    public static SwerveSubsystem getInstance() {
-        if (instance == null) {
-            instance =
-                new SwerveSubsystem(
-                    TunerConstants.DrivetrainConstants,
-                    TunerConstants.FrontLeft,
-                    TunerConstants.FrontRight,
-                    TunerConstants.BackLeft,
-                    TunerConstants.BackRight
-                );
-        }
-        return instance;
-    }
 
-    public SwerveSubsystem(
-        SwerveDrivetrainConstants drivetrainConstants, SwerveModuleConstants<?, ?, ?>... modules
-    ) {
-
-        super(drivetrainConstants, modules);
-        
-        CommandScheduler.getInstance().registerSubsystem(this);
-        
-        // Configure AutoBuilder HERE (remove from Robot.java)
-        PathFollowingController controller = 
-            new PPHolonomicDriveController(
-                new PIDConstants(1.5, 0.0, 0.05),  // Translation PID
-                new PIDConstants(5, 0.0, 0.0)       // Rotation PID
-            );
-        
-        AutoBuilder.configure(
-            this::getPose,                  // Robot pose supplier
-            this::resetPose,                // Method to reset odometry
-            this::getRobotRelativeSpeeds,         // ChassisSpeeds supplier
-            this::drive,                    // Method to drive the robot (now accepts DriveFeedforwards)
-            controller,                     // Path following controller
-            SwerveConstants.robotConfig,    // RobotConfig
-            () -> {
-                // Boolean supplier for alliance color
-                // var alliance = DriverStation.getAlliance();
-                // if (alliance.isPresent()) {
-                //     return alliance.get() == DriverStation.Alliance.Red;
-                // }
-                return false;
-            },
-            this                           
-        );
-        
-    System.out.println("Swerve Starting!");
-
-    // Try to apply operator perspective as early as possible so a deploy (process restart)
-    // gets the same perspective as a full power-cycle. We also publish telemetry so we can
-    // see what perspective was applied on deploy vs power-cycle.
-    DriverStation.getAlliance()
-        .ifPresent(
-            allianceColor -> {
-                var rot = allianceColor == Alliance.Red
-                    ? kRedAlliancePerspectiveRotation
-                    : kBlueAlliancePerspectiveRotation;
-                // Use helper that adjusts odometry pose when perspective changes so the
-                // operator's forward stays consistent.
-                setOperatorPerspectiveAndAdjustPose(rot);
-            });
-
-        // Start simulation thread if running in simulation
-        if (Utils.isSimulation()) startSimThread();
-    }
-
-    public ChassisSpeeds getRobotRelativeSpeeds() {
-                return getKinematics().toChassisSpeeds(getState().ModuleStates);
-        }
-
-    // This method now accepts DriveFeedforwards as PathPlanner expects
-    private void drive(ChassisSpeeds robotSpeeds, DriveFeedforwards feedForward) {
-        this.setControl(m_pathApplyRobotSpeeds.withSpeeds(robotSpeeds));
-    }
     public SwerveSubsystem(
         SwerveDrivetrainConstants drivetrainConstants, SwerveModuleConstants<?, ?, ?>... modules
     ) {
@@ -256,13 +148,7 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
     public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {
         return run(() -> this.setControl(requestSupplier.get())).withName("Drive Request");
     }
-    public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {
-        return run(() -> this.setControl(requestSupplier.get())).withName("Drive Request");
-    }
 
-    public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-        return m_sysIdRoutineToApply.quasistatic(direction);
-    }
     public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
         return m_sysIdRoutineToApply.quasistatic(direction);
     }
@@ -270,36 +156,7 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
     public Command sysIdDynamic(SysIdRoutine.Direction direction) {
         return m_sysIdRoutineToApply.dynamic(direction);
     }
-    public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-        return m_sysIdRoutineToApply.dynamic(direction);
-    }
 
-    @Override
-    public void periodic() {
-        if (!m_hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
-            if (DriverStation.getAlliance().isPresent()) {
-                var rot = kBlueAlliancePerspectiveRotation;
-                if (DriverStation.getAlliance().get() == Alliance.Red) {
-                    rot = kRedAlliancePerspectiveRotation;
-                }
-
-                setOperatorPerspectiveAndAdjustPose(rot);
-            }
-
-            // DriverStation.getAlliance()
-            //     .ifPresent(
-            //         allianceColor -> {
-            //             var rot =
-            //                 allianceColor == Alliance.Red
-            //                 ? kRedAlliancePerspectiveRotation
-            //                 : kBlueAlliancePerspectiveRotation;
-            //             setOperatorPerspectiveForward(rot);
-            //             m_hasAppliedOperatorPerspective = true;
-            //             SmartDashboard.putNumber("OperatorPerspectiveDeg", rot.getDegrees());
-            //             SmartDashboard.putString("OperatorPerspectiveAlliance", allianceColor.name());
-            //         }
-            //     );
-        }
     @Override
     public void periodic() {
         if (!m_hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
@@ -333,26 +190,11 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
         SmartDashboard.putNumber("Swerve/Pose y", pose.getY());
         SmartDashboard.putNumber("Swerve/Rotation", pose.getRotation().getDegrees());
     }
-        // Shows where SwerveDrive thinks the robot is positioned on the field.
-        Pose2d pose = getPose();
-        SmartDashboard.putNumber("Swerve/Pose x", pose.getX());
-        SmartDashboard.putNumber("Swerve/Pose y", pose.getY());
-        SmartDashboard.putNumber("Swerve/Rotation", pose.getRotation().getDegrees());
-    }
 
     public Pose2d getPose() {
         return simDrivetrain == null
                 ? getState().Pose
                 : simDrivetrain.mapleSimDrive.getSimulatedDriveTrainPose();
-    }
-    public Pose2d getPose() {
-        return simDrivetrain == null
-                ? getState().Pose
-                : simDrivetrain.mapleSimDrive.getSimulatedDriveTrainPose();
-    }
-
-    public Rotation2d getRotation() {
-        return getPose().getRotation();
     }
 
     public ChassisSpeeds getChassisSpeeds() {
@@ -368,15 +210,8 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
         super.resetPose(pose);
     }
 
-    public void setRobotRotationByAlliance(){
-        if (DriverStation.getAlliance().isPresent()) {
-            var rot = kBlueAlliancePerspectiveRotation;
-            if (DriverStation.getAlliance().get() == Alliance.Red) {
-                rot = kRedAlliancePerspectiveRotation;
-            }
-            resetPose(new Pose2d(0, 0, rot));
-            setOperatorPerspectiveAndAdjustPose(rot);
-        }
+    public void bigResetPose() {
+        this.resetPose(new Pose2d(0.0, 0.0, new Rotation2d()));
     }
 
     /**
@@ -438,27 +273,7 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
                         TunerConstants.FrontRight,
                         TunerConstants.BackLeft,
                         TunerConstants.BackRight);
-    private void startSimThread() {
-        simDrivetrain =
-                new MapleSimSwerveDrivetrain(
-                        Units.Seconds.of(kSimLoopPeriod),
-                        Units.Pounds.of(110),
-                        Units.Inches.of(30),
-                        Units.Inches.of(30),
-                        DCMotor.getKrakenX60Foc(1),
-                        DCMotor.getKrakenX60Foc(1),
-                        1.2,
-                        getModuleLocations(),
-                        getPigeon2(),
-                        getModules(),
-                        TunerConstants.FrontLeft,
-                        TunerConstants.FrontRight,
-                        TunerConstants.BackLeft,
-                        TunerConstants.BackRight);
 
-        m_simNotifier = new Notifier(simDrivetrain::update);
-        m_simNotifier.startPeriodic(kSimLoopPeriod);
-    }
         m_simNotifier = new Notifier(simDrivetrain::update);
         m_simNotifier.startPeriodic(kSimLoopPeriod);
     }
