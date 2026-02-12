@@ -83,13 +83,17 @@ public class ControlBoard {
 		// new StartEndCommand(() -> climber.moveUp(), () -> climber.stopMotors())
 		// ...
 
-		controller.leftTrigger.whileTrue(
-			new StartEndCommand(() -> climber.moveUp180(), () -> climber.stopMotors())
+		controller.leftTrigger.onTrue(
+			new InstantCommand(() -> climber.moveUp180())
 		);
 
-		controller.rightTrigger.whileTrue(
-			new StartEndCommand(() -> climber.moveDown180(), () -> climber.stopMotors())
+		controller.rightTrigger.onTrue(
+			new InstantCommand(() -> climber.moveDown180())
 		);
+
+		controller.triangleButton.whileTrue(
+			new StartEndCommand(() -> climber.motorSync(), () -> climber.stopMotors()
+		));
 		
 	}
 
