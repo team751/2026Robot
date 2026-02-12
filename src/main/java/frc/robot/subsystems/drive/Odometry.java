@@ -2,7 +2,6 @@ package frc.robot.subsystems.drive;
 
 import com.ctre.phoenix6.Utils;
 
-import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -72,13 +71,11 @@ public class Odometry extends SubsystemBase {
 		SmartDashboard.putNumber("Odometry/Rotation", robotPose.getRotation().getDegrees());
 
 		// Add's two vision measure ments to SwerveDrive so that they can be filtered by it
-		//drive.setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 9999999));
 		if (limelights.getBotPoseFront() != null) {
-			drive.addVisionMeasurement(new Pose2d(limelights.getBotPoseFront().getTranslation(), drive.getRotation()), time);
+			drive.addVisionMeasurement(limelights.getBotPoseFront(), time);
 		}
 		if (limelights.getBotPoseBack() != null) {
-			Pose2d backPose = limelights.getBotPoseBack();
-			drive.addVisionMeasurement(new Pose2d(backPose.getTranslation(), drive.getRotation()), time);
+			drive.addVisionMeasurement(limelights.getBotPoseBack(), time);
 		}
 
 

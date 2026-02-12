@@ -141,8 +141,8 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
         // Configure AutoBuilder HERE (remove from Robot.java)
         PathFollowingController controller = 
             new PPHolonomicDriveController(
-                new PIDConstants(1.5, 0.0, 0.05),  // Translation PID
-                new PIDConstants(5, 0.0, 0.0)       // Rotation PID
+                new PIDConstants(0.5, 0.0, 0.0),  // Translation PID
+                new PIDConstants(0.3, 0.0, 0.0)       // Rotation PID
             );
         
         AutoBuilder.configure(
@@ -154,10 +154,10 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
             SwerveConstants.robotConfig,    // RobotConfig
             () -> {
                 // Boolean supplier for alliance color
-                // var alliance = DriverStation.getAlliance();
-                // if (alliance.isPresent()) {
-                //     return alliance.get() == DriverStation.Alliance.Red;
-                // }
+                var alliance = DriverStation.getAlliance();
+                if (alliance.isPresent()) {
+                    return alliance.get() == DriverStation.Alliance.Red;
+                }
                 return false;
             },
             this                           
@@ -351,10 +351,6 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
                 : simDrivetrain.mapleSimDrive.getSimulatedDriveTrainPose();
     }
 
-    public Rotation2d getRotation() {
-        return getPose().getRotation();
-    }
-
     public ChassisSpeeds getChassisSpeeds() {
         return getState().Speeds;
     }
@@ -368,15 +364,8 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
         super.resetPose(pose);
     }
 
-    public void setRobotRotationByAlliance(){
-        if (DriverStation.getAlliance().isPresent()) {
-            var rot = kBlueAlliancePerspectiveRotation;
-            if (DriverStation.getAlliance().get() == Alliance.Red) {
-                rot = kRedAlliancePerspectiveRotation;
-            }
-            resetPose(new Pose2d(0, 0, rot));
-            setOperatorPerspectiveAndAdjustPose(rot);
-        }
+    public void bigResetPose() {
+        this.resetPose(new Pose2d(0.0, 0.0, new Rotation2d()));
     }
 
     /**
