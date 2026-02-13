@@ -40,7 +40,7 @@ public class ControlBoard {
 	private boolean preciseControl = false;
 	private boolean autoAim = false;
 
-	private PIDController autoAimController = new PIDController(0.21, 0, 0.015);
+	private PIDController autoAimController = new PIDController(0.4, 0.0, 0.01);
 
 	private enum ControllerPreset {
 		DRIVER(0),
@@ -137,8 +137,10 @@ public class ControlBoard {
 
 		if (autoAim){
 			Pose2d robotPose = drive.getPose();
-			double angleDiff =  Math.toDegrees(Math.atan2(4.11-robotPose.getY(), 4-robotPose.getX()));
+			double angleDiff =  Math.toDegrees(Math.atan2(3.5-robotPose.getY(), 14-robotPose.getX()));
+			SmartDashboard.putNumber("target offness", angleDiff-robotPose.getRotation().getDegrees());
 			rot = autoAimController.calculate(robotPose.getRotation().getDegrees(), angleDiff);
+			SmartDashboard.putNumber("pid value", rot);
 		}
 
 		return driveRequest

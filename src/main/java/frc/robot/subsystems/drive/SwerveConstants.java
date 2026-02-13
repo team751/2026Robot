@@ -16,7 +16,7 @@ public class SwerveConstants {
 
 	public static class AutoConstants {
 		public static double kMaxSpeedMetersPerSecond = 7; // 3
-		public static double kMaxAccelerationMetersPerSecondSquared = 2.5; // 3
+		public static double kMaxAccelerationMetersPerSecondSquared = 5.5; // 3
 		public static double kMaxAngularSpeedRadiansPerSecond = 4.2 * Math.PI;
 		public static double kMaxAngularSpeedRadiansPerSecondSquared = 4 * Math.PI;
 
