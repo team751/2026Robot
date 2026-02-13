@@ -1,15 +1,17 @@
 package frc.robot.subsystems.climber;
 
-
 import com.ctre.phoenix6.controls.DutyCycleOut;
 // import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.StrictFollower;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ClimberSubsystem extends SubsystemBase {
+private final TalonFX leftClimber = new TalonFX(10);
+private final TalonFX rightClimber = new TalonFX(11);
 
 private final PositionVoltage positionRequest = new PositionVoltage(0);
 
@@ -95,33 +97,41 @@ public void stopSpinUntil() {
 
 public void moveUp180(){
 
-	double currentPosition = ClimberConstants.leftClimber.getPosition().getValueAsDouble();
-	double targetPosition = currentPosition + 1.0;
+	double currentPosition = leftClimber.getPosition().getValueAsDouble();
+	double targetPosition = currentPosition + 0.6;
 
-	ClimberConstants.leftClimber.setControl(positionRequest.withPosition(targetPosition));
-	ClimberConstants.rightClimber.setControl(positionRequest.withPosition(targetPosition));
+	leftClimber.setControl(positionRequest.withPosition(targetPosition));
+	rightClimber.setControl(positionRequest.withPosition(targetPosition));
 
 }
 
 public void moveDown180(){
 
-	double currentPosition = ClimberConstants.leftClimber.getPosition().getValueAsDouble();
-	double targetPosition = currentPosition - 1.0;
+	double currentPosition = leftClimber.getPosition().getValueAsDouble();
+	double targetPosition = currentPosition - 0.6;
 
-	ClimberConstants.leftClimber.setControl(positionRequest.withPosition(targetPosition));
-	ClimberConstants.rightClimber.setControl(positionRequest.withPosition(targetPosition));
+	leftClimber.setControl(positionRequest.withPosition(targetPosition));
+	rightClimber.setControl(positionRequest.withPosition(targetPosition));
 
 }
 
 public void stopMotors(){
-	ClimberConstants.leftClimber.stopMotor();
-	ClimberConstants.rightClimber.stopMotor();
+	leftClimber.stopMotor();
+	rightClimber.stopMotor();
 }
 
 public void zeroClimber(){
-	ClimberConstants.leftClimber.setPosition(0);
-	ClimberConstants.rightClimber.setPosition(0);
+	leftClimber.setPosition(0);
+	rightClimber.setPosition(0);
 }
 
+public void moveUpManual(){
+	leftClimber.set(0.3);
+	rightClimber.set(0.3);
+}
 
+public void moveDownManual(){
+	leftClimber.set(-0.3);
+	rightClimber.set(-0.3);
+}
 }

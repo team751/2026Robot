@@ -5,6 +5,9 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import frc.lib.CTREConfig;
+import frc.robot.Robot;
+
 public class ClimberConstants {
     public static double averageMotorError = 0.3; // Starting average error, it will change later
 
