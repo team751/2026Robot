@@ -41,7 +41,7 @@ public void periodic() {
 
 }
 
-// write a methods (think of a function, ask chatgpt if u dont get it) that:
+// TODO: write a methods (think of a function, ask chatgpt if u dont get it) that:
 // moves the climber motors up to 180 degrees
 // moves the climber motors down to 180 degrees
 // stops the motors
