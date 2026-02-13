@@ -4,6 +4,7 @@ import com.ctre.phoenix6.controls.DutyCycleOut;
 // import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.StrictFollower;
+import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
