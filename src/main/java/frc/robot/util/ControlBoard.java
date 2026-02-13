@@ -112,6 +112,15 @@ public class ControlBoard {
 		}
 	}
 
+	private static double getAxisAlignAngle(double currentDegrees) {
+		// Normalize to [-180, 180]
+		currentDegrees = currentDegrees % 360;
+		if (currentDegrees > 180) currentDegrees -= 360;
+		if (currentDegrees < -180) currentDegrees += 360;
+		// If within 90 degrees of 0, snap to 0; otherwise snap to 180
+		return Math.abs(currentDegrees) <= 90 ? 0.0 : 180.0;
+	}
+
 	private void configureDriverBindings(PS5Controller controller) {
 		/* Precise Control */
 		controller.rightBumper.whileTrue(
@@ -142,18 +151,22 @@ public class ControlBoard {
 
 		if (autoAim){
 			Pose2d robotPose = drive.getPose();
-			double angleDiff =  Math.toDegrees(Math.atan2(3.5-robotPose.getY(), 14-robotPose.getX()));
+			Pose2d hubPose = FieldConstants.getAllianceHub();
+			double angleDiff =  Math.toDegrees(Math.atan2(hubPose.getY()-robotPose.getY(), hubPose.getX()-robotPose.getX()));
 			SmartDashboard.putNumber("target offness", angleDiff-robotPose.getRotation().getDegrees());
 			rot = autoAimController.calculate(robotPose.getRotation().getDegrees(), angleDiff);
 			SmartDashboard.putNumber("pid value", rot);
 		}
-		
+
 		double x = driver.leftVerticalJoystick.getAsDouble();
 		double y;
+
 		if (axisAlign){
 			Pose2d robotPose = drive.getPose();
-			y = -axisAlignController.calculate(robotPose.getY(), 0.5);
-			rot = autoAimController.calculate(robotPose.getRotation().getDegrees(), 180);
+			Pose2d nearestTrench = FieldConstants.getNearestTrench(robotPose);
+			y = -axisAlignController.calculate(robotPose.getY(), nearestTrench.getY());
+			rot = autoAimController.calculate(robotPose.getRotation().getDegrees(), getAxisAlignAngle(robotPose.getRotation().getDegrees()));
+
 		}else{
 			y = driver.leftHorizontalJoystick.getAsDouble();
 		}

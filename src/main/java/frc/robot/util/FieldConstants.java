@@ -9,6 +9,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+
 /**
  * Field element positions and dimensions for the 2026 Rebuilt game.
  *
@@ -147,6 +150,25 @@ public class FieldConstants {
     while (angle < -Math.PI) angle += 2 * Math.PI;
     return angle;
   }
+
+  public static Pose2d getAllianceHub(){
+    if (DriverStation.getAlliance().isPresent()) {
+      if (DriverStation.getAlliance().get() == Alliance.Red) {
+          return GameElement.HUB_RED.getCenter();
+      }
+    }
+    return GameElement.HUB_BLUE.getCenter();
+  }
+
+	public static Pose2d getNearestTrench(Pose2d robotPose) {
+    List<GameElement> trenches = GameElement.getColor(DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red);
+    return trenches.stream()
+      .min((t1, t2) -> Double.compare(
+        robotPose.getTranslation().getDistance(t1.getLocation()),
+        robotPose.getTranslation().getDistance(t2.getLocation())))
+      .map(GameElement::getCenter)
+        .orElse(null);
+	}
 
   /**
    * Returns a Pose2d offset from a center pose by a distance at an angle. Keeps the original
