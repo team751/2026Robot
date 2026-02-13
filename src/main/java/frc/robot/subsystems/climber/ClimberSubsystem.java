@@ -1,23 +1,13 @@
 package frc.robot.subsystems.climber;
 
 
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.controls.Follower;
+// import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionVoltage;
-import com.ctre.phoenix6.controls.TorqueCurrentFOC;
-import com.ctre.phoenix6.controls.VelocityDutyCycle;
-import com.ctre.phoenix6.controls.VelocityVoltage;
-import com.ctre.phoenix6.controls.VoltageOut;
-import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.InvertedValue;
-import com.ctre.phoenix6.signals.MotorAlignmentValue;
-import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.controls.StrictFollower;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.climber.ClimberConstants;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 public class ClimberSubsystem extends SubsystemBase {
 
@@ -26,46 +16,41 @@ private final PositionVoltage positionRequest = new PositionVoltage(0);
 private static ClimberSubsystem instance;
 
 // State used to run a non-blocking "spin until position" behavior
-private boolean m_spinUntilTarget = false;
-private double m_spinTarget = 10.0;
+private boolean spinning = false;
+private double spinTarget = 0.0;
+
+private boolean inverted = false;
 
 public static ClimberSubsystem getInstance() {
 	if (instance == null) instance = new ClimberSubsystem();
 	return instance;
 }
 
-private ClimberSubsystem() {
-	// TalonFXConfiguration config = new TalonFXConfiguration();
-	// config.Slot0.kP = 1;
-	// config.Slot0.kI = 0.0;
-	// config.Slot0.kD = 0.3;
-
-	// config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-	
-
-	// leftClimber.getConfigurator().apply(config);
-	// rightClimber.getConfigurator().apply(config);
-
-
-	//CommandScheduler.getInstance().registerSubsystem(this);
-}
+private ClimberSubsystem() {}
 
 @Override
 public void periodic() {
 	SmartDashboard.putNumber("Left Motor Pos", ClimberConstants.leftClimber.getPosition().getValueAsDouble());
 	SmartDashboard.putNumber("Right Motor Pos", ClimberConstants.rightClimber.getPosition().getValueAsDouble());
 
-	if (m_spinUntilTarget) {
-		SmartDashboard.putNumber("SpinUntil/Target", m_spinTarget);
-		if (ClimberConstants.leftClimber.getPosition().getValueAsDouble() >= m_spinTarget) {
-			stopMotors();
-			m_spinUntilTarget = false;
-			SmartDashboard.putBoolean("SpinUntil/Stopped", true);
-		} else {
-			SmartDashboard.putBoolean("SpinUntil/Stopped", false);
-		}
-	}
+	// Spin to target check
+	if (spinning) {
+		SmartDashboard.putNumber("SpinUntil/Target", spinTarget);
 
+		// If its not inverted, check if the value of the motor is greater than or equal to the target and then
+		if (!inverted && ClimberConstants.leftClimber.getPosition().getValueAsDouble() >= spinTarget) {
+			// stop the motors and set the spinning value to false
+			stopSpinUntil();
+			spinning = false;
+		}
+
+		// If it is inverted, check if the value of the motor is less than or equal to the target and then 
+		if (inverted && ClimberConstants.leftClimber.getPosition().getValueAsDouble() <= spinTarget) {
+			// stop the motors and set the spinning value to false.
+			stopSpinUntil();
+			spinning = false;
+		}	
+	}
 }
 
 
@@ -74,22 +59,37 @@ public void moveVerySlowly() {
 		ClimberConstants.rightClimber.setVoltage(0.5);
 }
 
-public void motorSync() {
-	ClimberConstants.leftClimber.setControl(new DutyCycleOut(0.1));
-	ClimberConstants.rightClimber.setControl(new Follower(10, MotorAlignmentValue.Aligned));
-}
+public void spinUntil(double value) {
+	// Error and setup
+	spinTarget = value - ClimberConstants.averageMotorError;
+	spinning = true;
 
-public void spinUntil10() {
-	m_spinTarget = 10.0;
-	m_spinUntilTarget = true;
-	if (m_spinUntilTarget) {
-		ClimberConstants.leftClimber.setControl(new DutyCycleOut(0.1));
-		ClimberConstants.rightClimber.setControl(new Follower(10, MotorAlignmentValue.Aligned));
+	if (spinning) {
+		// Inversion check
+		if (ClimberConstants.leftClimber.getPosition().getValueAsDouble() > spinTarget) {
+			inverted = true;
+
+			// Set the motors to spin
+			ClimberConstants.leftClimber.setControl(new DutyCycleOut(-0.1));
+			ClimberConstants.rightClimber.setControl(new StrictFollower(10));
+		} else {
+			inverted = false;
+
+			// Set the motors to spin
+			ClimberConstants.leftClimber.setControl(new DutyCycleOut(0.1));
+			ClimberConstants.rightClimber.setControl(new StrictFollower(10));
+		}
+		
 	}
 }
 
-public void cancelSpinUntil() {
-	m_spinUntilTarget = false;
+public void stopSpinUntil() {
+	spinning = false;
+
+	// Get the average error
+	double error = spinTarget - ClimberConstants.leftClimber.getPosition().getValueAsDouble();
+	ClimberConstants.averageMotorError = (ClimberConstants.averageMotorError + error) / 3;
+
 	stopMotors();
 }
 

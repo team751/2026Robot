@@ -92,7 +92,11 @@ public class ControlBoard {
 		);
 
 		controller.triangleButton.whileTrue(
-			new StartEndCommand(() -> climber.spinUntil10(), () -> climber.stopMotors()
+			new StartEndCommand(() -> climber.spinUntil(20), () -> climber.stopMotors()
+		));
+
+		controller.circleButton.whileTrue(
+			new StartEndCommand(() -> climber.spinUntil(10), () -> climber.stopMotors()
 		));
 		
 	}
