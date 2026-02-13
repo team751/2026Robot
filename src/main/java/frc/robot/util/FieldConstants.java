@@ -71,6 +71,11 @@ public class FieldConstants {
   public static final double TOWER_MID_RUNG = Units.inchesToMeters(45.0);
   public static final double TOWER_HIGH_RUNG = Units.inchesToMeters(63.0);
 
+  // ---- Trench dimensions ----
+  public static final double TRENCH_WALL_LENGTH = Units.inchesToMeters(53.0);
+  public static final double TRENCH_WALL_WIDTH = Units.inchesToMeters(12.0);
+  public static final double TRENCH_HEIGHT = Units.inchesToMeters(47.0);
+
   // ---- Outpost dimensions ----
   public static final double OUTPOST_WIDTH = Units.inchesToMeters(31.8);
   public static final double OUTPOST_OPENING_HEIGHT = Units.inchesToMeters(28.1);
@@ -94,6 +99,20 @@ public class FieldConstants {
 
     /** Red climbing tower (near the red alliance wall). */
     TOWER_RED(new Pose2d(Units.inchesToMeters(609), Units.inchesToMeters(170), Rotation2d.fromDegrees(180)),false),
+
+    // ----- TRENCHES -----
+
+    /** Blue right trench (lower Y, blue side of field). */
+    TRENCH_BLUE_RIGHT(new Pose2d(4.6251, 1.4315, Rotation2d.fromDegrees(90)), true),
+
+    /** Blue left trench (higher Y, blue side of field). */
+    TRENCH_BLUE_LEFT(new Pose2d(4.6251, 6.6385, Rotation2d.fromDegrees(-90)), true),
+
+    /** Red right trench (lower Y, red side of field). */
+    TRENCH_RED_RIGHT(new Pose2d(11.9149, 1.4315, Rotation2d.fromDegrees(90)), false),
+
+    /** Red left trench (higher Y, red side of field). */
+    TRENCH_RED_LEFT(new Pose2d(11.9149, 6.6385, Rotation2d.fromDegrees(-90)), false),
 
     // ----- OUTPOSTS -----
 

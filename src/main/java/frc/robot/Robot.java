@@ -1,169 +1,138 @@
-// Copyright (c) FIRST and other WPILib contributors.
-
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot;
 
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.SignalLogger;
-import com.pathplanner.lib.commands.PathfindingCommand;
-import com.pathplanner.lib.pathfinding.LocalADStar;
-import com.pathplanner.lib.pathfinding.Pathfinding;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.RobotConfig;
+
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.net.PortForwarder;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.lib.TunableParameter;
-import frc.robot.subsystems.auton.AutonSubsystem;
-import frc.robot.subsystems.lights.LightsSubsystem;
+import frc.robot.subsystems.drive.Odometry;
+import frc.robot.subsystems.drive.SwerveSubsystem;
 import frc.robot.subsystems.vision.LimelightSubsystem;
-import frc.robot.util.Constants;
 import frc.robot.util.ControlBoard;
 
 public class Robot extends TimedRobot {
-	public static final CANBus riobus = new CANBus("rio");
+  public static final CANBus riobus = new CANBus("rio");
 
-	@SuppressWarnings("deprecation")
-	public static final CANBus drivebus = new CANBus(Constants.drivebus);
+   public static final CANBus drivebus = new CANBus("Drivebus");
 
-	private Command autonomousCommand;
+  private final ControlBoard controlBoard;
+  private final CommandScheduler scheduler;
+  private Odometry odometry;
+  private SwerveSubsystem swerve;
+  private RobotConfig config;
+  
+  private Command autonomousCommand;
+  private SendableChooser<Command> autoChooser;
+ 
+  public Robot() {
+    Odometry.getInstance();
+    scheduler = CommandScheduler.getInstance();
+    swerve = SwerveSubsystem.getInstance();
 
-	private final ControlBoard controlBoard;
-	private final CommandScheduler scheduler;
-	private final AutonSubsystem autonSubsystem;
+    ControlBoard tmpControlBoard = null;
+    try {
+      tmpControlBoard = ControlBoard.getInstance();
+    } catch (Throwable t) {
+      DriverStation.reportError("ControlBoard init failed: " + t.toString(), t.getStackTrace());
+      t.printStackTrace();
+    }
+    this.controlBoard = tmpControlBoard; }
 
-	// private final Field2d m_field = new Field2d();
 
-	public Robot() {
-		scheduler = CommandScheduler.getInstance();
-		controlBoard = ControlBoard.getInstance();
-		autonSubsystem = AutonSubsystem.getInstance();
-	}
 
-	@Override
-	public void robotInit() {
-		for (int port = 5800; port <= 5809; port++) {
-			PortForwarder.add(port, "limelight.local", port);
-		}
 
-		// AutoBuilder.configure(swerveSubsystem::getPose, null, swerveSubsystem::getChassisSpeeds,
-		// this::drive, controller, SwerveConstants.robotConfig, () -> false, swerveSubsystem);
+  @Override
+  public void robotInit() {
+    System.out.println("Robot.robotInit() start");
+    for (int port = 5800; port <= 5809; port++) {
+      PortForwarder.add(port, "limelight.local",port);
+    }
+    autoChooser = AutoBuilder.buildAutoChooser();
+    SmartDashboard.putData("Auto Chooser", autoChooser);
+  }
 
-		//        SignalLogger.start(); // TODO: enable this for competition
-		Pathfinding.setPathfinder(
-				new LocalADStar()); // can the LocalADStar be static? It likely takes a lot of resources
-		// even if its spun off into its own thread
-		scheduler.schedule(PathfindingCommand.warmupCommand());
+  @Override
+  public void robotPeriodic() {
+    TunableParameter.updateAll();
+    try {
+      scheduler.run();
+    } catch (Throwable t) {
+      DriverStation.reportError("Unhandled exception in CommandScheduler: " + t.toString(), t.getStackTrace());
+      t.printStackTrace();
+    }
 
-		// TODO: disable this for competitions
-		scheduler.onCommandInitialize(
-				command ->
-						System.out.println(
-								"Initializing command: "
-										+ command.getName()
-										+ "@"
-										+ command.getSubsystem()
-										+ " w/"
-										+ command.getRequirements()));
-		scheduler.onCommandFinish(
-				command ->
-						System.out.println(
-								"Finishing command: "
-										+ command.getName()
-										+ "@"
-										+ command.getSubsystem()
-										+ " w/"
-										+ command.getRequirements()));
+    if (controlBoard != null) controlBoard.displayUI();
+  }
 
-		SignalLogger.setPath("/media/sda1/");
-		// SignalLogger.start();
+  @Override
+  public void driverStationConnected() {
+    ControlBoard.getInstance().tryInit();
+  }
 
-		// get alliance color from FMS (defaults to Blue if unavailable)
-		LightsSubsystem.getInstance().requestAllianceColor();
-	}
+  @Override
+  public void disabledInit() {
+    SignalLogger.stop();
+  }
 
-	@Override
-	public void robotPeriodic() {
-		TunableParameter.updateAll();
-		scheduler.run();
-		SmartDashboard.putBoolean("Limelight Has Target", LimelightSubsystem.getInstance().hasTarget());
-		//        printWatchdogEpochs(); // TODO: PRINT ALL THE EPOCHS ON EVERY LOOP
-		// ControlBoard.getInstance().tryInit();
-		controlBoard.displayUI();
-	}
+  @Override
+  public void disabledPeriodic() {}
+  public void autonomousInit() {
+    // Get the selected auto command from the chooser
+    autonomousCommand = autoChooser.getSelected();
+    
+    // Schedule the autonomous command
+    if (autonomousCommand != null) {
+      autonomousCommand.schedule();
+    }
+  }
 
-	@Override
-	public void driverStationConnected() {
-		LimelightSubsystem.getInstance()
-				.setAprilTagFilters(); // set the tag filters to the alliance color
-		LightsSubsystem.getInstance().requestAllianceColor();
-		ControlBoard.getInstance().tryInit();
-	}
+  @Override
+  public void autonomousPeriodic() {
+  }
 
-	@Override
-	public void disabledInit() {
-		//        ElevatorWristSubsystem.getInstance().setCoastMode();
-		SignalLogger.stop();
-		LightsSubsystem.getInstance().requestAllianceColor();
-	}
+  @Override
+  public void autonomousExit() {
+    if (autonomousCommand != null) {
+      autonomousCommand.cancel();
+    }
+  }
 
-	@Override
-	public void disabledPeriodic() {}
 
-	@Override
-	public void disabledExit() {
-		//         ElevatorWristSubsystem.getInstance().setBrakeMode();
-	}
 
-	@Override
-	public void autonomousInit() {
-		LimelightSubsystem.getInstance()
-				.setAprilTagFilters(); // set the tag filters to the alliance color
-		// odometry.resetOdometryCommand().schedule();
-		System.out.println("Auton Init");
-		autonomousCommand = autonSubsystem.getSelectedAuton();
-		if (autonomousCommand != null) scheduler.schedule(autonomousCommand);
-		LightsSubsystem.getInstance().requestRainbow();
-	}
 
-	@Override
-	public void autonomousPeriodic() {}
+  @Override
+  public void teleopInit() {
+    LimelightSubsystem.getInstance();
 
-	@Override
-	public void autonomousExit() {}
+    var rot = Rotation2d.kZero;
+    if (DriverStation.getAlliance().get() == Alliance.Red) {
+        rot = Rotation2d.k180deg;
+    }
 
-	@Override
-	public void teleopInit() {
-		LimelightSubsystem.getInstance()
-				.setAprilTagFilters(); // set the tag filters to the alliance color
-		if (autonomousCommand != null) autonomousCommand.cancel();
+  // Apply operator perspective and adjust odometry so "forward" remains consistent
+  // when switching alliances.
+  swerve.setOperatorPerspectiveAndAdjustPose(rot);
+  }
 
-		// TODO: please dont forget about this:
-		// new AssistCommand(FieldConstants.GameElement.REEF_BLUE_1,
-		// FieldConstants.GameElement.Branch.LEFT).schedule();
-	}
+  @Override
+  public void teleopPeriodic() {}
 
-	@Override
-	public void teleopPeriodic() {}
 
-	@Override
-	public void teleopExit() {
-		LightsSubsystem.getInstance().requestRainbow();
-	}
 
-	@Override
-	public void testPeriodic() {}
 
-	@Override
-	public void testInit() {}
+  @Override
+  public void simulationInit() {}
 
-	@Override
-	public void testExit() {}
-
-	@Override
-	public void simulationPeriodic() {
-		// SimulatedArena.getInstance().simulationPeriodic();
-	}
+  @Override
+  public void simulationPeriodic() {}
 }
