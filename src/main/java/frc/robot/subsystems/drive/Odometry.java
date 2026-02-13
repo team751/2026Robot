@@ -2,8 +2,8 @@ package frc.robot.subsystems.drive;
 
 import com.ctre.phoenix6.Utils;
 
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -62,42 +62,25 @@ public class Odometry extends SubsystemBase {
 
     @Override
     public void periodic() {
-		// Gets the interpolated value of each limelight (wont interpolate if only one april tag is present!)
-        Pose2d visionPose = limelights.getBotPoseInterpolated();
+		// Gets the current timestamp
+		double time = Utils.getCurrentTimeSeconds();
 
-		// If no april tags are present, do nothing pretty much
-        if (visionPose != null && !(visionPose.getX() == 0.0 && visionPose.getY() == 0.0 && visionPose.getRotation().getDegrees() == 0.0)) {
-			// Test field size: 4.572 m x 7.62 m
-			// 4572 7620
-			// 1500
+		// Adds values to SmartDashboard (or Elastic if u use that)
+		// Shows where Odometry/Limelight thinks the robot is on the field
+		SmartDashboard.putNumber("Odometry/X", robotPose.getX());
+		SmartDashboard.putNumber("Odometry/Y", robotPose.getY());
+		SmartDashboard.putNumber("Odometry/Rotation", robotPose.getRotation().getDegrees());
 
+		// Add's two vision measure ments to SwerveDrive so that they can be filtered by it
+		//drive.setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 9999999));
+		if (limelights.getBotPoseFront() != null) {
+			drive.addVisionMeasurement(new Pose2d(limelights.getBotPoseFront().getTranslation(), drive.getPose().getRotation()), time);
+		}
+		if (limelights.getBotPoseBack() != null) {
+			Pose2d backPose = limelights.getBotPoseBack();
+			drive.addVisionMeasurement(new Pose2d(backPose.getTranslation(), drive.getPose().getRotation()), time);
+		}
 
-
-
-			// Gets the current timestamp
-			double time = Utils.getCurrentTimeSeconds();
-
-			// Adds the interpolated vision position to the Pigeon2 rotation into one Pose2d
-			// Rotation2d botRotation = new Rotation2d(drive.getRotation3d().getZ());
-            // Pose2d composite = new Pose2d(visionPose.getTranslation(), botRotation);
-
-			// Adds values to SmartDashboard (or Elastic if u use that)
-			// Shows where Odometry/Limelight thinks the robot is on the field
-            SmartDashboard.putNumber("Odometry/X", robotPose.getX());
-            SmartDashboard.putNumber("Odometry/Y", robotPose.getY());
-            SmartDashboard.putNumber("Odometry/Rotation", robotPose.getRotation().getDegrees());
-
-			// Add's two vision measure ments to SwerveDrive so that they can be filtered by it
-			if (limelights.getBotPoseFront() != null) {
-				drive.addVisionMeasurement(limelights.getBotPoseFront(), time);
-			}
-			if (limelights.getBotPoseBack() != null) {
-				drive.addVisionMeasurement(limelights.getBotPoseBack(), time);
-			}
-
-			// Sets SwerveDrive's robot position to the composited robot position
-            // drive.resetPose(composite);
-        }
 
 		// Sets the Odometry robotPose variable (for easy/more normal access to the robot position)
         robotPose = drive.getPose();
@@ -110,21 +93,6 @@ public class Odometry extends SubsystemBase {
 		SmartDashboard.putNumber("Pigeon Pitch", drive.getPigeon2().getPitch().getValueAsDouble());
 		SmartDashboard.putNumber("Pigeon Roll", drive.getPigeon2().getRoll().getValueAsDouble());
 		SmartDashboard.putNumber("Swerve Rotation", Math.toDegrees(drive.getRotation3d().getZ()));
-
-		// Debug telemetry: publish each swerve module's angle (deg) and wheel speed (m/s).
-		// This is useful to compare device/encoder state between a full power cycle and a code deploy.
-		try {
-			var state = drive.getState();
-			if (state != null && state.ModuleStates != null) {
-				for (int i = 0; i < state.ModuleStates.length; i++) {
-					SmartDashboard.putNumber("Module" + i + " Angle Deg", Math.toDegrees(state.ModuleStates[i].angle.getRadians()));
-					SmartDashboard.putNumber("Module" + i + " Speed m/s", state.ModuleStates[i].speedMetersPerSecond);
-				}
-			}
-		} catch (Exception e) {
-			// Don't allow telemetry to throw; provide minimal error info.
-			SmartDashboard.putString("ModuleStates/Error", e.toString());
-		}
 
         SmartDashboard.putData(field);
 

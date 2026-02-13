@@ -30,8 +30,6 @@ import edu.wpi.first.units.measure.Mass;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotBase;
-import frc.robot.subsystems.drive.SwerveSubsystem;
-
 import org.ironmaple.simulation.IntakeSimulation;
 import org.ironmaple.simulation.IntakeSimulation.IntakeSide;
 import org.ironmaple.simulation.SimulatedArena;
@@ -43,7 +41,6 @@ import org.ironmaple.simulation.drivesims.configs.SwerveModuleSimulationConfig;
 import org.ironmaple.simulation.motorsims.SimulatedBattery;
 import org.ironmaple.simulation.motorsims.SimulatedMotorController;
 import org.ironmaple.simulation.seasonspecific.rebuilt2026.RebuiltFuelOnField;
-import org.ironmaple.simulation.seasonspecific.rebuilt2026.RebuiltFuelOnFly;
 
 /**
  *
@@ -132,7 +129,7 @@ public class MapleSimSwerveDrivetrain {
 				IntakeSimulation.OverTheBumperIntake(
 						"Fuel",
 						mapleSimDrive,
-						Units.Meters.of(Units.Meters.convertFrom(30, Units.Inches)),
+						Units.Meters.of(Units.Meters.convertFrom(10, Units.Inches)),
 						Units.Meters.of(Units.Meters.convertFrom(10, Units.Inches)),
 						IntakeSide.FRONT,
 						30);

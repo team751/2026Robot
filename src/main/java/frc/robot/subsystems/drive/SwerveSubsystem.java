@@ -211,7 +211,7 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
     }
 
     public void bigResetPose() {
-        this.resetPose(new Pose2d(0.0, 0.0, this.getPigeon2().getRotation2d()));
+        this.resetPose(new Pose2d(0.0, 0.0, new Rotation2d()));
     }
 
     /**

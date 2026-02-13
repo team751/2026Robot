@@ -14,7 +14,6 @@ import edu.wpi.first.cscore.HttpCamera;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.units.Units;
-import edu.wpi.first.wpilibj.DriverStation;
 import limelight.Limelight;
 /* TODO: Rough Overview of Vision/Limelight
  * The Limelight/Vision subsystem is used to help determine
@@ -87,44 +86,25 @@ public class LimelightSubsystem extends SubsystemBase {
   public Pose2d getBotPoseFront() {
     // Sets the robot orientation before getting the robot position
     LimelightHelpers.SetRobotOrientation(LimelightConstants.LimelightBack.name, drive.getRotation3d().getZ(), 0.0, 0.0, 0.0, 0.0, 0.0);
-    
-    // Gets the current side (alliance)
-    var alliance = DriverStation.getAlliance();
 
-    // If the alliance is red, get the robot position in the Red Alliance coordinates
-    // Otherwise get the robot position in the Blue Alliance coordinates
-    if (alliance.get() == DriverStation.Alliance.Red) {
-      if (!(LimelightHelpers.getBotPoseEstimate_wpiRed(LimelightConstants.LimelightFront.name).pose.getX() == 0 && LimelightHelpers.getBotPoseEstimate_wpiRed(LimelightConstants.LimelightFront.name).pose.getY() == 0)) {
-        return LimelightHelpers.getBotPoseEstimate_wpiRed(LimelightConstants.LimelightFront.name).pose;
-      } else {
-        return null;
-      }
-    } else {
-      if (!(LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name).pose.getX() == 0 && LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name).pose.getY() == 0)) {
-        return LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name).pose;
-      } else {
-        return null;
-      }
+    // If theres no april tag seen return null
+    if (LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name).pose.getX() == 0.0 && LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name).pose.getY() == 0.0) {
+      return null;
     }
+    
+    return LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name).pose;
   }
 
   public Pose2d getBotPoseBack() {
+    // Sets the robot orientation before getting the robot position
     LimelightHelpers.SetRobotOrientation(LimelightConstants.LimelightBack.name, drive.getRotation3d().getZ(), 0.0, 0.0, 0.0, 0.0, 0.0);
-    var alliance = DriverStation.getAlliance();
-
-    if (alliance.get() == DriverStation.Alliance.Red) {
-      if (!(LimelightHelpers.getBotPoseEstimate_wpiRed(LimelightConstants.LimelightBack.name).pose.getX() == 0 && LimelightHelpers.getBotPoseEstimate_wpiRed(LimelightConstants.LimelightBack.name).pose.getY() == 0)) {
-        return LimelightHelpers.getBotPoseEstimate_wpiRed(LimelightConstants.LimelightBack.name).pose;
-      } else {
-        return null;
-      }
-    } else {
-      if (!(LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightBack.name).pose.getX() == 0 && LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightBack.name).pose.getY() == 0)) {
-        return LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightBack.name).pose;
-      } else {
-        return null;
-      }
+    
+    // If theres no april tag seen return null
+    if (LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightBack.name).pose.getX() == 0.0 && LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightBack.name).pose.getY() == 0.0) {
+      return null;
     }
+    
+    return LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightBack.name).pose;
   }
 
   // Interpolates (averages) the front and back camera positions

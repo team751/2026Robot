@@ -8,6 +8,5 @@ public class Constants {
 	@Deprecated
 	public static final String drivebus = "Drivebus";
 
-	/** True when running in simulation/test environments where HAL is not initialized */
 	public static final boolean disableHAL = !HAL.initialize(500, 0);
 }
