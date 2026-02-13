@@ -10,6 +10,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Joystick.AxisType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
@@ -39,8 +40,10 @@ public class ControlBoard {
 	private SwerveSubsystem drive = SwerveSubsystem.getInstance();
 	private boolean preciseControl = false;
 	private boolean autoAim = false;
+	private boolean axisAlign = false;
 
 	private PIDController autoAimController = new PIDController(0.4, 0.0, 0.01);
+	private ProfiledPIDController axisAlignController = new ProfiledPIDController(1.5, 0, 0.4, new Constraints(1, 1));
 
 	private enum ControllerPreset {
 		DRIVER(0),
@@ -116,7 +119,11 @@ public class ControlBoard {
 						.withName("Precise Control Toggle")); // Fight me owen
 		controller.leftBumper.whileTrue(
 				new StartEndCommand(() -> autoAim = true, () -> autoAim = false)
-						.withName("Brake Toggle")); // Fight me sender
+						.withName("Auto Aim Toggle")); // Fight me sender
+
+		controller.rightJoystickButton.whileTrue(
+				new StartEndCommand(() -> axisAlign = true, () -> axisAlign = false)
+						.withName("Axis Align Toggle")); // Fight me sender
 
 		controller.circleButton.onTrue(new InstantCommand(() -> drive.setRobotRotationByAlliance()));
 	}
@@ -128,9 +135,7 @@ public class ControlBoard {
 
 		double scale = preciseControl ? 0.25 : 1.0;
 		double rotScale = preciseControl ? 0.50 : 1.0;
-		
-		double x = driver.leftVerticalJoystick.getAsDouble();
-		double y = driver.leftHorizontalJoystick.getAsDouble();
+
 
 		double rawStickRot = driver.rightHorizontalJoystick.getAsDouble();
 		double rot = rotScale * SwerveConstants.maxAngularSpeed * (Math.copySign(rawStickRot * rawStickRot, rawStickRot));
@@ -141,6 +146,16 @@ public class ControlBoard {
 			SmartDashboard.putNumber("target offness", angleDiff-robotPose.getRotation().getDegrees());
 			rot = autoAimController.calculate(robotPose.getRotation().getDegrees(), angleDiff);
 			SmartDashboard.putNumber("pid value", rot);
+		}
+		
+		double x = driver.leftVerticalJoystick.getAsDouble();
+		double y;
+		if (axisAlign){
+			Pose2d robotPose = drive.getPose();
+			y = -axisAlignController.calculate(robotPose.getY(), 0.5);
+			rot = autoAimController.calculate(robotPose.getRotation().getDegrees(), 180);
+		}else{
+			y = driver.leftHorizontalJoystick.getAsDouble();
 		}
 
 		return driveRequest
