@@ -12,7 +12,7 @@ public class ControlBoard {
 	/* Controllers */
 	private PS5Controller driver = null;
 	private PS5Controller operator = null;
-	private LimitSwitch climber = LimitSwitch.getInstance();
+	private LimitSwitch limitSwitch = LimitSwitch.getInstance();
 
 	private enum ControllerPreset {
 		DRIVER(0),
