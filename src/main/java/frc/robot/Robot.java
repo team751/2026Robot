@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.lib.TunableParameter;
 import frc.robot.subsystems.limit_switch.LimitSwitch;
+import frc.robot.subsystems.motor.Motor;
 import frc.robot.util.ControlBoard;
 
 public class Robot extends TimedRobot {
@@ -15,8 +16,13 @@ public class Robot extends TimedRobot {
   private final CommandScheduler scheduler;
   private final ControlBoard controlBoard;
 
+  private final Motor motor;
+  private final LimitSwitch limitSwitch;
+
   public Robot() {
     scheduler = CommandScheduler.getInstance();
+    motor = Motor.getInstance();
+    limitSwitch = LimitSwitch.getInstance();
 
     ControlBoard tmpControlBoard = null;
     try {
@@ -26,7 +32,6 @@ public class Robot extends TimedRobot {
     }
     this.controlBoard = tmpControlBoard;
   }
-
 
   @Override
   public void robotPeriodic() {

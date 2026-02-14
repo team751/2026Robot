@@ -9,7 +9,7 @@ public class LimitSwitch extends SubsystemBase {
 
 private static LimitSwitch instance;
 
-DigitalInput limitSwitch = new DigitalInput(0);
+private static DigitalInput limitSwitch = new DigitalInput(0);
 
 public static LimitSwitch getInstance() {
 	if (instance == null) instance = new LimitSwitch();
@@ -20,13 +20,11 @@ private LimitSwitch() {}
 
 @Override
 public void periodic() {
-	if (limitSwitch.get()) {
-		Motor.runMotor(0.1);
-	} else {
-		Motor.stopMotor(); 
-	}
-
 	SmartDashboard.putBoolean("Pressed",limitSwitch.get());
+}
+
+public static boolean getSwitch() {
+	return limitSwitch.get();
 }
 
 }
