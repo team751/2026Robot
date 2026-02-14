@@ -4,7 +4,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.lib.PS5Controller;
-import frc.robot.subsystems.limit_switch.LimitSwitch;
 import frc.robot.subsystems.motor.Motor;
 
 public class ControlBoard {
@@ -13,7 +12,6 @@ public class ControlBoard {
 	/* Controllers */
 	private PS5Controller driver = null;
 	private PS5Controller operator = null;
-	private LimitSwitch limitSwitch = LimitSwitch.getInstance();
 
 	private enum ControllerPreset {
 		DRIVER(0),
@@ -67,8 +65,12 @@ public class ControlBoard {
 	}
 
 	private void configureDriverBindings(PS5Controller controller) {
+		controller.leftTrigger.whileTrue(
+			new StartEndCommand(() -> Motor.constantSpin(), () -> Motor.stopMotor())
+		);
+
 		controller.triangleButton.whileTrue(
-			new InstantCommand(() -> Motor.runMotor(0.1))
+			new InstantCommand(() -> Motor.runMotor(90))
 		);
 
 		controller.circleButton.onTrue(
