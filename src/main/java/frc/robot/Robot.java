@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.lib.TunableParameter;
-import frc.robot.subsystems.climber.ClimberSubsystem;
+import frc.robot.subsystems.limit_switch.LimitSwitch;
 import frc.robot.util.ControlBoard;
 
 public class Robot extends TimedRobot {
@@ -57,12 +57,12 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    ClimberSubsystem.getInstance().zeroClimber();
+
    }
 
   @Override
   public void robotInit(){
-    ClimberSubsystem.getInstance().zeroClimber();
+
   }
 
   @Override

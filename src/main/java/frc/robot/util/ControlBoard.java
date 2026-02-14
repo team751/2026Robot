@@ -4,8 +4,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.lib.PS5Controller;
-//import frc.robot.subsystems.Superstructure;
-import frc.robot.subsystems.climber.ClimberSubsystem;
+import frc.robot.subsystems.limit_switch.LimitSwitch;
 
 public class ControlBoard {
 	private static ControlBoard instance;
@@ -13,7 +12,7 @@ public class ControlBoard {
 	/* Controllers */
 	private PS5Controller driver = null;
 	private PS5Controller operator = null;
-	private ClimberSubsystem climber = ClimberSubsystem.getInstance();
+	private LimitSwitch climber = LimitSwitch.getInstance();
 
 	private enum ControllerPreset {
 		DRIVER(0),
@@ -66,24 +65,7 @@ public class ControlBoard {
 		}
 	}
 
-	private void configureDriverBindings(PS5Controller controller) {
-		// controller.leftTrigger.whileTrue(
-		// 	new StartEndCommand(() -> climber.moveUp180(), () -> climber.stopMotors())
-		// );
-
-		// controller.rightTrigger.whileTrue(
-		// 	new StartEndCommand(() -> climber.moveDown180(), () -> climber.stopMotors())
-		// );
-
-		controller.triangleButton.whileTrue(
-			new StartEndCommand(() -> climber.spinUntil(10), () -> climber.stopMotors()
-		));
-
-		controller.circleButton.whileTrue(
-			new StartEndCommand(() -> climber.spinUntil(-10), () -> climber.stopMotors()
-		));
-		
-	}
+	private void configureDriverBindings(PS5Controller controller) {}
 
 	private void configureOperatorBindings(PS5Controller controller) {}
 }
