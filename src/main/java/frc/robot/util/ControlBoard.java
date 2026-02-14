@@ -67,36 +67,20 @@ public class ControlBoard {
 	}
 
 	private void configureDriverBindings(PS5Controller controller) {
-		// controller.triangleButton.whileTrue(
-		// 	new StartEndCommand(() -> /* COMMAND ON START */, () -> /* COMMAND ON END */)
-		// 	.withName("Shooter Shooty")
+		// controller.leftTrigger.whileTrue(
+		// 	new StartEndCommand(() -> climber.moveUp180(), () -> climber.stopMotors())
 		// );
-		// like lwk just kinda copy that lol, but in the COMMAND ON START and COMMAND ON END sections, put a method call
-		// ex:
-		// (in ClimberSubsystem.java)
-		// public static void moveUp() {
-		// 		motor.move();
-		// }
-		//
-		// (in ControlBoard.java)
-		// ...
-		// new StartEndCommand(() -> climber.moveUp(), () -> climber.stopMotors())
-		// ...
 
-		controller.leftTrigger.whileTrue(
-			new StartEndCommand(() -> climber.moveUp180(), () -> climber.stopMotors())
-		);
-
-		controller.rightTrigger.whileTrue(
-			new StartEndCommand(() -> climber.moveDown180(), () -> climber.stopMotors())
-		);
+		// controller.rightTrigger.whileTrue(
+		// 	new StartEndCommand(() -> climber.moveDown180(), () -> climber.stopMotors())
+		// );
 
 		controller.triangleButton.whileTrue(
-			new StartEndCommand(() -> climber.spinUntil(20), () -> climber.stopMotors()
+			new StartEndCommand(() -> climber.spinUntil(10), () -> climber.stopMotors()
 		));
 
 		controller.circleButton.whileTrue(
-			new StartEndCommand(() -> climber.spinUntil(10), () -> climber.stopMotors()
+			new StartEndCommand(() -> climber.spinUntil(-10), () -> climber.stopMotors()
 		));
 		
 	}

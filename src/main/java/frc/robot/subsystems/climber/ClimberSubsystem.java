@@ -1,10 +1,12 @@
 package frc.robot.subsystems.climber;
 
+import com.ctre.phoenix6.controls.DifferentialFollower;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 // import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.StrictFollower;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
 
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -45,6 +47,7 @@ public void periodic() {
 			// stop the motors and set the spinning value to false
 			stopSpinUntil();
 			spinning = false;
+			zeroClimber();
 		}
 
 		// If it is inverted, check if the value of the motor is less than or equal to the target and then 
@@ -52,17 +55,14 @@ public void periodic() {
 			// stop the motors and set the spinning value to false.
 			stopSpinUntil();
 			spinning = false;
+			zeroClimber();
 		}	
 	}
 }
 
 
-public void moveVerySlowly() {
-		ClimberConstants.leftClimber.setVoltage(0.5);
-		ClimberConstants.rightClimber.setVoltage(0.5);
-}
-
 public void spinUntil(double value) {
+
 	// Error and setup
 	spinTarget = value - ClimberConstants.averageMotorError;
 	spinning = true;
@@ -124,15 +124,5 @@ public void stopMotors(){
 public void zeroClimber(){
 	leftClimber.setPosition(0);
 	rightClimber.setPosition(0);
-}
-
-public void moveUpManual(){
-	leftClimber.set(0.3);
-	rightClimber.set(0.3);
-}
-
-public void moveDownManual(){
-	leftClimber.set(-0.3);
-	rightClimber.set(-0.3);
 }
 }
