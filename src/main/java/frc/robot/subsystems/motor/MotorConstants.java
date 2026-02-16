@@ -14,9 +14,9 @@ public class MotorConstants {
        motor1Config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         motor1Config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     
-        motor1Config.Slot0.kP = 30.0;
-        motor1Config.Slot0.kI = 0.0; // Scary spooky value dont touch it
-        motor1Config.Slot0.kD = 0.0;
+        motor1Config.Slot0.kP = 20.0;
+        motor1Config.Slot0.kI = 1; // Scary spooky value dont touch it
+        motor1Config.Slot0.kD = 5;
 
         motor1Config.Slot0.kS = 0.0;
         motor1Config.Slot0.kV = 0.0;

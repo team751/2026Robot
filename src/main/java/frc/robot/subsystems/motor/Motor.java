@@ -9,6 +9,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj.DutyCycle;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -43,6 +44,8 @@ public class Motor extends SubsystemBase {
     }
 
     public static void constantSpin() {
+        stopMotor();
+        
         running = true;
         if (running) {
             motor1.setControl(new DutyCycleOut(0.1));
