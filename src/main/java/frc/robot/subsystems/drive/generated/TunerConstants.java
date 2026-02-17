@@ -126,7 +126,7 @@ public class TunerConstants {
 
 	private static final boolean kInvertLeftSide = false;
 	private static final boolean kInvertRightSide = true;
-	private static final int kPigeonId = 2;
+	private static final int kPigeonId = 1;
 
 	// These are only used for simulation
 	private static final MomentOfInertia kSteerInertia = Units.KilogramSquareMeters.of(0.004);
@@ -171,8 +171,8 @@ public class TunerConstants {
 	private static final int kFrontLeftDriveMotorId = 10;
 	private static final int kFrontLeftSteerMotorId = 11;
 	private static final int kFrontLeftEncoderId = 12;
-	private static final Angle kFrontLeftEncoderOffset = Units.Rotations.of(0.415527488);
-	// 0.476074
+	private static final Angle kFrontLeftEncoderOffset = Units.Rotations.of(-0.041016);
+	// -0.041016
 	private static final boolean kFrontLeftSteerMotorInverted = true;
 	private static final boolean kFrontLeftEncoderInverted = false;
 
@@ -183,8 +183,8 @@ public class TunerConstants {
 	private static final int kFrontRightDriveMotorId = 20;
 	private static final int kFrontRightSteerMotorId = 21;
 	private static final int kFrontRightEncoderId = 22;
-	private static final Angle kFrontRightEncoderOffset = Units.Rotations.of(0.474854);
-	// 0.416260
+	private static final Angle kFrontRightEncoderOffset = Units.Rotations.of(-0.497070);
+	// -0.497070
 	private static final boolean kFrontRightSteerMotorInverted = true;
 	private static final boolean kFrontRightEncoderInverted = false;
 
@@ -195,8 +195,8 @@ public class TunerConstants {
 	private static final int kBackLeftDriveMotorId = 40;
 	private static final int kBackLeftSteerMotorId = 41;
 	private static final int kBackLeftEncoderId = 42;
-	private static final Angle kBackLeftEncoderOffset = Units.Rotations.of(0.472900488);
-	// -0.028809244
+	private static final Angle kBackLeftEncoderOffset = Units.Rotations.of(0.445557);
+	// 0.445557
 	private static final boolean kBackLeftSteerMotorInverted = true;
 	private static final boolean kBackLeftEncoderInverted = false;
 
@@ -207,8 +207,8 @@ public class TunerConstants {
 	private static final int kBackRightDriveMotorId = 30;
 	private static final int kBackRightSteerMotorId = 31;
 	private static final int kBackRightEncoderId = 32;
-	private static final Angle kBackRightEncoderOffset = Units.Rotations.of(-0.027100);
-	// 0.472168 
+	private static final Angle kBackRightEncoderOffset = Units.Rotations.of(-0.380371244);
+	// -0.380371244
 	private static final boolean kBackRightSteerMotorInverted = true;
 	private static final boolean kBackRightEncoderInverted = false;
 
