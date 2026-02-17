@@ -13,8 +13,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ClimberSubsystem extends SubsystemBase {
-private final TalonFX leftClimber = new TalonFX(10);
-private final TalonFX rightClimber = new TalonFX(11);
+private final TalonFX leftClimber = ClimberConstants.leftClimber;
+private final TalonFX rightClimber = ClimberConstants.rightClimber;
 
 private final PositionVoltage positionRequest = new PositionVoltage(0);
 
@@ -35,15 +35,15 @@ private ClimberSubsystem() {}
 
 @Override
 public void periodic() {
-	SmartDashboard.putNumber("Left Motor Pos", ClimberConstants.leftClimber.getPosition().getValueAsDouble());
-	SmartDashboard.putNumber("Right Motor Pos", ClimberConstants.rightClimber.getPosition().getValueAsDouble());
+	SmartDashboard.putNumber("Left Motor Pos", leftClimber.getPosition().getValueAsDouble());
+	SmartDashboard.putNumber("Right Motor Pos", rightClimber.getPosition().getValueAsDouble());
 
 	// Spin to target check
 	if (spinning) {
 		SmartDashboard.putNumber("SpinUntil/Target", spinTarget);
 
 		// If its not inverted, check if the value of the motor is greater than or equal to the target and then
-		if (!inverted && ClimberConstants.leftClimber.getPosition().getValueAsDouble() >= spinTarget) {
+		if (!inverted && leftClimber.getPosition().getValueAsDouble() >= spinTarget) {
 			// stop the motors and set the spinning value to false
 			stopSpinUntil();
 			spinning = false;
@@ -51,7 +51,7 @@ public void periodic() {
 		}
 
 		// If it is inverted, check if the value of the motor is less than or equal to the target and then 
-		if (inverted && ClimberConstants.leftClimber.getPosition().getValueAsDouble() <= spinTarget) {
+		if (inverted && leftClimber.getPosition().getValueAsDouble() <= spinTarget) {
 			// stop the motors and set the spinning value to false.
 			stopSpinUntil();
 			spinning = false;
@@ -69,18 +69,18 @@ public void spinUntil(double value) {
 
 	if (spinning) {
 		// Inversion check
-		if (ClimberConstants.leftClimber.getPosition().getValueAsDouble() > spinTarget) {
+		if (leftClimber.getPosition().getValueAsDouble() > spinTarget) {
 			inverted = true;
 
 			// Set the motors to spin
-			ClimberConstants.leftClimber.setControl(new DutyCycleOut(-0.1));
-			ClimberConstants.rightClimber.setControl(new StrictFollower(10));
+			leftClimber.setControl(new DutyCycleOut(-0.1));
+			rightClimber.setControl(new StrictFollower(10));
 		} else {
 			inverted = false;
 
 			// Set the motors to spin
-			ClimberConstants.leftClimber.setControl(new DutyCycleOut(0.1));
-			ClimberConstants.rightClimber.setControl(new StrictFollower(10));
+			leftClimber.setControl(new DutyCycleOut(0.1));
+			rightClimber.setControl(new StrictFollower(10));
 		}
 		
 	}
@@ -90,7 +90,7 @@ public void stopSpinUntil() {
 	spinning = false;
 
 	// Get the average error
-	double error = spinTarget - ClimberConstants.leftClimber.getPosition().getValueAsDouble();
+	double error = spinTarget - leftClimber.getPosition().getValueAsDouble();
 	ClimberConstants.averageMotorError = (ClimberConstants.averageMotorError + error) / 3;
 
 	stopMotors();
