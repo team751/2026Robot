@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.lib.TunableParameter;
 import frc.robot.subsystems.drive.Odometry;
 import frc.robot.subsystems.drive.SwerveSubsystem;
-import frc.robot.subsystems.vision.LimelightSubsystem;
+//import frc.robot.subsystems.vision.LimelightSubsystem;
 import frc.robot.util.ControlBoard;
 
 public class Robot extends TimedRobot {
@@ -112,7 +112,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    LimelightSubsystem.getInstance();
+    //LimelightSubsystem.getInstance();
 
     var rot = Rotation2d.kZero;
     if (DriverStation.getAlliance().get() == Alliance.Red) {

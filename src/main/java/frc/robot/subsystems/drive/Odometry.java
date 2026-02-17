@@ -7,7 +7,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.vision.LimelightSubsystem;
+//import frc.robot.subsystems.vision.LimelightSubsystem;
 
 /* TODO: Rough overview of what Odometry.java does and how it works.
  * Odometry tells the driver where the robot is at all times.
@@ -37,13 +37,13 @@ import frc.robot.subsystems.vision.LimelightSubsystem;
 public class Odometry extends SubsystemBase {
 	private static Odometry instance;
 	private final SwerveSubsystem drive;
-	private final LimelightSubsystem limelights;
+	//private final LimelightSubsystem limelights;
     private Field2d field = new Field2d();
 	private Pose2d robotPose;
 
 	public Odometry() {
 		this.drive = SwerveSubsystem.getInstance();
-		this.limelights = LimelightSubsystem.getInstance();
+		//this.limelights = LimelightSubsystem.getInstance();
 		this.robotPose = new Pose2d();
 	}
 
@@ -73,13 +73,13 @@ public class Odometry extends SubsystemBase {
 
 		// Add's two vision measure ments to SwerveDrive so that they can be filtered by it
 		//drive.setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 9999999));
-		if (limelights.getBotPoseFront() != null) {
-			drive.addVisionMeasurement(new Pose2d(limelights.getBotPoseFront().getTranslation(), drive.getPose().getRotation()), time);
-		}
-		if (limelights.getBotPoseBack() != null) {
-			Pose2d backPose = limelights.getBotPoseBack();
-			drive.addVisionMeasurement(new Pose2d(backPose.getTranslation(), drive.getPose().getRotation()), time);
-		}
+		// if (limelights.getBotPoseFront() != null) {
+		// 	drive.addVisionMeasurement(new Pose2d(limelights.getBotPoseFront().getTranslation(), drive.getPose().getRotation()), time);
+		// }
+		// if (limelights.getBotPoseBack() != null) {
+		// 	Pose2d backPose = limelights.getBotPoseBack();
+		// 	drive.addVisionMeasurement(new Pose2d(backPose.getTranslation(), drive.getPose().getRotation()), time);
+		// }
 
 
 		// Sets the Odometry robotPose variable (for easy/more normal access to the robot position)
@@ -97,6 +97,6 @@ public class Odometry extends SubsystemBase {
         SmartDashboard.putData(field);
 
 		// Tells you in SmartDashboard (or Elastic if u use that) whether or not the code is interpolating apriltag positions
-		SmartDashboard.putBoolean("Interpolating?", limelights.hasTarget());
+		//SmartDashboard.putBoolean("Interpolating?", limelights.hasTarget());
     }
 }
