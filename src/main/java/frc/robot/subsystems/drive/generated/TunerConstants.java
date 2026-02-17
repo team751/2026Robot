@@ -98,12 +98,12 @@ public class TunerConstants {
 	private static final Pigeon2Configuration pigeonConfigs =
 			new Pigeon2Configuration().withMountPose(
 				new MountPoseConfigs()
-					.withMountPoseYaw(1.066)
-					.withMountPosePitch(0.238)
-					.withMountPoseRoll(-0.978));
-	// New Yaw: -87.09540557861328
-	// New Pitch: 0.4624914824962616
-	// New Roll: -179.29147338867188
+					.withMountPoseYaw(0.7111079096794128)
+					.withMountPosePitch(-0.2132425159215927)
+					.withMountPoseRoll(-1.2683842182159424));
+	// Old Yaw: 1.066
+	// Old Pitch: 0.238
+	// Old Roll: -0.978
 
 
 	// CAN bus that the devices are located on;
@@ -126,7 +126,7 @@ public class TunerConstants {
 
 	private static final boolean kInvertLeftSide = false;
 	private static final boolean kInvertRightSide = true;
-	private static final int kPigeonId = 1;
+	private static final int kPigeonId = 2;
 
 	// These are only used for simulation
 	private static final MomentOfInertia kSteerInertia = Units.KilogramSquareMeters.of(0.004);
