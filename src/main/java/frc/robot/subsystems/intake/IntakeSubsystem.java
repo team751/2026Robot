@@ -6,7 +6,6 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.lights.LightsSubsystem;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -98,7 +97,6 @@ private void setExtenderMotor(double voltage) {
 	// 	requestedRetracting = false;
 	// }
 	}
-	LightsSubsystem.getInstance().requestBlinking(state != IntakeState.IDLE);
 	SmartDashboard.putString("Intake/Intake State", state.toString());
 	SmartDashboard.putNumber("Intake/Intake Speed", intakeMotor.getVelocity().getValueAsDouble());
 	SmartDashboard.putNumber("Extender/Extender Speed", extenderMotor.getVelocity().getValueAsDouble());
