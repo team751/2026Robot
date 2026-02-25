@@ -34,7 +34,7 @@ public class IntakeConstants {
 	intakeConfig.Feedback.SensorToMechanismRatio = 1;
 
 	intakeConfig.CurrentLimits.StatorCurrentLimit = 120;
-	intakeConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+	intakeConfig.CurrentLimits.StatorCurrentLimitEnable = false;
 	intakeConfig.TorqueCurrent.PeakForwardTorqueCurrent = 40;
 	intakeConfig.TorqueCurrent.PeakReverseTorqueCurrent = -40;
 
@@ -59,7 +59,7 @@ public static final CTREConfig<TalonFX, TalonFXConfiguration> extenderMotorConfi
 	extenderConfig.Feedback.SensorToMechanismRatio = 1;
 
 	extenderConfig.CurrentLimits.StatorCurrentLimit = 120;
-	extenderConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+	extenderConfig.CurrentLimits.StatorCurrentLimitEnable = false;
 	extenderConfig.TorqueCurrent.PeakForwardTorqueCurrent = 40;
 	extenderConfig.TorqueCurrent.PeakReverseTorqueCurrent = -40;
 
