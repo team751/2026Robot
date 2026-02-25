@@ -29,8 +29,8 @@
 // 	shooterConfig.Feedback.RotorToSensorRatio = 1;
 // 	shooterConfig.Feedback.SensorToMechanismRatio = 1;
 
-// 	shooterConfig.CurrentLimits.StatorCurrentLimit = 40; // TODO: Change
-// 	shooterConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+// 	shooterConfig.CurrentLimits.StatorCurrentLimit = 120;
+// 	shooterConfig.CurrentLimits.StatorCurrentLimitEnable = false;
 
 // 	shooterConfig.TorqueCurrent.PeakForwardTorqueCurrent = 40;
 // 	shooterConfig.TorqueCurrent.PeakReverseTorqueCurrent = -40;
