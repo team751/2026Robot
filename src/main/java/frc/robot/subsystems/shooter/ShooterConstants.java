@@ -29,6 +29,10 @@ public static final CTREConfig<TalonFX, TalonFXConfiguration> flywheelMotorConfi
 
 		flywheelConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 		flywheelConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+		flywheelConfig.CurrentLimits.StatorCurrentLimit = 120;
+		flywheelConfig.CurrentLimits.StatorCurrentLimitEnable = false;
+		flywheelConfig.TorqueCurrent.PeakForwardTorqueCurrent = 40;
+		flywheelConfig.TorqueCurrent.PeakReverseTorqueCurrent = -40;
 	}
 
 public static final CTREConfig<TalonFX, TalonFXConfiguration> backMotorConfig = 
@@ -49,6 +53,10 @@ static {
 
 	backConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 	backConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+	backConfig.CurrentLimits.StatorCurrentLimit = 120;
+	backConfig.CurrentLimits.StatorCurrentLimitEnable = false;
+	backConfig.TorqueCurrent.PeakForwardTorqueCurrent = 40;
+	backConfig.TorqueCurrent.PeakReverseTorqueCurrent = -40;
 }
 
 }
