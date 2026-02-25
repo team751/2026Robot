@@ -30,6 +30,10 @@ public class ClimberConstants {
         leftClimberConfig.Slot0.kV = 0.0;
         leftClimberConfig.Slot0.kG = 0.0;
         leftClimberConfig.Slot0.kA = 0.0;
+        leftClimberConfig.CurrentLimits.StatorCurrentLimit = 120;
+        leftClimberConfig.CurrentLimits.StatorCurrentLimitEnable = false;
+        leftClimberConfig.TorqueCurrent.PeakForwardTorqueCurrent = 40;
+        leftClimberConfig.TorqueCurrent.PeakReverseTorqueCurrent = -40;
     }
 
     static {
@@ -46,6 +50,10 @@ public class ClimberConstants {
         rightClimberConfig.Slot0.kV = 0.0;
         rightClimberConfig.Slot0.kG = 0.0;
         rightClimberConfig.Slot0.kA = 0.0;
+        rightClimberConfig.CurrentLimits.StatorCurrentLimit = 120;
+        rightClimberConfig.CurrentLimits.StatorCurrentLimitEnable = false;
+        rightClimberConfig.TorqueCurrent.PeakForwardTorqueCurrent = 40;
+        rightClimberConfig.TorqueCurrent.PeakReverseTorqueCurrent = -40;
     }
 
 }
