@@ -3,6 +3,7 @@ package frc.robot.util;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.lib.PS5Controller;
 //import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
@@ -67,39 +68,26 @@ public class ControlBoard {
 	}
 
 	private void configureDriverBindings(PS5Controller controller) {
-		controller.triangleButton.whileTrue(
-			new StartEndCommand(() -> shooter.newShooterSpeed(1,1), () -> shooter.requestIdle())
-		);
-
-		controller.dLeft.whileTrue(
-			new StartEndCommand(() -> shooter.newShooterSpeed(2,2), () -> shooter.requestIdle())
-		);
-
-		controller.dUp.whileTrue(
-			new StartEndCommand(() -> shooter.newShooterSpeed(5,5), () -> shooter.requestIdle())
-		);
-        
-		controller.dRight.whileTrue(
-			new StartEndCommand(() -> shooter.newShooterSpeed(7,7), () -> shooter.requestIdle())
-		);
-
 		controller.leftBumper.whileTrue(
-			new StartEndCommand(() -> shooter.newShooterSpeed(2, 0), () -> shooter.requestIdle())
+			new StartEndCommand(() -> shooter.sysIdQuasistatic(SysIdRoutine.Direction.kForward), () -> shooter.requestIdle())
+		);
+
+		controller.leftTrigger.whileTrue(
+			new StartEndCommand(() -> shooter.sysIdQuasistatic(SysIdRoutine.Direction.kReverse), () -> shooter.requestIdle())
 		);
 
 		controller.rightBumper.whileTrue(
-			new StartEndCommand(() -> shooter.newShooterSpeed(0, 2), () -> shooter.requestIdle())
+			new StartEndCommand(() -> shooter.sysIdDynamic(SysIdRoutine.Direction.kForward), () -> shooter.requestIdle())
 		);
 
-		// controller.rightTrigger.whileTrue(
-		// 	new StartEndCommand(() -> shooter.newShooterSpeed(controller.getRightTrigger()), () -> shooter.requestIdle())
-		// );
-
-		// controller.rightTrigger.whileTrue(
-		// 	new StartEndCommand(() -> System.out.println(controller.getRightTrigger()), () -> System.out.println("Stopped"))
-		// );
-
+		controller.rightTrigger.whileTrue(
+			new StartEndCommand(() -> shooter.sysIdDynamic(SysIdRoutine.Direction.kReverse), () -> shooter.requestIdle())
+		);
 		
+
+		controller.circleButton.whileTrue(
+			new InstantCommand(() -> shooter.stopShooter())
+		);
 	}
 
 	private void configureOperatorBindings(PS5Controller controller) {}
