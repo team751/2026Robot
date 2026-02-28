@@ -124,20 +124,6 @@ public class FieldConstants {
     /** Red left trench (higher Y, red side of field). */
 	TRENCH_RED_LEFT(new Pose2d(11.9149, 6.6385, Rotation2d.fromDegrees(-90)), false, ElementType.TRENCH),
 
-    // ----- TRENCHES -----
-
-    /** Blue right trench (lower Y, blue side of field). */
-    TRENCH_BLUE_RIGHT(new Pose2d(4.6251, 1.4315, Rotation2d.fromDegrees(90)), true),
-
-    /** Blue left trench (higher Y, blue side of field). */
-    TRENCH_BLUE_LEFT(new Pose2d(4.6251, 6.6385, Rotation2d.fromDegrees(-90)), true),
-
-    /** Red right trench (lower Y, red side of field). */
-    TRENCH_RED_RIGHT(new Pose2d(11.9149, 1.4315, Rotation2d.fromDegrees(90)), false),
-
-    /** Red left trench (higher Y, red side of field). */
-    TRENCH_RED_LEFT(new Pose2d(11.9149, 6.6385, Rotation2d.fromDegrees(-90)), false),
-
     // ----- OUTPOSTS -----
 
     /** Blue outpost — human player station on the blue alliance wall. */
