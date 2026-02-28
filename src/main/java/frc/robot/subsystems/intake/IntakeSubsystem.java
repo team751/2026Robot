@@ -19,11 +19,11 @@ private final VoltageOut intakeControl = new VoltageOut(0);
 private final VoltageOut extenderControl = new VoltageOut(0);
 	/* Limit Switches */
 	//TODO: Find ports for limit switches
-//	  DigitalInput ExtendLimitSwitch1 = new DigitalInput("TBD");
-//    DigitalInput ExtendLimitSwitch2 = new DigitalInput("TBD");
-//    DigitalInput ExtendLimitSwitch1 = new DigitalInput("TBD");
-//    DigitalInput RetractLimitSwitch = new DigitalInput("TBD");
-//    DigitalInput RetractLimitSwitch2 = new DigitalInput("TBD");
+//	  DigitalInput ExtendLimitL = new DigitalInput("TBD");
+//    DigitalInput ExtendLimitR = new DigitalInput("TBD");
+
+//    DigitalInput RetractLimitL = new DigitalInput("TBD");
+//    DigitalInput RetractLimitR = new DigitalInput("TBD");
   
 
 	/* State Machine Logic */
@@ -88,13 +88,13 @@ private void setExtenderMotor(double voltage) {
 		case EXTENDING -> setExtenderMotor(IntakeConstants.extenderSpeed);
 		case RETRACTING -> setExtenderMotor(IntakeConstants.retractorSpeed);
 	}
-	// if (state == IntakeState.EXTENDING && (ExtendLimitSwitch1.get() && ExtendLimitSwitch2.get())) {
-	// 	setExtenderMotor(0);
-	// 	requestedExtending = false;
+	// if (state == IntakeState.EXTENDING && (ExtendLimitL.get() && ExtendLimitR.get())) {
+	// 	requestIdle();
+	// setExtenderMotor(0);
 	// }
-	// if (state == IntakeState.RETRACTING && (RetractLimitSwitch.get() && RetractLimitSwitch2.get())) {
-	// 	setExtenderMotor(0);
-	// 	requestedRetracting = false;
+	// if (state == IntakeState.RETRACTING && (RetractLimitL.get() && RetractLimitR.get())) {
+	// 	requestIdle();
+	// setExtenderMotor(0);
 	// }
 	}
 	SmartDashboard.putString("Intake/Intake State", state.toString());
@@ -109,6 +109,7 @@ private void setExtenderMotor(double voltage) {
 	public void requestIdle() {
 		unsetAllRequests();
 		requestedIdle = true;
+		setExtenderMotor(0);
 	}
 	public void requestSpitting() {
 		requestedIntaking = false;

@@ -9,15 +9,16 @@ import frc.lib.CTREConfig;
 import frc.robot.Robot;
 
 public class IntakeConstants {
-	public static final double intakeSpeed = 12;
-	public static final double spitSpeed = 4;
-	public static final double extenderSpeed = 6;
-	public static final double retractorSpeed = -6;
+	// Lucas remember this is in volts. This is wayyyy to fast. 4, 6, & 12v of power is insane .-.
+	public static final double intakeSpeed = 12; // Prolly more like 4-5v (MAYBE 6v if we need it)
+	public static final double spitSpeed = 4; // 4 is fine, but 2.5v or 3v would take less power
+	public static final double extenderSpeed = 6; // Way way WAYY to fast. Its going to apply (and waste) a ton of power
+	public static final double retractorSpeed = -6; // Something more like 2v would be good
 
     public static final CTREConfig<TalonFX, TalonFXConfiguration> intakeMotorConfig =
 	new CTREConfig<>(TalonFXConfiguration::new);
 
-    static {
+    static { // Climber and swerve get their own bus's, so whatever we end up naming the last bus will be used for everything but climber and swerve
 		//TODO: Find CAN ID and bus for intake motor
 	//intakeMotorConfig.withName("Intake Motor").withCanID("TBS").withBus("TBD");
 
@@ -41,11 +42,15 @@ public class IntakeConstants {
 	intakeConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive; // Positive intake
 	intakeConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 }
+
+
+
+
 public static final CTREConfig<TalonFX, TalonFXConfiguration> extenderMotorConfig =
 	new CTREConfig<>(TalonFXConfiguration::new);
     
     static {
-	extenderMotorConfig.withName("Extender Motor").withCanID(52);
+	extenderMotorConfig.withName("Extender Motor").withCanID(52)/*.withBus("TBD") */;
 
 	TalonFXConfiguration extenderConfig = extenderMotorConfig.config;
 	extenderConfig.Slot0.kP = 0; // Increase until speed oscillates
