@@ -12,7 +12,7 @@ public class ClimberConstants {
     public static double averageMotorError = 0.3; // Starting average error, it will change later
 
 
-    public static final TalonFX leftClimber = new TalonFX(50);
+    public static final TalonFX leftClimber = new TalonFX(11);
     public static final TalonFX rightClimber = new TalonFX(51);
 
     private static TalonFXConfiguration leftClimberConfig = new TalonFXConfiguration();
