@@ -3,9 +3,15 @@ package frc.robot.subsystems.shooter;
 import java.util.function.Consumer;
 
 import com.ctre.phoenix6.SignalLogger;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.units.Unit;
+import edu.wpi.first.units.Units;
+import edu.wpi.first.units.VelocityUnit;
+import edu.wpi.first.units.VoltageUnit;
+import edu.wpi.first.units.measure.Velocity;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
@@ -58,24 +64,32 @@ private void setShooterMotor(double voltage1, double voltage2) {
 
 public void stopShooter() {
 	flywheelMotor.setControl(flywheelControl.withOutput(0));
-	SignalLogger.stop();
 }
 
-private SysIdRoutine routine = new SysIdRoutine(new SysIdRoutine.Config(), new SysIdRoutine.Mechanism(
+private SysIdRoutine routine = new SysIdRoutine(new SysIdRoutine.Config(
+	Units.Volts.of(0.5).per(Units.Seconds), 
+	Units.Volts.of(7), null,   (state) -> SignalLogger.writeString("Sysid", state.toString())), new SysIdRoutine.Mechanism(
                     volts -> flywheelMotor.setControl(
                         flywheelControl.withOutput(volts)
                     ),
-                    null,
+                  null,
                     this));
+
+public void startLogging() {
+	SignalLogger.start();
+}
+
+public void stopLogging() {
+	SignalLogger.stop();
+}
 
 
 public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-	SignalLogger.start();
   return routine.quasistatic(direction);
 }
 
 public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-	SignalLogger.start();
+
   return routine.dynamic(direction);
 }
 

@@ -68,20 +68,29 @@ public class ControlBoard {
 	}
 
 	private void configureDriverBindings(PS5Controller controller) {
+
+		controller.triangleButton.whileTrue(
+			new InstantCommand(() -> shooter.startLogging())
+		);
+
+		controller.crossButton.whileTrue(
+			new InstantCommand(() -> shooter.stopLogging())
+		);
+
 		controller.leftBumper.whileTrue(
-			new StartEndCommand(() -> shooter.sysIdQuasistatic(SysIdRoutine.Direction.kForward), () -> shooter.requestIdle())
+			shooter.sysIdQuasistatic(SysIdRoutine.Direction.kForward)
 		);
 
 		controller.leftTrigger.whileTrue(
-			new StartEndCommand(() -> shooter.sysIdQuasistatic(SysIdRoutine.Direction.kReverse), () -> shooter.requestIdle())
+			shooter.sysIdQuasistatic(SysIdRoutine.Direction.kReverse)
 		);
 
 		controller.rightBumper.whileTrue(
-			new StartEndCommand(() -> shooter.sysIdDynamic(SysIdRoutine.Direction.kForward), () -> shooter.requestIdle())
+			shooter.sysIdDynamic(SysIdRoutine.Direction.kForward)
 		);
 
 		controller.rightTrigger.whileTrue(
-			new StartEndCommand(() -> shooter.sysIdDynamic(SysIdRoutine.Direction.kReverse), () -> shooter.requestIdle())
+			shooter.sysIdDynamic(SysIdRoutine.Direction.kReverse)
 		);
 		
 

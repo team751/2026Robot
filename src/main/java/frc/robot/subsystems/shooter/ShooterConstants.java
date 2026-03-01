@@ -16,7 +16,7 @@ public static final CTREConfig<TalonFX, TalonFXConfiguration> flywheelMotorConfi
 	new CTREConfig<>(TalonFXConfiguration::new);
 
 	static {
-		flywheelMotorConfig.withName("Flywheel Motor").withCanID(11).withBus(Robot.riobus);
+		flywheelMotorConfig.withName("ID 11").withCanID(11).withBus(Robot.riobus);
 
 		TalonFXConfiguration flywheelConfig = flywheelMotorConfig.config;
 		flywheelConfig.Slot0.kP = 0.1; // Increase until speed oscillates
