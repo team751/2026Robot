@@ -94,7 +94,15 @@ public class ControlBoard {
 		controller.circleButton.whileTrue(
 			new InstantCommand(() -> climber.stopMotors())
 		);
-		
+
+		controller.dUp.whileTrue(
+			new StartEndCommand(() -> climber.setServoSpeed(1.0), () -> climber.stopServo())
+		);
+
+		controller.dDown.whileTrue(
+			new StartEndCommand(() -> climber.setServoSpeed(-1.0), () -> climber.stopServo())
+		);
+
 	}
 
 	private void configureOperatorBindings(PS5Controller controller) {}

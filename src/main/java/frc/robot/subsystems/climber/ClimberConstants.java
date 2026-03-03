@@ -11,6 +11,7 @@ import frc.robot.Robot;
 
 public class ClimberConstants {
     public static double averageMotorError = 0.3; // Starting average error, it will change later
+    public static final int kServoPort = 0;
 
 
     public static final TalonFX leftClimber = new TalonFX(11);
