@@ -136,10 +136,11 @@ public void zeroClimber(){
 }
 
 public void setServoSpeed(double speed) {
-	m_servo.setSpeed(speed);
+	m_servo.setPulseTimeMicroseconds(100);
 }
 
 public void stopServo() {
 	m_servo.setSpeed(0.0);
+	
 }
 }
