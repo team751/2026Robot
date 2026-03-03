@@ -75,13 +75,25 @@ public class ControlBoard {
 		// 	new StartEndCommand(() -> climber.moveDown180(), () -> climber.stopMotors())
 		// );
 
-		controller.triangleButton.whileTrue(
-			new StartEndCommand(() -> climber.spinUntil(10), () -> climber.stopMotors()
-		));
+		// controller.triangleButton.whileTrue(
+		// 	new StartEndCommand(() -> climber.spinUntil(10), () -> climber.stopMotors()
+		// ));
+
+		// controller.circleButton.whileTrue(
+		// 	new StartEndCommand(() -> climber.spinUntil(-10), () -> climber.stopMotors()
+		// ));
+
+		controller.leftTrigger.whileTrue(
+			new StartEndCommand(() -> climber.spinSlow(1), () -> climber.stopMotors())
+		);
+
+		controller.rightTrigger.whileTrue(
+			new StartEndCommand(() -> climber.spinSlow(-1), () -> climber.stopMotors())
+		);
 
 		controller.circleButton.whileTrue(
-			new StartEndCommand(() -> climber.spinUntil(-10), () -> climber.stopMotors()
-		));
+			new InstantCommand(() -> climber.stopMotors())
+		);
 		
 	}
 
