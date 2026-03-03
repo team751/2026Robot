@@ -4,6 +4,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import edu.wpi.first.wpilibj.Servo;
 
 import frc.lib.CTREConfig;
 import frc.robot.Robot;
@@ -17,6 +18,7 @@ public class ClimberConstants {
 
     private static TalonFXConfiguration leftClimberConfig = new TalonFXConfiguration();
     private static TalonFXConfiguration rightClimberConfig = new TalonFXConfiguration();
+    
 
     static {
        leftClimberConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -52,8 +54,8 @@ public class ClimberConstants {
         rightClimberConfig.Slot0.kA = 0.0;
         rightClimberConfig.CurrentLimits.StatorCurrentLimit = 150;
         rightClimberConfig.CurrentLimits.StatorCurrentLimitEnable = false;
-        rightClimberConfig.TorqueCurrent.PeakForwardTorqueCurrent = 45;
-        rightClimberConfig.TorqueCurrent.PeakReverseTorqueCurrent = -45;
+        rightClimberConfig.TorqueCurrent.PeakForwardTorqueCurrent = 35;
+        rightClimberConfig.TorqueCurrent.PeakReverseTorqueCurrent = -35;
     }
 
 }
