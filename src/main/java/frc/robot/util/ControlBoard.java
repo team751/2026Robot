@@ -10,7 +10,7 @@ import frc.lib.PS5Controller;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.drive.SwerveConstants;
 import frc.robot.subsystems.drive.SwerveSubsystem;
-//import frc.robot.subsystems.shooter.ShooterSubsystem;
+import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.simulation.MapSimSwerveTelemetry;
 
 public class ControlBoard {
@@ -20,7 +20,7 @@ public class ControlBoard {
 	private PS5Controller driver = null;
 	private PS5Controller operator = null;
 	private SwerveSubsystem drive = SwerveSubsystem.getInstance();
-	//private ShooterSubsystem shooter = ShooterSubsystem.getInstance();
+	private ShooterSubsystem shooter = ShooterSubsystem.getInstance();
 	private boolean preciseControl = false;
 
 	private enum ControllerPreset {
@@ -43,8 +43,8 @@ public class ControlBoard {
 
 	private final SwerveRequest.FieldCentric driveRequest =
 			new SwerveRequest.FieldCentric()
-					.withDeadband(SwerveConstants.maxSpeed * 0.05) // Add a 5% deadband
-					.withRotationalDeadband(SwerveConstants.maxAngularSpeed * 0.1) // Add a 10% deadband
+					.withDeadband(SwerveConstants.maxSpeed * 0.05)
+					.withRotationalDeadband(SwerveConstants.maxAngularSpeed * 0.1)
 					.withDriveRequestType(SwerveModule.DriveRequestType.OpenLoopVoltage)
 					.withSteerRequestType(SwerveModule.SteerRequestType.Position)
 					.withDesaturateWheelSpeeds(true)
@@ -60,7 +60,6 @@ public class ControlBoard {
 		if (driver == null) {
 			driver = new PS5Controller(ControllerPreset.DRIVER.port());
 			configureBindings(ControllerPreset.DRIVER, driver);
-
 
 			drive.setDefaultCommand(drive.applyRequest(this::getDriverRequest));
 			if (Utils.isSimulation())
@@ -91,10 +90,35 @@ public class ControlBoard {
 	}
 
 	private void configureDriverBindings(PS5Controller controller) {
-		/* Precise Control */
+		/* Shooter */
+		controller.triangleButton.whileTrue(
+			new StartEndCommand(() -> shooter.newShooterSpeed(1, 1), () -> shooter.requestIdle())
+		);
+
+		controller.dLeft.whileTrue(
+			new StartEndCommand(() -> shooter.newShooterSpeed(2, 2), () -> shooter.requestIdle())
+		);
+
+		controller.dUp.whileTrue(
+			new StartEndCommand(() -> shooter.newShooterSpeed(5, 5), () -> shooter.requestIdle())
+		);
+
+		controller.dRight.whileTrue(
+			new StartEndCommand(() -> shooter.newShooterSpeed(7, 7), () -> shooter.requestIdle())
+		);
+
+		controller.leftBumper.whileTrue(
+			new StartEndCommand(() -> shooter.newShooterSpeed(2, 0), () -> shooter.requestIdle())
+		);
+
+		controller.rightTrigger.whileTrue(
+			new StartEndCommand(() -> shooter.newShooterSpeed(0, 2), () -> shooter.requestIdle())
+		);
+
+		/* Swerve Drive */
 		controller.rightBumper.whileTrue(
 				new StartEndCommand(() -> preciseControl = true, () -> preciseControl = false)
-						.withName("Precise Control Toggle")); // Fight me owen
+						.withName("Precise Control Toggle"));
 		controller.circleButton.onTrue(new InstantCommand(() -> drive.bigResetPose()));
 	}
 

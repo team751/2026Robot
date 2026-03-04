@@ -73,4 +73,8 @@ public class PS5Controller {
 
 		touchpadButton = new JoystickButton(joystick, Button.kTouchpad.value);
 	}
+
+	public double getRightTrigger() {
+		return 0.0;
+	}
 }

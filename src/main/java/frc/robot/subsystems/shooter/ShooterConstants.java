@@ -1,40 +1,62 @@
-// package frc.robot.subsystems.shooter;
+package frc.robot.subsystems.shooter;
 
-// import com.ctre.phoenix6.configs.TalonFXConfiguration;
-// import com.ctre.phoenix6.hardware.TalonFX;
-// import com.ctre.phoenix6.signals.InvertedValue;
-// import frc.lib.CTREConfig;
-// import frc.robot.Robot;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
-// public class ShooterConstants {
-// public static final double shooterSpeed = 12;
-// public static final double spitSpeed = 4; // Negated in request
-// //    public static final int stalledCurrentThreshold = 30;
+import frc.lib.CTREConfig;
+import frc.robot.Robot;
 
-// public static final CTREConfig<TalonFX, TalonFXConfiguration> shooterMotorConfig =
-// 	new CTREConfig<>(TalonFXConfiguration::new);
+public class ShooterConstants {
+public static double flywheelSpeed = 1; // 12
+public static double backSpeed = 1;
 
-// static {
-// 	shooterMotorConfig.withName("Shooter Motor").withCanID(15).withBus(Robot.drivebus);
+public static final CTREConfig<TalonFX, TalonFXConfiguration> flywheelMotorConfig = 
+	new CTREConfig<>(TalonFXConfiguration::new);
 
-// 	TalonFXConfiguration shooterConfig = shooterMotorConfig.config;
-// 	shooterConfig.Slot0.kP = 0; // Increase until speed oscillates
-// 	shooterConfig.Slot0.kI = 0; // Don't touch haha im gunna touch it lol
-// 	shooterConfig.Slot0.kD = 0; // Increase until jitter
-// 	shooterConfig.Slot0.kS = 0; // Increase until just before motor starts moving
-// 	shooterConfig.Slot0.kA = 0; //
-// 	shooterConfig.Slot0.kV = 0; //
-// 	shooterConfig.Slot0.kG = 0; // Don't touch
+	static {
+		flywheelMotorConfig.withName("Flywheel Motor").withCanID(11).withBus(Robot.riobus);
 
-// 	shooterConfig.Feedback.RotorToSensorRatio = 1;
-// 	shooterConfig.Feedback.SensorToMechanismRatio = 1;
+		TalonFXConfiguration flywheelConfig = flywheelMotorConfig.config;
+		flywheelConfig.Slot0.kP = 0.1; // Increase until speed oscillates
+		flywheelConfig.Slot0.kI = 0; // Don't touch
+		flywheelConfig.Slot0.kD = 0; // Increase until jitter
+		flywheelConfig.Slot0.kS = 0; // Increase until just before motor starts moving
+		flywheelConfig.Slot0.kA = 0; //
+		flywheelConfig.Slot0.kV = 0; //
+		flywheelConfig.Slot0.kG = 0; // Don't touch
 
-// 	shooterConfig.CurrentLimits.StatorCurrentLimit = 120;
-// 	shooterConfig.CurrentLimits.StatorCurrentLimitEnable = false;
+		flywheelConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+		flywheelConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+		flywheelConfig.CurrentLimits.StatorCurrentLimit = 120;
+		flywheelConfig.CurrentLimits.StatorCurrentLimitEnable = false;
+		flywheelConfig.TorqueCurrent.PeakForwardTorqueCurrent = 40;
+		flywheelConfig.TorqueCurrent.PeakReverseTorqueCurrent = -40;
+	}
 
-// 	shooterConfig.TorqueCurrent.PeakForwardTorqueCurrent = 40;
-// 	shooterConfig.TorqueCurrent.PeakReverseTorqueCurrent = -40;
+public static final CTREConfig<TalonFX, TalonFXConfiguration> backMotorConfig = 
+	new CTREConfig<>(TalonFXConfiguration::new);
 
-// 	shooterConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive; // Positive shooter
-// }
-// }
+static {
+	backMotorConfig.withName("Back Motor").withCanID(10).withBus(Robot.riobus);
+
+	TalonFXConfiguration backConfig = backMotorConfig.config;
+
+	backConfig.Slot0.kP = 0.1; // Increase until speed oscillates
+	backConfig.Slot0.kI = 0; // Don't touch haha im gunna touch it lol
+	backConfig.Slot0.kD = 0; // Increase until jitter
+	backConfig.Slot0.kS = 0; // Increase until just before motor starts moving
+	backConfig.Slot0.kA = 0; //
+	backConfig.Slot0.kV = 0; //
+	backConfig.Slot0.kG = 0; // Don't touch
+
+	backConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+	backConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+	backConfig.CurrentLimits.StatorCurrentLimit = 120;
+	backConfig.CurrentLimits.StatorCurrentLimitEnable = false;
+	backConfig.TorqueCurrent.PeakForwardTorqueCurrent = 40;
+	backConfig.TorqueCurrent.PeakReverseTorqueCurrent = -40;
+}
+
+}
