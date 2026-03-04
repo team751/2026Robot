@@ -184,7 +184,7 @@ public class ControlBoard {
 			retractCommand);
 		controller.touchpadButton.whileTrue(
 			spitCommand);					
-		
+		// TODO: Fix this thing
 		controller.circleButton.onTrue(new InstantCommand(() -> drive.bigResetPose()));
 	}
 
