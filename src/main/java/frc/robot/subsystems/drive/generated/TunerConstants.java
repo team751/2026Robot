@@ -167,6 +167,12 @@ public class TunerConstants {
 							.withSteerFrictionVoltage(kSteerFrictionVoltage)
 							.withDriveFrictionVoltage(kDriveFrictionVoltage);
 
+
+
+	// TODO: Make sure that you set the offset values for all the motors and for the pigeon!
+	// TODO: Make sure that you set the offset values for all the motors and for the pigeon!
+	// TODO: Make sure that you set the offset values for all the motors and for the pigeon!
+
 	// Front Left
 	private static final int kFrontLeftDriveMotorId = 10;
 	private static final int kFrontLeftSteerMotorId = 11;

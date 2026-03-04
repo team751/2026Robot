@@ -23,16 +23,6 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 
 public class ControlBoard {
 	private static ControlBoard instance;
-	/*public void setRobotRotationByAlliance(){
-        if (DriverStation.getAlliance().isPresent()) {
-            var rot = kBlueAlliancePerspectiveRotation;
-            if (DriverStation.getAlliance().get() == Alliance.Red) {
-                rot = kRedAlliancePerspectiveRotation;
-            }
-            resetPose(new Pose2d(0, 0, rot));
-            setOperatorPerspectiveAndAdjustPose(rot);
-        }
-    } */
 
 	/* Controllers */
 	private PS5Controller driver = null;
@@ -142,6 +132,7 @@ public class ControlBoard {
 	public SwerveRequest getDriverRequest() {
 		if (driver == null) return null;
 
+		// TODO: Precise Control Strength Values \/\/\/\/\/
 		double scale = preciseControl ? 0.25 : 1.0;
 		double rotScale = preciseControl ? 0.50 : 1.0;
 

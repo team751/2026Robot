@@ -46,7 +46,8 @@ public class Robot extends TimedRobot {
       DriverStation.reportError("ControlBoard init failed: " + t.toString(), t.getStackTrace());
       t.printStackTrace();
     }
-    this.controlBoard = tmpControlBoard; }
+    this.controlBoard = tmpControlBoard;
+  }
 
 
 
@@ -120,7 +121,7 @@ public class Robot extends TimedRobot {
     }
 
   // Apply operator perspective and adjust odometry so "forward" remains consistent
-  // when switching alliances.
+  // when switching alliances. - chatgpt
   swerve.setOperatorPerspectiveAndAdjustPose(rot);
   }
 
