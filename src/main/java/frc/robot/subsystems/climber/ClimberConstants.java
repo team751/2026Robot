@@ -12,6 +12,9 @@ import frc.robot.Robot;
 public class ClimberConstants {
     public static double averageMotorError = 0.3; // Starting average error, it will change later
     public static final int kServoPort = 0;
+    // Rotations per second at full speed (1.0). Tune by running full speed for
+    // 1 second and comparing getServoPosition() to actual shaft rotations.
+    public static final double kServoMaxRPS = 1.0;
 
 
     public static final TalonFX leftClimber = new TalonFX(11);
