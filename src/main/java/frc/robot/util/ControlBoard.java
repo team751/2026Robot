@@ -25,6 +25,7 @@ import frc.robot.subsystems.drive.SwerveSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.simulation.MapSimSwerveTelemetry;
 
+//TODO: Clean up the controller bindings for this
 public class ControlBoard {
 	private static ControlBoard instance;
 
