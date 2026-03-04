@@ -8,6 +8,8 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import frc.lib.CTREConfig;
 import frc.robot.Robot;
 
+import frc.robot.util.Constants;
+
 public class ShooterConstants {
 public static double flywheelSpeed = 1; // 12
 public static double backSpeed = 1;
@@ -16,7 +18,7 @@ public static final CTREConfig<TalonFX, TalonFXConfiguration> flywheelMotorConfi
 	new CTREConfig<>(TalonFXConfiguration::new);
 
 	static {
-		flywheelMotorConfig.withName("Flywheel Motor").withCanID(11).withBus(Robot.riobus);
+		flywheelMotorConfig.withName("Flywheel Motor").withCanID(Constants.flywheelMotorID).withBus(Robot.riobus);
 
 		TalonFXConfiguration flywheelConfig = flywheelMotorConfig.config;
 		flywheelConfig.Slot0.kP = 0.1; // Increase until speed oscillates
@@ -39,7 +41,7 @@ public static final CTREConfig<TalonFX, TalonFXConfiguration> backMotorConfig =
 	new CTREConfig<>(TalonFXConfiguration::new);
 
 static {
-	backMotorConfig.withName("Back Motor").withCanID(10).withBus(Robot.riobus);
+	backMotorConfig.withName("Back Motor").withCanID(Constants.backMotorID).withBus(Robot.riobus);
 
 	TalonFXConfiguration backConfig = backMotorConfig.config;
 
