@@ -96,12 +96,12 @@ public class ControlBoard {
 		);
 
 		controller.dUp.whileTrue(
-			new StartEndCommand(() -> climber.setServoSpeed(1.0), () -> climber.stopServo())
+			new StartEndCommand(() -> climber.setServoPWM(1.0), () -> climber.stopServo())
 		);
 
-		controller.dDown.whileTrue(
-			new StartEndCommand(() -> climber.setServoSpeed(-1.0), () -> climber.stopServo())
-		);
+		// controller.dDown.whileTrue(
+		// 	new StartEndCommand(() -> climber.setServoPWM(1000), () -> climber.stopServo())
+		// );
 
 	}
 

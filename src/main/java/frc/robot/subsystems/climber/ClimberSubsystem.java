@@ -10,6 +10,7 @@ import com.ctre.phoenix6.signals.MotorAlignmentValue;
 
 import edu.wpi.first.hal.SimDevice.Direction;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.PWM;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -17,7 +18,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class ClimberSubsystem extends SubsystemBase {
 private final TalonFX leftClimber = ClimberConstants.leftClimber;
 private final TalonFX rightClimber = ClimberConstants.rightClimber;
-private final Servo m_servo = new Servo(ClimberConstants.kServoPort);
+private final PWM m_servo = new PWM(ClimberConstants.kServoPort);
 
 private final PositionVoltage positionRequest = new PositionVoltage(0);
 
@@ -128,6 +129,7 @@ public void moveDown180(){
 public void stopMotors(){
 	leftClimber.stopMotor();
 	rightClimber.stopMotor();
+	stopServo();
 }
 
 public void zeroClimber(){
@@ -139,7 +141,13 @@ public void setServoSpeed(double speed) {
 	m_servo.setSpeed(speed);
 }
 
+public void setServoPWM(double speed) {
+	int s = (int) speed;
+	m_servo.setPulseTimeMicroseconds(s * 1000);
+}
+
 public void stopServo() {
 	m_servo.setSpeed(0.0);
+	m_servo.setPulseTimeMicroseconds(0);
 }
 }
