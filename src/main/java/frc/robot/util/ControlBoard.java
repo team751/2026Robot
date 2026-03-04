@@ -69,7 +69,6 @@ public class ControlBoard {
 	private void configureDriverBindings(PS5Controller controller) {
 		controller.triangleButton.whileTrue(
 			new StartEndCommand(() -> shooter.newShooterSpeed(1,1), () -> shooter.requestIdle())
-			.withName("Shooter Shooty")
 		);
 
 		controller.dLeft.whileTrue(
