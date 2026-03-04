@@ -122,6 +122,7 @@ public class ControlBoard {
 		return Math.abs(currentDegrees) <= 90 ? 0.0 : 180.0;
 	}
 
+	/* Driver bindings */
 	private void configureDriverBindings(PS5Controller controller) {
 		/* Shooter */
 		controller.triangleButton.whileTrue(
@@ -172,7 +173,7 @@ public class ControlBoard {
 			spitCommand);					
 	}
 
-
+	/* Operator bindings */
 	private void configureOperatorBindings(PS5Controller controller) {
 		controller.leftJoystickButton.onTrue(
 			new InstantCommand(() -> drive.setRobotRotationByAlliance()));
