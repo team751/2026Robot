@@ -746,7 +746,6 @@ public abstract class SimulatedArena {
 	 * SimulatedArena} to reflect the unique game piece placements for that season's game.
 	 */
 	public abstract void placeGamePiecesOnField();
-
 	/**
 	 *
 	 *
