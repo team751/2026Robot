@@ -1,6 +1,7 @@
 package frc.robot.util;
 
 import com.ctre.phoenix6.Utils;
+import com.ctre.phoenix6.mechanisms.swerve.LegacySwerveRequest.Idle;
 import com.ctre.phoenix6.swerve.SwerveModule;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.controller.PIDController;
@@ -13,6 +14,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.lib.PS5Controller;
+import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.SpitCommand;
+import frc.robot.commands.RetractCommand;
+import frc.robot.commands.ExtendCommand;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.drive.SwerveConstants;
@@ -54,6 +59,13 @@ public class ControlBoard {
 
 	/* Subsystems */
 	private final Superstructure superstructure = Superstructure.getInstance();
+
+	/*Commands */
+	private final IntakeCommand intakeCommand = new IntakeCommand();
+	private final SpitCommand spitCommand = new SpitCommand();
+	private final RetractCommand retractCommand = new RetractCommand();
+	private final ExtendCommand extendCommand = new ExtendCommand();
+	private final Idle IdleCommand = new Idle();
 
 	private final SwerveRequest.FieldCentric driveRequest =
 			new SwerveRequest.FieldCentric()
