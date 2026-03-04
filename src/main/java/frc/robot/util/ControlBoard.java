@@ -12,6 +12,7 @@ import frc.robot.subsystems.drive.SwerveConstants;
 import frc.robot.subsystems.drive.SwerveSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.simulation.MapSimSwerveTelemetry;
+import frc.robot.subsystems.climber.ClimberSubsystem;
 
 public class ControlBoard {
 	private static ControlBoard instance;
@@ -22,6 +23,7 @@ public class ControlBoard {
 	private SwerveSubsystem drive = SwerveSubsystem.getInstance();
 	private ShooterSubsystem shooter = ShooterSubsystem.getInstance();
 	private boolean preciseControl = false;
+	private ClimberSubsystem climber = ClimberSubsystem.getInstance();
 
 	private enum ControllerPreset {
 		DRIVER(0),
@@ -94,9 +96,35 @@ public class ControlBoard {
 		controller.triangleButton.whileTrue(
 			new StartEndCommand(() -> shooter.newShooterSpeed(1, 1), () -> shooter.requestIdle())
 		);
+		// controller.leftTrigger.whileTrue(
+		// 	new StartEndCommand(() -> climber.moveUp180(), () -> climber.stopMotors())
+		// );
+
+		// controller.rightTrigger.whileTrue(
+		// 	new StartEndCommand(() -> climber.moveDown180(), () -> climber.stopMotors())
+		// );
+
+		// controller.triangleButton.whileTrue(
+		// 	new StartEndCommand(() -> climber.spinUntil(10), () -> climber.stopMotors()
+		// ));
+
+		// controller.circleButton.whileTrue(
+		// 	new StartEndCommand(() -> climber.spinUntil(-10), () -> climber.stopMotors()
+		// ));
 
 		controller.dLeft.whileTrue(
 			new StartEndCommand(() -> shooter.newShooterSpeed(2, 2), () -> shooter.requestIdle())
+		);
+		controller.leftTrigger.whileTrue(
+			new StartEndCommand(() -> climber.spinSlow(1), () -> climber.stopMotors())
+		);
+
+		controller.crossButton.whileTrue(
+			new StartEndCommand(() -> climber.spinSlow(-1), () -> climber.stopMotors())
+		);
+
+		controller.circleButton.whileTrue(
+			new InstantCommand(() -> climber.stopMotors())
 		);
 
 		controller.dUp.whileTrue(
@@ -119,7 +147,17 @@ public class ControlBoard {
 		controller.rightBumper.whileTrue(
 				new StartEndCommand(() -> preciseControl = true, () -> preciseControl = false)
 						.withName("Precise Control Toggle"));
-		controller.circleButton.onTrue(new InstantCommand(() -> drive.bigResetPose()));
+		controller.squareButton.onTrue(new InstantCommand(() -> drive.bigResetPose()));
+
+
+		/* William Servo Thing IDK */
+		// controller.dDown.whileTrue(
+		// 	new StartEndCommand(() -> climber.setServoSpeed(-1.0), () -> climber.stopServo())
+		// );
+		// controller.dUp.whileTrue(
+		//	new StartEndCommand(() -> climber.setServoSpeed(1.0), () -> climber.stopServo())
+		// );
+
 	}
 
 	private void configureOperatorBindings(PS5Controller controller) {}
