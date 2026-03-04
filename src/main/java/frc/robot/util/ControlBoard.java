@@ -21,6 +21,7 @@ import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.simulation.MapSimSwerveTelemetry;
 
 //TODO: Clean up the controller bindings for this
+//TODO: Fix intake commands
 public class ControlBoard {
 	private static ControlBoard instance;
 
