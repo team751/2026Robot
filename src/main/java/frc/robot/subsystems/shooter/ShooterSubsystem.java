@@ -38,17 +38,6 @@ private ShooterSubsystem() {
 	setShooterMotor(0,0);
 }
 
-/**
-* Set the intake motor to a given speed
-*
-* @param voltage in volts
-*/
-private void setShooterMotor(double voltage1, double voltage2) {
-	flywheelMotor.setControl(flywheelControl.withOutput(voltage1));
-	backMotor.setControl(backControl.withOutput(voltage2));
-}
-
-
 @Override
 public void periodic() {
 	ShooterState nextState = state;
@@ -66,12 +55,16 @@ public void periodic() {
 
 	}
 
-	SmartDashboard.putString("Shooter/Shoot State", state.toString());
 	SmartDashboard.putNumber("Shooter/Back Speed", backMotor.getVelocity().getValueAsDouble());
 	SmartDashboard.putNumber("Shooter/Back Duty",backMotor.getDutyCycle().getValueAsDouble());
 
 	SmartDashboard.putNumber("Shooter/Flywheel Speed", flywheelMotor.getVelocity().getValueAsDouble());
 		SmartDashboard.putNumber("Shooter/Flywheel Duty", flywheelMotor.getDutyCycle().getValueAsDouble());
+}
+
+private void setShooterMotor(double voltage1, double voltage2) {
+	flywheelMotor.setControl(flywheelControl.withOutput(voltage1));
+	backMotor.setControl(backControl.withOutput(voltage2));
 }
 
 public void newShooterSpeed(double flySpeed, double backSpeed) {
