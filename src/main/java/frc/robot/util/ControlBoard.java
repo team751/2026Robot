@@ -17,6 +17,7 @@ import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.drive.SwerveConstants;
 import frc.robot.subsystems.drive.SwerveSubsystem;
+import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.simulation.MapSimSwerveTelemetry;
 
@@ -118,15 +119,15 @@ public class ControlBoard {
 			new StartEndCommand(() -> shooter.newShooterSpeed(1, 1), () -> shooter.requestIdle())
 		);
 
-		controller.dLeft.whileTrue(
+		controller.crossButton.whileTrue(
 			new StartEndCommand(() -> shooter.newShooterSpeed(2, 2), () -> shooter.requestIdle())
 		);
 
-		controller.dUp.whileTrue(
+		controller.circleButton.whileTrue(
 			new StartEndCommand(() -> shooter.newShooterSpeed(5, 5), () -> shooter.requestIdle())
 		);
 
-		controller.dRight.whileTrue(
+		controller.squareButton.whileTrue(
 			new StartEndCommand(() -> shooter.newShooterSpeed(7, 7), () -> shooter.requestIdle())
 		);
 
@@ -136,6 +137,18 @@ public class ControlBoard {
 
 		controller.rightTrigger.whileTrue(
 			new StartEndCommand(() -> shooter.newShooterSpeed(0, 2), () -> shooter.requestIdle())
+		);
+		controller.dUp.whileTrue(
+			new StartEndCommand(() -> IntakeSubsystem.getInstance().requestIntaking(), () -> IntakeSubsystem.getInstance().requestIdle())
+		);
+		controller.dDown.whileTrue(
+			new StartEndCommand(() -> IntakeSubsystem.getInstance().requestSpitting(), () -> IntakeSubsystem.getInstance().requestIdle())
+		);
+		controller.dLeft.whileTrue(
+			new StartEndCommand(() -> IntakeSubsystem.getInstance().requestRetracting(), () -> IntakeSubsystem.getInstance().requestIdle())
+		);
+		controller.dRight.whileTrue(
+			new StartEndCommand(() -> IntakeSubsystem.getInstance().requestExtending(), () -> IntakeSubsystem.getInstance().requestIdle())
 		);
 
 		/* Swerve Drive */
