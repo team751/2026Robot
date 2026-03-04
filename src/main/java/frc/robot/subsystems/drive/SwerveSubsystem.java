@@ -59,8 +59,8 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
                     ),
                     null,
                     this));
-    
-    private final SwerveRequest.ApplyRobotSpeeds m_pathApplyRobotSpeeds = 
+
+    private final SwerveRequest.ApplyRobotSpeeds m_pathApplyRobotSpeeds =
             new SwerveRequest.ApplyRobotSpeeds()
                 .withSteerRequestType(SwerveModule.SteerRequestType.Position)
                 .withDriveRequestType(SwerveModule.DriveRequestType.Velocity);
@@ -88,16 +88,16 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
     ) {
 
         super(drivetrainConstants, modules);
-        
+
         CommandScheduler.getInstance().registerSubsystem(this);
-        
+
         // Configure AutoBuilder HERE (remove from Robot.java)
-        PathFollowingController controller = 
+        PathFollowingController controller =
             new PPHolonomicDriveController(
-                new PIDConstants(0.5, 0.0, 0.0),  // Translation PID
-                new PIDConstants(0.3, 0.0, 0.0)       // Rotation PID
+                new PIDConstants(1.5, 0.0, 0.05),  // Translation PID
+                new PIDConstants(5, 0.0, 0.0)       // Rotation PID
             );
-        
+
         AutoBuilder.configure(
             this::getPose,                  // Robot pose supplier
             this::resetPose,                // Method to reset odometry
@@ -107,15 +107,15 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
             SwerveConstants.robotConfig,    // RobotConfig
             () -> {
                 // Boolean supplier for alliance color
-                var alliance = DriverStation.getAlliance();
-                if (alliance.isPresent()) {
-                    return alliance.get() == DriverStation.Alliance.Red;
-                }
+                // var alliance = DriverStation.getAlliance();
+                // if (alliance.isPresent()) {
+                //     return alliance.get() == DriverStation.Alliance.Red;
+                // }
                 return false;
             },
-            this                           
+            this
         );
-        
+
     System.out.println("Swerve Starting!");
 
     // Try to apply operator perspective as early as possible so a deploy (process restart)
@@ -197,6 +197,10 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
                 : simDrivetrain.mapleSimDrive.getSimulatedDriveTrainPose();
     }
 
+    public Rotation2d getRotation() {
+        return getPose().getRotation();
+    }
+
     public ChassisSpeeds getChassisSpeeds() {
         return getState().Speeds;
     }
@@ -210,8 +214,15 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
         super.resetPose(pose);
     }
 
-    public void bigResetPose() {
-        this.resetPose(new Pose2d(0.0, 0.0, new Rotation2d()));
+    public void setRobotRotationByAlliance(){
+        if (DriverStation.getAlliance().isPresent()) {
+            var rot = kBlueAlliancePerspectiveRotation;
+            if (DriverStation.getAlliance().get() == Alliance.Red) {
+                rot = kRedAlliancePerspectiveRotation;
+            }
+            resetPose(new Pose2d(0, 0, rot));
+            setOperatorPerspectiveAndAdjustPose(rot);
+        }
     }
 
     /**
