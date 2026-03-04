@@ -11,6 +11,7 @@ import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import edu.wpi.first.hal.SimDevice.Direction;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -29,6 +30,10 @@ private double spinTarget = 0.0;
 
 private boolean inverted = false;
 
+private double m_servoPosition = 0.0;  // accumulated rotations
+private double m_servoSpeed    = 0.0;  // last commanded speed
+private double m_lastTimestamp;         // initialized in constructor
+
 public static ClimberSubsystem getInstance() {
 	if (instance == null) instance = new ClimberSubsystem();
 	return instance;
@@ -36,12 +41,18 @@ public static ClimberSubsystem getInstance() {
 
 private ClimberSubsystem() {
     m_servo.setBoundsMicroseconds(2400, 1520, 1500, 1480, 600);
+    m_lastTimestamp = Timer.getFPGATimestamp();
 }
 
 @Override
 public void periodic() {
+	double now = Timer.getFPGATimestamp();
+	m_servoPosition += m_servoSpeed * ClimberConstants.kServoMaxRPS * (now - m_lastTimestamp);
+	m_lastTimestamp = now;
+
 	SmartDashboard.putNumber("Left Motor Pos", leftClimber.getPosition().getValueAsDouble());
 	SmartDashboard.putNumber("Right Motor Pos", rightClimber.getPosition().getValueAsDouble());
+	SmartDashboard.putNumber("Servo Position (rotations)", m_servoPosition);
 
 	// Spin to target check
 	if (spinning) {
@@ -136,10 +147,20 @@ public void zeroClimber(){
 }
 
 public void setServoSpeed(double speed) {
+	m_servoSpeed = speed;
 	m_servo.setSpeed(speed);
 }
 
 public void stopServo() {
+	m_servoSpeed = 0.0;
 	m_servo.setSpeed(0.0);
+}
+
+public double getServoPosition() {
+	return m_servoPosition;
+}
+
+public void resetServoPosition() {
+	m_servoPosition = 0.0;
 }
 }
