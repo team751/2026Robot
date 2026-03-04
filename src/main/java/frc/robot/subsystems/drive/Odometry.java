@@ -72,7 +72,6 @@ public class Odometry extends SubsystemBase {
 		SmartDashboard.putNumber("Odometry/Rotation", robotPose.getRotation().getDegrees());
 
 		// Add's two vision measure ments to SwerveDrive so that they can be filtered by it
-		//drive.setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 9999999));
 		if (limelights.getBotPoseFront() != null) {
 			drive.addVisionMeasurement(new Pose2d(limelights.getBotPoseFront().getTranslation(), drive.getPose().getRotation()), time);
 		}
@@ -85,8 +84,7 @@ public class Odometry extends SubsystemBase {
 		// Sets the Odometry robotPose variable (for easy/more normal access to the robot position)
         robotPose = drive.getPose();
 
-		// Puts a new field value into SmartDashboard (or Elastic if u use that)
-        field.setRobotPose(robotPose);
+		// Puts a new field value into Elastic
         field.setRobotPose(robotPose.getX(), robotPose.getY(), robotPose.getRotation());
 
 		SmartDashboard.putNumber("Pigeon Yaw", drive.getPigeon2().getYaw().getValueAsDouble());
@@ -96,7 +94,5 @@ public class Odometry extends SubsystemBase {
 
         SmartDashboard.putData(field);
 
-		// Tells you in SmartDashboard (or Elastic if u use that) whether or not the code is interpolating apriltag positions
-		SmartDashboard.putBoolean("Interpolating?", limelights.hasTarget());
     }
 }
