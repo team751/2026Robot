@@ -137,15 +137,6 @@ public class ControlBoard {
 			new StartEndCommand(() -> shooter.newShooterSpeed(0, 2), () -> shooter.requestIdle())
 		);
 
-		/* Climber */
-		controller.leftTrigger.whileTrue(
-			new StartEndCommand(() -> climber.spinSlow(1), () -> climber.stopMotors())
-		);
-
-		controller.crossButton.whileTrue(
-			new StartEndCommand(() -> climber.spinSlow(-1), () -> climber.stopMotors())
-		);
-
 		/* Swerve Drive */
 		controller.rightBumper.whileTrue(
 				new StartEndCommand(() -> preciseControl = true, () -> preciseControl = false)
@@ -157,9 +148,6 @@ public class ControlBoard {
 		controller.leftJoystickButton.onTrue(
 			new InstantCommand(() -> drive.setRobotRotationByAlliance()));
 
-		controller.circleButton.whileTrue(
-			new InstantCommand(() -> climber.stopMotors()));
-
 		controller.squareButton.whileTrue(
 				new StartEndCommand(() -> autoAim = true, () -> autoAim = false)
 						.withName("Auto Aim Toggle"));
@@ -167,6 +155,19 @@ public class ControlBoard {
 		controller.rightJoystickButton.whileTrue(
 				new StartEndCommand(() -> axisAlign = true, () -> axisAlign = false)
 						.withName("Axis Align Toggle"));
+			
+		/* Climber */
+		controller.leftTrigger.whileTrue(
+			new StartEndCommand(() -> climber.spinSlow(1), () -> climber.stopMotors())
+		);
+
+		controller.crossButton.whileTrue(
+			new StartEndCommand(() -> climber.spinSlow(-1), () -> climber.stopMotors())
+		);
+
+		controller.circleButton.whileTrue(
+			new InstantCommand(() -> climber.stopMotors())
+		);				
 	}
 
 	public SwerveRequest getDriverRequest() {
