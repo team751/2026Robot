@@ -21,7 +21,7 @@ public class IntakeSubsystem extends SubsystemBase {
 	private final VoltageOut extenderControl = new VoltageOut(0);
 
 	/* Limit Switches */
-	// TODO: find intake limit switch ports
+	// TODO: lucas update your code. the limit switch ports are: DO3 for the left switch and DO2 for the right switch
 	//DigitalInput ExtendLimitL = new DigitalInput(TBD);
     //DigitalInput ExtendLimitR = new DigitalInput(TBD);
 
