@@ -6,7 +6,6 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -116,6 +115,7 @@ public class ControlBoard {
 	private void configureDriverBindings(PS5Controller controller) {
 		/* Shooter */
 		//TODO: We have way to many shooter buttons. We can probably cut some and also make more efficient bindings.
+
 		controller.triangleButton.whileTrue(
 			new StartEndCommand(() -> shooter.newShooterSpeed(1, 1), () -> shooter.requestIdle())
 		);
@@ -139,6 +139,7 @@ public class ControlBoard {
 		controller.rightTrigger.whileTrue(
 			new StartEndCommand(() -> shooter.newShooterSpeed(0, 2), () -> shooter.requestIdle())
 		);
+				/* Intake */
 		controller.dUp.whileTrue(
 			new StartEndCommand(() -> IntakeSubsystem.getInstance().requestIntaking(), () -> IntakeSubsystem.getInstance().requestIdle())
 		);
@@ -152,7 +153,7 @@ public class ControlBoard {
 			new StartEndCommand(() -> IntakeSubsystem.getInstance().requestExtending(), () -> IntakeSubsystem.getInstance().requestIdle())
 		);
 
-		/* Swerve Drive */
+		/* Swerve */
 		controller.rightBumper.whileTrue(
 				new StartEndCommand(() -> preciseControl = true, () -> preciseControl = false)
 						.withName("Precise Control Toggle")); // Fight me owen

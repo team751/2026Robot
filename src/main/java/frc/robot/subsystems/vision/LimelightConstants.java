@@ -4,7 +4,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Distance;
 
-/* TODO: LimelightConstants.java Info
+/* LimelightConstants.java Info
  * This is where all the basic, and often/literally never
  * changed info for Limelight is stored.
  * 

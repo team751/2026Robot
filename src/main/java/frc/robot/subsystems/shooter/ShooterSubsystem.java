@@ -4,7 +4,6 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.shooter.ShooterConstants;
 
 public class ShooterSubsystem extends SubsystemBase {
 private static ShooterSubsystem instance;
@@ -21,6 +20,7 @@ private final VoltageOut backControl = new VoltageOut(0);
 /* State Machine Logic */
 private enum ShooterState {
 	IDLE,
+	// SLOWSPIN, <- might want this so that we dont have to fully spin up the shooter everytime?
 	SPINNING
 }
 
@@ -59,15 +59,15 @@ public void periodic() {
 	SmartDashboard.putNumber("Shooter/Back Duty",backMotor.getDutyCycle().getValueAsDouble());
 
 	SmartDashboard.putNumber("Shooter/Flywheel Speed", flywheelMotor.getVelocity().getValueAsDouble());
-		SmartDashboard.putNumber("Shooter/Flywheel Duty", flywheelMotor.getDutyCycle().getValueAsDouble());
+	SmartDashboard.putNumber("Shooter/Flywheel Duty", flywheelMotor.getDutyCycle().getValueAsDouble());
 }
 
-private void setShooterMotor(double voltage1, double voltage2) {
-	flywheelMotor.setControl(flywheelControl.withOutput(voltage1));
-	backMotor.setControl(backControl.withOutput(voltage2));
+private void setShooterMotor(double flywheelVoltage, double backVoltage) {
+	flywheelMotor.setControl(flywheelControl.withOutput(flywheelVoltage));
+	backMotor.setControl(backControl.withOutput(backVoltage));
 }
 
-public void newShooterSpeed(double flySpeed, double backSpeed) {
+public void newSpeed(double flySpeed, double backSpeed) {
 	ShooterConstants.flywheelSpeed = flySpeed;
 	ShooterConstants.backSpeed = backSpeed;
 	this.requestShoot();
@@ -79,7 +79,7 @@ private void unsetAllRequests() {
 }
 
 public void requestIdle() {
-	newShooterSpeed(0,0);
+	newSpeed(0,0);
 
 	unsetAllRequests();
 	requestedIdle = true;

@@ -7,25 +7,31 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import frc.lib.CTREConfig;
 import frc.robot.Robot;
+import frc.robot.util.Constants;
 
 public class IntakeConstants {
-	// Lucas remember this is in volts. This is wayyyy to fast. 4, 6, & 12v of power is insane .-.
-	public static final double intakeSpeed = 4; // Prolly more like 4-5v (MAYBE 6v if we need it)
-	public static final double spitSpeed = 4; // 4 is fine, but 2.5v or 3v would take less power
-	public static final double extenderSpeed = 2; // Way way WAYY to fast. Its going to apply (and waste) a ton of power
-	public static final double retractorSpeed = -2; // Something more like 2v would be good
+	// TODO: Set current limits and tune the motors. also name/find the canbus to put the motors on
+
+	public static final double intakeSpeed = 4;
+	public static final double spitSpeed = 4;
+	public static final double extenderSpeed = 2;
+	public static final double retractorSpeed = -2;
 
     public static final CTREConfig<TalonFX, TalonFXConfiguration> intakeMotorConfig =
-	new CTREConfig<>(TalonFXConfiguration::new);
+		new CTREConfig<>(TalonFXConfiguration::new);
 
-    static { // Climber and swerve get their own bus's, so whatever we end up naming the last bus will be used for everything but climber and swerve
-		//TODO: Find CAN ID and bus for intake motor
-	//intakeMotorConfig.withName("Intake Motor").withCanID("TBS").withBus("TBD");
+	public static final CTREConfig<TalonFX, TalonFXConfiguration> extenderMotorConfig =
+		new CTREConfig<>(TalonFXConfiguration::new);
+    
+
+    static {
+	intakeMotorConfig.withName("Intake Motor").withCanID(Constants.intakeMotorID)/*.withBus(Robot.TBD)*/;
 
 	TalonFXConfiguration intakeConfig = intakeMotorConfig.config;
 	intakeConfig.Slot0.kP = 0; // Increase until speed oscillates
 	intakeConfig.Slot0.kI = 0; // Don't touch
 	intakeConfig.Slot0.kD = 0; // Increase until jitter
+
 	intakeConfig.Slot0.kS = 0; // Increase until just before motor starts moving
 	intakeConfig.Slot0.kA = 0; //
 	intakeConfig.Slot0.kV = 0; //
@@ -43,19 +49,14 @@ public class IntakeConstants {
 	intakeConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 }
 
-
-
-
-public static final CTREConfig<TalonFX, TalonFXConfiguration> extenderMotorConfig =
-	new CTREConfig<>(TalonFXConfiguration::new);
-    
     static {
-	extenderMotorConfig.withName("Extender Motor").withCanID(52)/*.withBus("TBD") */;
+	extenderMotorConfig.withName("Extender Motor").withCanID(Constants.extenderMotorID)/*.withBus(Robot.TBD) */;
 
 	TalonFXConfiguration extenderConfig = extenderMotorConfig.config;
 	extenderConfig.Slot0.kP = 0; // Increase until speed oscillates
 	extenderConfig.Slot0.kI = 0; // Don't touch
 	extenderConfig.Slot0.kD = 0; // Increase until jitter
+
 	extenderConfig.Slot0.kS = 0; // Increase until just before motor starts moving
 	extenderConfig.Slot0.kA = 0; //
 	extenderConfig.Slot0.kV = 0; //

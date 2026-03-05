@@ -17,6 +17,7 @@ private final TalonFX extenderMotor = IntakeConstants.extenderMotorConfig.create
 	/* Control Signals */
 private final VoltageOut intakeControl = new VoltageOut(0);
 private final VoltageOut extenderControl = new VoltageOut(0);
+
 	/* Limit Switches */
 	//TODO: Find ports for limit switches
 //	  DigitalInput ExtendLimitL = new DigitalInput("TBD");

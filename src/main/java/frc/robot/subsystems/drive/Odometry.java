@@ -2,14 +2,13 @@ package frc.robot.subsystems.drive;
 
 import com.ctre.phoenix6.Utils;
 
-import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.vision.LimelightSubsystem;
 
-/* TODO: Rough overview of what Odometry.java does and how it works.
+/* Rough overview of what Odometry.java does and how it works.
  * Odometry tells the driver where the robot is at all times.
  * It's also VERY VERY useful for auton since during that period
  * the robot must know where it is to properly drive to each place
