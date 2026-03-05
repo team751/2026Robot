@@ -114,31 +114,10 @@ public class ControlBoard {
 	/* Driver bindings */
 	private void configureDriverBindings(PS5Controller controller) {
 		/* Shooter */
-		//TODO: We have way to many shooter buttons. We can probably cut some and also make more efficient bindings.
+		//We have way to many shooter buttons. We can probably cut some and also make more efficient bindings.
+		// TODO: old shooter bindings were for testing purposes. we gotta make entirely new ones
 
-		controller.triangleButton.whileTrue(
-			new StartEndCommand(() -> shooter.newShooterSpeed(1, 1), () -> shooter.requestIdle())
-		);
 
-		controller.crossButton.whileTrue(
-			new StartEndCommand(() -> shooter.newShooterSpeed(2, 2), () -> shooter.requestIdle())
-		);
-
-		controller.circleButton.whileTrue(
-			new StartEndCommand(() -> shooter.newShooterSpeed(5, 5), () -> shooter.requestIdle())
-		);
-
-		controller.squareButton.whileTrue(
-			new StartEndCommand(() -> shooter.newShooterSpeed(7, 7), () -> shooter.requestIdle())
-		);
-
-		controller.leftBumper.whileTrue(
-			new StartEndCommand(() -> shooter.newShooterSpeed(2, 0), () -> shooter.requestIdle())
-		);
-
-		controller.rightTrigger.whileTrue(
-			new StartEndCommand(() -> shooter.newShooterSpeed(0, 2), () -> shooter.requestIdle())
-		);
 				/* Intake */
 		controller.dUp.whileTrue(
 			new StartEndCommand(() -> IntakeSubsystem.getInstance().requestIntaking(), () -> IntakeSubsystem.getInstance().requestIdle())
