@@ -115,6 +115,7 @@ public class ControlBoard {
 	/* Driver bindings */
 	private void configureDriverBindings(PS5Controller controller) {
 		/* Shooter */
+		//TODO: We have way to many shooter buttons. We cn probably cut some and also make more efficient bindings.
 		controller.triangleButton.whileTrue(
 			new StartEndCommand(() -> shooter.newShooterSpeed(1, 1), () -> shooter.requestIdle())
 		);

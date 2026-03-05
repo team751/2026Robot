@@ -2,7 +2,7 @@ package frc.robot.subsystems.climber;
 
 import com.ctre.phoenix6.controls.DifferentialFollower;
 import com.ctre.phoenix6.controls.DutyCycleOut;
-// import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.StrictFollower;
 import com.ctre.phoenix6.hardware.TalonFX;
