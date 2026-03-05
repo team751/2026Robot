@@ -67,29 +67,29 @@ public class IntakeSubsystem extends SubsystemBase {
 		else if (requestedExtending) nextState = IntakeState.EXTENDING;
 		else if (requestedRetracting) nextState = IntakeState.RETRACTING;
 
-	if (nextState != state) {
-		state = nextState;
-		unsetAllRequests();
+		if (nextState != state) {
+			state = nextState;
+			unsetAllRequests();
 
-		switch (state) {
-		case IDLE -> {
-		setIntakeMotor(0);
-		setExtenderMotor(0);
+			switch (state) {
+				case IDLE -> {
+					setIntakeMotor(0);
+					setExtenderMotor(0);
+				}
+				case INTAKING -> setIntakeMotor(IntakeConstants.intakeSpeed);
+				case SPITTING -> setIntakeMotor(IntakeConstants.spitSpeed);
+				case EXTENDING -> setExtenderMotor(IntakeConstants.extenderSpeed);
+				case RETRACTING -> setExtenderMotor(IntakeConstants.retractorSpeed);
+			}
+			// if (state == IntakeState.EXTENDING && (ExtendLimit.get())) {
+			// 	requestIdle();
+			// setExtenderMotor(0);
+			// }
+			// if (state == IntakeState.RETRACTING && (RetractLimit.get())) {
+			// 	requestIdle();
+			// setExtenderMotor(0);
+			// }
 		}
-		case INTAKING -> setIntakeMotor(IntakeConstants.intakeSpeed);
-		case SPITTING -> setIntakeMotor(IntakeConstants.spitSpeed);
-		case EXTENDING -> setExtenderMotor(IntakeConstants.extenderSpeed);
-		case RETRACTING -> setExtenderMotor(IntakeConstants.retractorSpeed);
-	}
-	// if (state == IntakeState.EXTENDING && (ExtendLimit.get())) {
-	// 	requestIdle();
-	// setExtenderMotor(0);
-	// }
-	// if (state == IntakeState.RETRACTING && (RetractLimit.get())) {
-	// 	requestIdle();
-	// setExtenderMotor(0);
-	// }
-	}
 	SmartDashboard.putString("Intake/Intake State", state.toString());
 	SmartDashboard.putNumber("Intake/Intake Speed", intakeMotor.getVelocity().getValueAsDouble());
 	SmartDashboard.putNumber("Extender/Extender Speed", extenderMotor.getVelocity().getValueAsDouble());
@@ -136,10 +136,10 @@ public class IntakeSubsystem extends SubsystemBase {
 		requestedRetracting = true;
 	}
 	private void unsetAllRequests() {
-	requestedIdle = false;
-	requestedIntaking = false;
-	requestedSpitting = false;
-	requestedExtending = false;
-	requestedRetracting = false;
+		requestedIdle = false;
+		requestedIntaking = false;
+		requestedSpitting = false;
+		requestedExtending = false;
+		requestedRetracting = false;
 	}
 }

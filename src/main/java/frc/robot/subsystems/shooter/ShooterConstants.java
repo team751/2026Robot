@@ -44,26 +44,26 @@ public class ShooterConstants {
 	}
 
 
-static {
-	backMotorConfig.withName("Back Motor").withCanID(Constants.backMotorID)/*.withBus(Robot.TBD)*/;
+	static {
+		backMotorConfig.withName("Back Motor").withCanID(Constants.backMotorID)/*.withBus(Robot.TBD)*/;
 
-	TalonFXConfiguration backConfig = backMotorConfig.config;
+		TalonFXConfiguration backConfig = backMotorConfig.config;
 
-	backConfig.Slot0.kP = 0.1; // Increase until speed oscillates
-	backConfig.Slot0.kI = 0; // Don't touch haha im gunna touch it lol
-	backConfig.Slot0.kD = 0; // Increase until jitter
+		backConfig.Slot0.kP = 0.1; // Increase until speed oscillates
+		backConfig.Slot0.kI = 0; // Don't touch haha im gunna touch it lol
+		backConfig.Slot0.kD = 0; // Increase until jitter
 
-	backConfig.Slot0.kS = 0; // Increase until just before motor starts moving
-	backConfig.Slot0.kA = 0; //
-	backConfig.Slot0.kV = 0; //
-	backConfig.Slot0.kG = 0; // Don't touch
+		backConfig.Slot0.kS = 0; // Increase until just before motor starts moving
+		backConfig.Slot0.kA = 0; //
+		backConfig.Slot0.kV = 0; //
+		backConfig.Slot0.kG = 0; // Don't touch
 
-	backConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-	backConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-	// backConfig.CurrentLimits.StatorCurrentLimit = 120;
-	// backConfig.CurrentLimits.StatorCurrentLimitEnable = false;
-	// backConfig.TorqueCurrent.PeakForwardTorqueCurrent = 40;
-	// backConfig.TorqueCurrent.PeakReverseTorqueCurrent = -40;
-}
+		backConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+		backConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+		// backConfig.CurrentLimits.StatorCurrentLimit = 120;
+		// backConfig.CurrentLimits.StatorCurrentLimitEnable = false;
+		// backConfig.TorqueCurrent.PeakForwardTorqueCurrent = 40;
+		// backConfig.TorqueCurrent.PeakReverseTorqueCurrent = -40;
+	}
 
 }

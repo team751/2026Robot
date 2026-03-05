@@ -42,8 +42,8 @@ public class ClimberSubsystem extends SubsystemBase {
 	}
 
 	private ClimberSubsystem() {
-    	m_servo.setBoundsMicroseconds(2400, 1520, 1500, 1480, 600);
-    	m_lastTimestamp = Timer.getFPGATimestamp();
+		m_servo.setBoundsMicroseconds(2400, 1520, 1500, 1480, 600);
+		m_lastTimestamp = Timer.getFPGATimestamp();
 	}
 
 	@Override

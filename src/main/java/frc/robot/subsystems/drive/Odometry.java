@@ -37,7 +37,7 @@ public class Odometry extends SubsystemBase {
 	private static Odometry instance;
 	private final SwerveSubsystem drive;
 	private final LimelightSubsystem limelights;
-    private Field2d field = new Field2d();
+	private Field2d field = new Field2d();
 	private Pose2d robotPose;
 
 	public Odometry() {
@@ -59,8 +59,8 @@ public class Odometry extends SubsystemBase {
 		drive.resetPose(newPose);
 	}
 
-    @Override
-    public void periodic() {
+	@Override
+	public void periodic() {
 		// Gets the current timestamp
 		double time = Utils.getCurrentTimeSeconds();
 
@@ -81,17 +81,17 @@ public class Odometry extends SubsystemBase {
 
 
 		// Sets the Odometry robotPose variable (for easy/more normal access to the robot position)
-        robotPose = drive.getPose();
+		robotPose = drive.getPose();
 
 		// Puts a new field value into Elastic
-        field.setRobotPose(robotPose.getX(), robotPose.getY(), robotPose.getRotation());
+		field.setRobotPose(robotPose.getX(), robotPose.getY(), robotPose.getRotation());
 
 		SmartDashboard.putNumber("Pigeon Yaw", drive.getPigeon2().getYaw().getValueAsDouble());
 		SmartDashboard.putNumber("Pigeon Pitch", drive.getPigeon2().getPitch().getValueAsDouble());
 		SmartDashboard.putNumber("Pigeon Roll", drive.getPigeon2().getRoll().getValueAsDouble());
 		SmartDashboard.putNumber("Swerve Rotation", Math.toDegrees(drive.getRotation3d().getZ()));
 
-        SmartDashboard.putData(field);
+		SmartDashboard.putData(field);
 
-    }
+	}
 }

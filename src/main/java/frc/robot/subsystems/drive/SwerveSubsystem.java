@@ -116,29 +116,29 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
             this
         );
 
-    System.out.println("Swerve Starting!");
+        System.out.println("Swerve Starting!");
 
-    // Try to apply operator perspective as early as possible so a deploy (process restart)
-    // gets the same perspective as a full power-cycle. We also publish telemetry so we can
-    // see what perspective was applied on deploy vs power-cycle.
-    DriverStation.getAlliance()
-        .ifPresent(
-            allianceColor -> {
-                var rot = allianceColor == Alliance.Red
-                    ? kRedAlliancePerspectiveRotation
-                    : kBlueAlliancePerspectiveRotation;
-                // Use helper that adjusts odometry pose when perspective changes so the
-                // operator's forward stays consistent.
-                setOperatorPerspectiveAndAdjustPose(rot);
-            });
+        // Try to apply operator perspective as early as possible so a deploy (process restart)
+        // gets the same perspective as a full power-cycle. We also publish telemetry so we can
+        // see what perspective was applied on deploy vs power-cycle.
+        DriverStation.getAlliance()
+            .ifPresent(
+                allianceColor -> {
+                    var rot = allianceColor == Alliance.Red
+                        ? kRedAlliancePerspectiveRotation
+                        : kBlueAlliancePerspectiveRotation;
+                    // Use helper that adjusts odometry pose when perspective changes so the
+                    // operator's forward stays consistent.
+                    setOperatorPerspectiveAndAdjustPose(rot);
+                });
 
         // Start simulation thread if running in simulation
         if (Utils.isSimulation()) startSimThread();
     }
 
     public ChassisSpeeds getRobotRelativeSpeeds() {
-                return getKinematics().toChassisSpeeds(getState().ModuleStates);
-        }
+        return getKinematics().toChassisSpeeds(getState().ModuleStates);
+    }
 
     // This method now accepts DriveFeedforwards as PathPlanner expects
     private void drive(ChassisSpeeds robotSpeeds, DriveFeedforwards feedForward) {

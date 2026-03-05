@@ -118,7 +118,7 @@ public class ControlBoard {
 		// TODO: old shooter bindings were for testing purposes. we gotta make entirely new ones
 
 
-				/* Intake */
+			/* Intake */
 		controller.dUp.whileTrue(
 			new StartEndCommand(() -> IntakeSubsystem.getInstance().requestIntaking(), () -> IntakeSubsystem.getInstance().requestIdle())
 		);
