@@ -15,7 +15,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.units.Units;
 import limelight.Limelight;
-/* TODO: Rough Overview of Vision/Limelight
+
+/* Rough Overview of Vision/Limelight
  * The Limelight/Vision subsystem is used to help determine
  * where our robot is on the field. This is used in the
  * Odometry.java file. 
