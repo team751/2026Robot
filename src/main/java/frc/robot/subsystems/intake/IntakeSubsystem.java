@@ -21,12 +21,12 @@ public class IntakeSubsystem extends SubsystemBase {
 	private final VoltageOut extenderControl = new VoltageOut(0);
 
 	/* Limit Switches */
-	// TODO: lucas update your code. the limit switch ports are: DO3 for the left switch and DO2 for the right switch
-	//DigitalInput ExtendLimitL = new DigitalInput(TBD);
-    //DigitalInput ExtendLimitR = new DigitalInput(TBD);
+	//TODO: lucas update your code. the limit switch ports are: DO3 for the left switch and DO2 for the right switch
+	//TODO: Find out which one is left and which one is right
+	
+	// DigitalInput ExtendLimit = new DigitalInput(TBD);
 
-	//DigitalInput RetractLimitL = new DigitalInput(TBD);
-    //DigitalInput RetractLimitR = new DigitalInput(TBD);
+	// DigitalInput RetractLimit = new DigitalInput(TBD);
   
 
 	/* State Machine Logic */
@@ -81,11 +81,11 @@ public class IntakeSubsystem extends SubsystemBase {
 		case EXTENDING -> setExtenderMotor(IntakeConstants.extenderSpeed);
 		case RETRACTING -> setExtenderMotor(IntakeConstants.retractorSpeed);
 	}
-	// if (state == IntakeState.EXTENDING && (ExtendLimitL.get() && ExtendLimitR.get())) {
+	// if (state == IntakeState.EXTENDING && (ExtendLimit.get())) {
 	// 	requestIdle();
 	// setExtenderMotor(0);
 	// }
-	// if (state == IntakeState.RETRACTING && (RetractLimitL.get() && RetractLimitR.get())) {
+	// if (state == IntakeState.RETRACTING && (RetractLimit.get())) {
 	// 	requestIdle();
 	// setExtenderMotor(0);
 	// }

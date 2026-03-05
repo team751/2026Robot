@@ -12,8 +12,8 @@ import frc.robot.util.Constants;
 public class IntakeConstants {
 	// TODO: Set current limits and tune the motors. also name/find the canbus to put the motors on
 
-	public static final double intakeSpeed = 4;
-	public static final double spitSpeed = 4;
+	public static final double intakeSpeed = 3.5;
+	public static final double spitSpeed = 3.5;
 	public static final double extenderSpeed = 2;
 	public static final double retractorSpeed = -2;
 
