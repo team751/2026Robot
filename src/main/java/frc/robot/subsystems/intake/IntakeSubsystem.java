@@ -12,19 +12,21 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class IntakeSubsystem extends SubsystemBase {
 	private static IntakeSubsystem instance;
 
-private final TalonFX intakeMotor = IntakeConstants.intakeMotorConfig.createDevice(TalonFX::new);
-private final TalonFX extenderMotor = IntakeConstants.extenderMotorConfig.createDevice(TalonFX::new);
+	/* Motors */
+	private final TalonFX intakeMotor = IntakeConstants.intakeMotorConfig.createDevice(TalonFX::new);
+	private final TalonFX extenderMotor = IntakeConstants.extenderMotorConfig.createDevice(TalonFX::new);
+
 	/* Control Signals */
-private final VoltageOut intakeControl = new VoltageOut(0);
-private final VoltageOut extenderControl = new VoltageOut(0);
+	private final VoltageOut intakeControl = new VoltageOut(0);
+	private final VoltageOut extenderControl = new VoltageOut(0);
 
 	/* Limit Switches */
-	//TODO: Find ports for limit switches
-//	  DigitalInput ExtendLimitL = new DigitalInput("TBD");
-//    DigitalInput ExtendLimitR = new DigitalInput("TBD");
+	// TODO: find intake limit switch ports
+	//DigitalInput ExtendLimitL = new DigitalInput(TBD);
+    //DigitalInput ExtendLimitR = new DigitalInput(TBD);
 
-//    DigitalInput RetractLimitL = new DigitalInput("TBD");
-//    DigitalInput RetractLimitR = new DigitalInput("TBD");
+	//DigitalInput RetractLimitL = new DigitalInput(TBD);
+    //DigitalInput RetractLimitR = new DigitalInput(TBD);
   
 
 	/* State Machine Logic */
@@ -44,27 +46,17 @@ private final VoltageOut extenderControl = new VoltageOut(0);
 	private boolean requestedExtending = false;
 	private boolean requestedRetracting = false;
 
-public static IntakeSubsystem getInstance() {
-	if (instance == null) instance = new IntakeSubsystem();
-	return instance;
-}
-
-private IntakeSubsystem() {
-	setIntakeMotor(0);
-	setExtenderMotor(0);
-}
-
-/**
-* Set the intake motor to a given speed
-*
-* @param voltage in volts
-*/
-private void setIntakeMotor(double voltage) {
-	intakeMotor.setControl(intakeControl.withOutput(voltage));
-}
-private void setExtenderMotor(double voltage) {
-	extenderMotor.setControl(extenderControl.withOutput(voltage));
+	public static IntakeSubsystem getInstance() {
+		if (instance == null) instance = new IntakeSubsystem();
+		return instance;
 	}
+
+	private IntakeSubsystem() {
+		setIntakeMotor(0);
+		setExtenderMotor(0);
+	}
+
+
 
 	@Override
 	public void periodic() {
@@ -103,6 +95,24 @@ private void setExtenderMotor(double voltage) {
 	SmartDashboard.putNumber("Extender/Extender Speed", extenderMotor.getVelocity().getValueAsDouble());
 	}
 
+	/**
+	* Set the intake motor to a given speed
+	*
+	* @param voltage in volts
+	*/
+	private void setIntakeMotor(double voltage) {
+		intakeMotor.setControl(intakeControl.withOutput(voltage));
+	}
+
+	/**
+	* Set the extender motor to a given speed
+	*
+	* @param voltage in volts
+	*/
+	private void setExtenderMotor(double voltage) {
+		extenderMotor.setControl(extenderControl.withOutput(voltage));
+	}
+
 	public void requestIntaking() {
 		requestedSpitting = false;
 		requestedIntaking = true;
@@ -131,5 +141,5 @@ private void setExtenderMotor(double voltage) {
 	requestedSpitting = false;
 	requestedExtending = false;
 	requestedRetracting = false;
-}
+	}
 }
