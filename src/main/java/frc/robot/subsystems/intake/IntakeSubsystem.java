@@ -79,14 +79,20 @@ public class IntakeSubsystem extends SubsystemBase {
 				case EXTENDING -> setExtenderMotor(IntakeConstants.extenderSpeed);
 				case RETRACTING -> setExtenderMotor(IntakeConstants.retractorSpeed);
 			}
-			// if (state == IntakeState.EXTENDING && (ExtendLimit.get())) {
-			// 	requestIdle();
-			// setExtenderMotor(0);
-			// }
-			// if (state == IntakeState.RETRACTING && (RetractLimit.get())) {
-			// 	requestIdle();
-			// setExtenderMotor(0);
-			// }
+			if (state == IntakeState.EXTENDING && (LeftLimit.get()) || (RightLimit.get())) {
+			setExtenderMotor(0.5);
+			}
+			if (state == IntakeState.RETRACTING && (LeftLimit.get()) || (RightLimit.get())) {
+			setExtenderMotor(0.5);
+			}
+			if (state == IntakeState.RETRACTING && (RightLimit.get()) && (LeftLimit.get())) {
+				requestIdle();
+			setExtenderMotor(0);
+			}
+			if (state == IntakeState.EXTENDING && (RightLimit.get()) && (LeftLimit.get())) {
+				requestIdle();
+			setExtenderMotor(0);
+			}
 		}
 	SmartDashboard.putString("Intake/Intake State", state.toString());
 	SmartDashboard.putNumber("Intake/Intake Speed", intakeMotor.getVelocity().getValueAsDouble());
