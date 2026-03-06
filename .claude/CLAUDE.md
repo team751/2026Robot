@@ -1,585 +1,204 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code when working with this FRC 2026 REBUILT robot codebase (Team 751).
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Build Commands
 
 ```bash
 ./gradlew build              # Full build (compile + spotlessCheck + tests)
-./gradlew assemble           # Build without tests
 ./gradlew deploy             # Deploy to RoboRIO (must be connected via USB/Wi-Fi/Ethernet)
 ./gradlew simulateJava       # Run simulation with MapleSim physics + Sim GUI
 ./gradlew spotlessApply      # Auto-format all code (Google Java Format via Spotless)
 ./gradlew spotlessCheck      # Check formatting (CI gating)
 ./gradlew test               # Run JUnit 5 tests
-./gradlew clean              # Clean build artifacts
 ```
 
-**First build** downloads all dependencies and will be slow. Subsequent builds are fast.
-
-## Dependency Versions
-
-| Library | Version | Source File |
-|---------|---------|-------------|
-| GradleRIO (WPILib) | `2026.2.1` | `build.gradle` |
-| Java | `17` | `build.gradle` |
-| CTRE Phoenix 6 | `26.1.1` | `vendordeps/Phoenix6-26.1.1.json` |
-| PathPlannerLib | `2026.1.2` | `vendordeps/PathplannerLib-2026.1.2.json` |
-| REVLib | `2026.0.1` | `vendordeps/REVLib.json` |
-| YALL (Limelight) | `2026.1.12` | `vendordeps/yall.json` |
-| MapleSim | `0.4.0-beta` | `vendordeps/maple-sim.json` |
-| Dyn4j (physics) | `5.0.2` | via MapleSim vendordep |
-| WPILibNewCommands | `2026` | `vendordeps/WPILibNewCommands.json` |
-| Lombok | `1.18.30` | `build.gradle` |
-| Spotless | `6.23.3` | `build.gradle` |
-| JUnit 5 | `5.10.1` | `build.gradle` |
+**Always run `./gradlew spotlessApply` before committing.** The build will fail if formatting is wrong.
 
 ## Architecture Overview
 
-This is an FRC robot project for the **2026 REBUILT** season. The game involves scoring **fuel** into alternating **hubs** and **climbing a tower** with 3 levels.
+FRC Team 751's 2026 REBUILT season robot. Java 17, WPILib 2026.2.1, CTRE Phoenix 6 swerve drive.
 
 ### System Diagram
 
 ```
-Main.java
-  └─ Robot.java (TimedRobot, 50Hz main loop)
-       ├─ CommandScheduler (runs all subsystem periodic() + commands)
-       │    ├─ SwerveSubsystem (drive control, PathPlanner AutoBuilder)
-       │    │    └─ [sim] MapleSimSwerveDrivetrain (200Hz physics thread)
-       │    ├─ Odometry (vision + wheel fusion, Field2d)
-       │    │    └─ LimelightSubsystem (dual camera AprilTag poses)
-       │    ├─ Superstructure (state machine coordinator)
-       │    └─ [future subsystems...]
-       ├─ ControlBoard (PS5 controller bindings → SwerveRequests)
-       └─ TunableParameter.updateAll() (SmartDashboard polling)
+Robot.java (TimedRobot, 50Hz)
+  ├─ CommandScheduler
+  │    ├─ SwerveSubsystem (swerve drive, PathPlanner AutoBuilder)
+  │    │    └─ [sim] MapleSimSwerveDrivetrain (200Hz physics)
+  │    ├─ Odometry (vision + wheel fusion)
+  │    │    └─ LimelightSubsystem (dual AprilTag cameras)
+  │    ├─ Superstructure (state machine coordinator)
+  │    │    ├─ ShooterSubsystem
+  │    │    ├─ ClimberSubsystem
+  │    │    ├─ IntakeSubsystem
+  │    │    └─ ExtenderSubsystem
+  │    └─ TransferSubsystem (in progress)
+  ├─ ControlBoard (PS5 controller bindings)
+  └─ TunableParameter.updateAll()
 ```
 
 ### Initialization Order (Matters!)
 
-1. `Odometry.getInstance()` creates Odometry, which creates SwerveSubsystem and LimelightSubsystem
-2. `SwerveSubsystem.getInstance()` is already created by Odometry
-3. `ControlBoard.getInstance()` depends on SwerveSubsystem being initialized
-4. `robotInit()`: port forwarding for Limelights, builds AutoChooser
+1. `Odometry.getInstance()` — creates Odometry, which creates SwerveSubsystem and LimelightSubsystem
+2. `SwerveSubsystem.getInstance()` — already created by Odometry
+3. `ControlBoard.getInstance()` — depends on SwerveSubsystem being initialized
+4. `robotInit()`: port forwarding, AutoChooser, `ClimberSubsystem.getInstance().zeroClimber()`
 
-### Periodic Loop (50Hz / 20ms)
+### Periodic Loop (50Hz)
 
 ```
 robotPeriodic():
-  1. TunableParameter.updateAll()    ← polls SmartDashboard for changed values
-  2. CommandScheduler.run()          ← runs all subsystem periodic() + scheduled commands
-     ├─ SwerveSubsystem.periodic()  ← operator perspective, publishes pose
-     ├─ Odometry.periodic()         ← vision fusion, Field2d update
-     ├─ Superstructure.periodic()   ← state machine transitions
-     └─ [active commands execute]
-  3. ControlBoard.displayUI()        ← reserved for dashboard updates
+  1. TunableParameter.updateAll()
+  2. CommandScheduler.run()  ← all subsystem periodic() + commands
+  3. ControlBoard.displayUI()
 ```
 
-## Package Structure
+## Key Design Patterns
 
-```
-src/main/java/
-├── frc/
-│   ├── lib/                              # Reusable library classes (cross-project)
-│   │   ├── CTREConfig.java               # Builder pattern for CTRE device config
-│   │   ├── CTREUtil.java                 # CTRE retry/error handling utilities
-│   │   ├── PS5Controller.java            # PS5 DualSense controller wrapper
-│   │   └── TunableParameter.java         # Live SmartDashboard value tuning
-│   └── robot/
-│       ├── Main.java                     # Entry point
-│       ├── Robot.java                    # TimedRobot lifecycle, CAN bus refs
-│       ├── Constants.java                # Deprecated drivebus string, HAL flag
-│       ├── subsystems/
-│       │   ├── Superstructure.java       # Central state machine coordinator
-│       │   ├── drive/
-│       │   │   ├── SwerveSubsystem.java  # Main swerve drive subsystem
-│       │   │   ├── SwerveConstants.java  # Derived constants + PathPlanner config
-│       │   │   ├── Odometry.java         # Vision + wheel odometry fusion
-│       │   │   └── generated/
-│       │   │       └── TunerConstants.java  # GENERATED by Tuner X - DO NOT EDIT
-│       │   ├── vision/
-│       │   │   ├── LimelightSubsystem.java  # Dual Limelight AprilTag vision
-│       │   │   └── LimelightConstants.java  # Camera names, IPs, offsets
-│       │   ├── shooter/                  # COMMENTED OUT - inactive
-│       │   │   ├── ShooterSubsystem.java
-│       │   │   └── ShooterConstants.java
-│       │   └── simulation/
-│       │       ├── MapleSimSwerveDrivetrain.java  # CTRE ↔ MapleSim bridge
-│       │       ├── MapSimSwerveTelemetry.java     # Sim NetworkTables publisher
-│       │       └── ElevatorWristSim.java          # Placeholder Mechanism2d
-│       └── util/
-│           ├── ControlBoard.java         # PS5 controller bindings + drive command
-│           ├── FieldConstants.java       # 2026 REBUILT field geometry
-│           ├── Constants.java            # Deprecated, use Robot.drivebus/riobus
-│           └── LimelightHelpers.java     # Official Limelight helper library v1.14
-└── org/ironmaple/simulation/            # MapleSim physics engine (bundled in-tree)
-    ├── SimulatedArena.java              # Central physics world
-    ├── IntakeSimulation.java            # Game piece collection simulation
-    ├── drivesims/                       # Swerve drive physics
-    ├── motorsims/                       # DC motor simulation models
-    ├── seasonspecific/rebuilt2026/       # 2026 field + game pieces
-    └── ...
-```
+### Singleton Subsystems
 
-## Design Patterns
-
-### 1. Singleton Subsystems
-
-**All subsystems** use the singleton pattern via `getInstance()`. **Never** instantiate subsystems directly with `new`.
+**All subsystems** use `getInstance()`. Never use `new` directly.
 
 ```java
-public class MySubsystem extends SubsystemBase {
-    private static MySubsystem instance;
-    public static MySubsystem getInstance() {
-        if (instance == null) instance = new MySubsystem();
-        return instance;
-    }
-    private MySubsystem() { /* private constructor */ }
+private static MySubsystem instance;
+public static MySubsystem getInstance() {
+    if (instance == null) instance = new MySubsystem();
+    return instance;
 }
+private MySubsystem() { }
 ```
 
-### 2. Request-Based State Machines
+### Request-Based State Machines
 
-Subsystems with multiple operating modes use request methods to decouple intent from execution:
+Subsystems decouple intent from execution. External code calls `request*()` methods; transitions happen atomically in `periodic()`.
 
 ```java
-// External code calls request methods
-subsystem.requestActive();
-
-// Transitions happen atomically in periodic()
-switch (systemState) {
-    case IDLE -> { if (requestActive) nextState = State.ACTIVE; }
-    case ACTIVE -> { if (requestIdle) nextState = State.IDLE; }
-}
+subsystem.requestIntaking();  // sets a flag
+// In periodic(): switch(state) checks flags, transitions, clears flags
 ```
 
-Used by: `Superstructure` (PRE_HOME/IDLE), `ShooterSubsystem` (IDLE/SPINNING, commented out).
+Used by: IntakeSubsystem (IDLE/INTAKING/SPITTING), ExtenderSubsystem (IDLE/EXTENDING/RETRACTING), Superstructure (PRE_HOME/IDLE), ShooterSubsystem (IDLE/SPINNING).
 
-### 3. Superstructure Coordinator
+### Superstructure Coordinator
 
-`Superstructure.java` is a meta-subsystem that coordinates all mechanism subsystems through a single state machine. Currently minimal (PRE_HOME/IDLE) but designed for expansion:
+`Superstructure.java` coordinates all mechanism subsystems through a central state machine. Currently holds references to SwerveSubsystem, ShooterSubsystem, ClimberSubsystem, IntakeSubsystem, and ExtenderSubsystem.
 
-```java
-case SCORING -> {
-    elevatorSubsystem.requestExtend();
-    if (elevator.isAtTarget()) {
-        wristSubsystem.requestScore();
-        shooterSubsystem.requestShoot();
-    }
-}
-```
+## CAN Bus Architecture
 
-### 4. CAN Bus Architecture
+Three separate CAN buses:
 
-Two separate CAN buses to prevent bandwidth starvation:
+| Bus | Constant | Devices |
+|-----|----------|---------|
+| `drivebus` | `Robot.drivebus` | All swerve modules (drive/steer/CANcoder), Pigeon 2 IMU |
+| `rio` | `Robot.riobus` | General devices |
+| `climbbus` | `Robot.climbbus` | Climber motors |
 
-```
-CAN Bus "rio" (Robot.riobus)           CAN Bus "Drivebus" (Robot.drivebus)
-├─ General devices                      ├─ FL Drive Motor (10)
-├─ Shooter Motor (15, planned)          ├─ FL Steer Motor (11)
-└─ Future subsystem motors              ├─ FL CANcoder   (12)
-                                        ├─ FR Drive Motor (20)
-                                        ├─ FR Steer Motor (21)
-                                        ├─ FR CANcoder   (22)
-                                        ├─ BR Drive Motor (30)
-                                        ├─ BR Steer Motor (31)
-                                        ├─ BR CANcoder   (32)
-                                        ├─ BL Drive Motor (40)
-                                        ├─ BL Steer Motor (41)
-                                        ├─ BL CANcoder   (42)
-                                        └─ Pigeon2 IMU   (2)
-```
+**Note:** Many non-drive motor CAN IDs are placeholder `-1` in `Constants.java` — these need to be set to real values before deployment.
 
-Always use `Robot.drivebus` and `Robot.riobus`. The string constants in `frc.robot.util.Constants` are deprecated.
+## Subsystems
 
-## Swerve Drive
+### Swerve Drive (`subsystems/drive/`)
 
-Uses CTRE's generated swerve (`TunerSwerveDrivetrain`) with **Kraken X60 FOC** motors.
+CTRE generated swerve (`TunerSwerveDrivetrain`) with Kraken X60 FOC motors. Max speed 4.73 m/s.
 
-### Key Specs
+- `TunerConstants.java` — **Generated by Tuner X, DO NOT EDIT**. `OldTunerConstants.java` is a backup.
+- `SwerveSubsystem.java` — Extends TunerSwerveDrivetrain, configures PathPlanner AutoBuilder
+- `SwerveConstants.java` — Derived constants + PathPlanner RobotConfig
+- `Odometry.java` — Fuses vision translation (not heading) with wheel odometry
 
-| Parameter | Value |
-|-----------|-------|
-| Max speed | 4.73 m/s (at 12V) |
-| Max angular speed | 6.91 rad/s (1.1 rot/s) |
-| Drive gear ratio | 6.746:1 |
-| Steer gear ratio | 21.43:1 |
-| Coupling ratio | 3.571:1 |
-| Wheel radius | 2.1 inches (0.053 m) |
-| Module spacing | 10.375" from center (20.75" wheelbase) |
-| Slip current | 65A |
-| Steer current limit | 60A stator |
+### Vision (`subsystems/vision/`)
 
-### Module CAN IDs
+Dual Limelights: `limelight-front` (3G, 10.7.51.71) and `limelight-back` (2, 10.7.51.75). Only translation from vision is used — heading always comes from Pigeon 2 gyro.
 
-| Module | Drive | Steer | CANcoder | Position | CANcoder Offset |
-|--------|-------|-------|----------|----------|-----------------|
-| Front Left | 10 | 11 | 12 | (+10.375", +10.375") | 0.4155 rot |
-| Front Right | 20 | 21 | 22 | (+10.375", -10.375") | 0.4749 rot |
-| Back Right | 30 | 31 | 32 | (-10.375", -10.375") | -0.0271 rot |
-| Back Left | 40 | 41 | 42 | (-10.375", +10.375") | 0.4729 rot |
+### Intake (`subsystems/intake/`)
 
-**Pigeon 2 IMU**: CAN ID 2, on "Drivebus". Mount: Yaw=1.066, Pitch=0.238, Roll=-0.978 degrees.
+- **IntakeSubsystem**: Single TalonFX, states: IDLE/INTAKING/SPITTING. VoltageOut control.
+- **ExtenderSubsystem**: Single TalonFX + 2 limit switches (DIO 2, 3). States: IDLE/EXTENDING/RETRACTING. Stops on limit switch activation.
+- Constants in `IntakeConstants.java` (speeds, motor configs for both).
 
-### PID Gains
+### Climber (`subsystems/climber/`)
 
-| Controller | kP | kI | kD | kS | kV |
-|------------|----|----|----|----|-----|
-| Steer | 10 | 0 | 0 | — | — |
-| Drive | 0.02 | 0 | 0 | 0 | 0.124 |
-| PathPlanner Translation | 0.5 | 0 | 0 | — | — |
-| PathPlanner Rotation | 0.3 | 0 | 0 | — | — |
+Dual TalonFX motors (left/right) + 1 servo + 2 limit switches (DIO 7, 8). On `climbbus`. Features `spinUntil()` for non-blocking position targeting with average error compensation. Motors zeroed on init and teleop start.
 
-### Key Files
+### Shooter (`subsystems/shooter/`)
 
-- `TunerConstants.java` — **Generated by Tuner X**. Do NOT edit by hand. Contains all module configs, CAN IDs, gear ratios, PID gains.
-- `SwerveSubsystem.java` — Extends `TunerSwerveDrivetrain`, implements `Subsystem`. Configures PathPlanner AutoBuilder, manages operator perspective, starts sim thread.
-- `SwerveConstants.java` — Derived constants (maxSpeed, maxAngularSpeed) and PathPlanner `RobotConfig`.
+TalonFX-based shooter with IDLE/SPINNING state machine.
 
-### Operator Controls (ControlBoard.java)
+### Transfer (`subsystems/transfer/`)
+
+Dual TalonFX motors (top/bottom). Constants defined in `TransferConstants.java`. **TransferSubsystem.java is currently empty** — needs implementation.
+
+## Operator Controls (ControlBoard.java)
+
+### Driver (Port 0, PS5)
 
 | Input | Action |
 |-------|--------|
-| Left stick Y | Forward/backward (60% of max speed) |
-| Left stick X | Left/right (60% of max speed) |
-| Right stick X | Rotation (80% of max, squared for sensitivity) |
+| Left stick | Translation (60% max speed) |
+| Right stick X | Rotation (squared for sensitivity) |
 | Right bumper (hold) | Precise mode: 25% translation, 50% rotation |
-| Left bumper (hold) | Auto aim toggle (PID toward point 14, 3.5) |
-| Right stick press | Axis align toggle (Y=0.5m, facing 180 degrees) |
-| Circle button | Reset rotation to alliance perspective |
+| Right trigger (hold) | Intake |
+| Square (hold) | Spit |
+| D-pad left (hold) | Retract extender |
+| D-pad right (hold) | Extend extender |
 
-Drive uses `SwerveRequest.FieldCentric` with:
-- 5% translation deadband, 10% rotation deadband
-- OpenLoopVoltage drive, Position (closed-loop) steer
-- DesaturateWheelSpeeds enabled
-- Alliance-aware OperatorPerspective
+### Operator (Port 1, PS5)
 
-### Controllers
+| Input | Action |
+|-------|--------|
+| Left stick press | Reset rotation to alliance perspective |
+| Square (hold) | Auto aim toward alliance hub |
+| Right stick press (hold) | Axis align to nearest trench |
+| Left trigger (hold) | Climber up (slow) |
+| Cross (hold) | Climber down (slow) |
+| Circle | Stop climber motors |
 
-| Role | Port | Type |
-|------|------|------|
-| Driver | 0 | PS5Controller (custom wrapper in `frc.lib`) |
-| Operator | 1 | PS5Controller (bindings currently empty) |
+### Drive Request Config
 
-## Vision & Odometry
+Field-centric with 5% translation deadband, 10% rotation deadband, OpenLoopVoltage drive, Position steer, DesaturateWheelSpeeds, OperatorPerspective.
 
-Dual Limelight cameras provide AprilTag-based localization, fused with wheel odometry.
+## Field Constants (`FieldConstants.java`)
 
-### Camera Configuration
+Uses `GameElement` enum for all field elements (hubs, towers, trenches, outposts) with alliance-aware helpers:
+- `getAllianceHub()` — returns hub Pose2d for current alliance
+- `getNearestTrench(robotPose)` — returns closest alliance trench
+- `GameElement.getColor(isBlue)` / `GameElement.getByType(type)` — filter elements
 
-| Property | Front Camera | Back Camera |
-|----------|-------------|-------------|
-| Name | `limelight-front` | `limelight-back` |
-| Model | Limelight 3G | Limelight 2 |
-| IP | 10.7.51.71 | 10.7.51.75 |
-| Stream | http://10.7.51.71:5800 | http://10.7.51.75:5800 |
-| Dashboard | http://10.7.51.71:5801 | http://10.7.51.75:5801 |
-| X offset | 0.225 m (forward) | -0.01 m (slightly back) |
-| Y offset | 0.025 m (left) | -0.29 m (right) |
-| Z offset | 0.235 m (up) | 0.285 m (up) |
-| Rotation | None (0,0,0) | 90 degrees yaw |
-
-### How Odometry Works
-
-1. **Wheel odometry** (250Hz via CTRE SwerveDrivetrain): continuous position tracking, drifts over time
-2. **Vision** (Limelight MegaTag2): absolute position from AprilTags, corrects wheel drift
-3. **Fusion** (`Odometry.periodic()`): feeds vision translation to `addVisionMeasurement()`. **Only translation (x,y) from vision is used** — heading always comes from Pigeon 2 gyro
-
-```java
-// Vision measurement uses vision translation + gyro heading
-new Pose2d(visionPose.getTranslation(), drive.getPose().getRotation())
-```
-
-### Key AprilTag IDs
-
-| ID | Location |
-|----|----------|
-| 26 | Blue hub near face |
-| 20 | Blue hub far face |
-| 18 | Blue hub right face |
-| 21 | Blue hub left face |
-| 4 | Red hub near face |
-| 10 | Red alliance zone |
-| 31 | Blue tower |
-| 15 | Red tower |
-| 29 | Blue outpost |
-
-Port forwarding for Limelights (ports 5800-5809) is set up in `Robot.robotInit()`.
+WPILib Blue-origin coordinates: origin at bottom-right of Blue wall, +X toward Red, +Y left.
 
 ## Autonomous
 
-Uses [PathPlanner](https://pathplanner.dev/) for trajectory following. No separate ChoreoLib vendordep — Choreo integration is via PathPlannerLib.
+PathPlanner-based. AutoBuilder configured in `SwerveSubsystem` constructor. Auto chooser built in `Robot.robotInit()` and scans `src/main/deploy/pathplanner/autos/*.auto` — no code changes needed for new autos.
 
-### Configuration
+## Simulation
 
-AutoBuilder configured in `SwerveSubsystem` constructor:
+MapleSim + Dyn4j physics at 200Hz. Run with `./gradlew simulateJava`. Connect AdvantageScope to `localhost` for 3D viz. Vision returns null in sim.
 
-```java
-AutoBuilder.configure(
-    this::getPose,
-    this::resetPose,
-    this::getRobotRelativeSpeeds,
-    this::drive,                          // Uses ApplyRobotSpeeds (closed-loop velocity)
-    new PPHolonomicDriveController(
-        new PIDConstants(0.5, 0.0, 0.0),  // Translation PID
-        new PIDConstants(0.3, 0.0, 0.0)   // Rotation PID
-    ),
-    SwerveConstants.robotConfig,
-    () -> isRedAlliance(),                // Auto-mirrors paths for Red alliance
-    this
-);
-```
+## Utility Classes (`frc.lib`)
 
-### Auto Chooser
-
-Built in `Robot.robotInit()` via `AutoBuilder.buildAutoChooser()`. Automatically scans `src/main/deploy/pathplanner/autos/*.auto`. No code changes needed when adding new auto files.
-
-### Defined Autos
-
-| Auto | Paths | Alliance | Reset Odom |
-|------|-------|----------|------------|
-| Auto1blue | Startingpath → grabdepotp1 → grabdepotbluepart2 → Scoredepotblue → intake → intakepart2 → Score Intake | Blue | Yes |
-| Forward | Forward Path | Any | No |
-| red8path | red 8 | Red | — |
-| redtestauto | red test1 | Red | — |
-| Test Auto | Test Path | Any | — |
-
-### PathPlanner Robot Config (settings.json)
-
-```
-Robot: 0.9m x 0.9m, 49.8 kg, MOI 6.883 kg*m^2
-Max velocity: 3.084 m/s, Max accel: 5.3 m/s^2
-Max angular vel: 540 deg/s, Max angular accel: 720 deg/s^2
-Motors: Kraken X60, Current limit: 60A, Wheel COF: 1.2
-Module positions: +/-0.273m X, +/-0.273m Y
-```
-
-### File Structure
-
-```
-src/main/deploy/pathplanner/
-├── settings.json          # Robot config for PathPlanner GUI
-├── navgrid.json           # Obstacle avoidance grid
-├── autos/                 # Autonomous routines (.auto files)
-│   ├── Forward.auto
-│   ├── Auto1blue.auto
-│   ├── Test Auto.auto
-│   ├── red8path.auto
-│   └── redtestauto.auto
-└── paths/                 # Individual path segments (.path files)
-    ├── Forward Path.path
-    ├── Park.path
-    ├── Score Intake.path
-    ├── Scoredepotblue.path
-    ├── Startingpath.path
-    ├── grabdepotp1.path
-    ├── grabdepotbluepart2.path
-    ├── intake.path
-    ├── intakepart2.path
-    ├── red 8.path
-    └── red test1.path
-```
-
-## Simulation (MapleSim)
-
-Physics simulation using MapleSim + Dyn4j engine running at **200Hz** on a dedicated Notifier thread.
-
-### Running
-
-```bash
-./gradlew simulateJava
-```
-
-Opens Sim GUI + simulated Driver Station. Connect AdvantageScope to `localhost` for 3D visualization.
-
-### Simulation Parameters
-
-| Parameter | Value |
-|-----------|-------|
-| Sim period | 5ms (200Hz) |
-| Robot mass | 110 lbs (49.9 kg) |
-| Bumper size | 30" x 30" |
-| Drive/Steer motors | Kraken X60 FOC |
-| Wheel COF | 1.2 |
-| Default start position | (3, 3) |
-
-### What's Simulated
-
-- Swerve module physics (drive torque, steer torque, wheel friction)
-- Robot rigid body collisions with field elements
-- Pigeon 2 gyro (from physics-derived heading)
-- Game piece interactions (fuel pickup via IntakeSimulation)
-- Field obstacles (hubs, outposts, barriers from `Arena2026Rebuilt`)
-
-### What's NOT Simulated
-
-- Vertical dynamics (climbing, elevator)
-- Vision (Limelights return null in sim)
-- CAN bus latency
-- Detailed game piece scoring
-
-### Key Sim Classes
-
-- `MapleSimSwerveDrivetrain.java` — Bridges CTRE swerve with MapleSim. Has `regulateModuleConstantsForSimulation()` which adjusts PID (steer kP=70, kD=4.5) and disables inversions for sim.
-- `MapSimSwerveTelemetry.java` — Publishes drive state, field poses, game pieces to NetworkTables for AdvantageScope
-- `SimulatedArena.java` — Central physics world, `simulationPeriodic()` steps all physics
-- `Arena2026Rebuilt.java` — Season-specific field layout with obstacles
-
-### NetworkTables Published (Sim)
-
-- `DriveState/Pose`, `DriveState/Speeds`, `DriveState/ModuleStates`, `DriveState/ModuleTargets`
-- `Field/robotPose` — robot pose as [x, y, deg]
-- `FieldSimulation/Fuel` — game piece positions (Pose3d array)
-
-## Field Constants (2026 REBUILT)
-
-All coordinates use **WPILib Blue-origin field coordinates**: origin at bottom-right of Blue wall, +X toward Red wall, +Y toward left wall.
-
-### Field Dimensions
-
-- `fieldLength`: 16.541 m (loaded from AprilTag layout JSON)
-- `fieldWidth`: 8.052 m
-
-### Key Positions
-
-| Element | Blue Position | Red Position |
-|---------|--------------|--------------|
-| Hub center | (4.5974, 4.0345) m | (11.938, 4.0345) m |
-| Tower | (1.0668, 4.0386) m | (15.494, 4.318) m |
-| Outpost | (0, 0.666) m | (16.621, 7.403) m |
-
-### Hub Dimensions
-
-| Property | Value |
-|----------|-------|
-| Width | 47" (1.194 m) |
-| Height | 72" (1.829 m) including catcher |
-| Inner width | 41.7" (1.059 m) |
-| Inner height | 56.5" (1.435 m) |
-
-### Tower (Climbing Structure)
-
-| Property | Value |
-|----------|-------|
-| Width | 49.25" (1.251 m) |
-| Height | 78.25" (1.988 m) |
-| Rung L1 | 27" (10 pts teleop / 15 pts auto) |
-| Rung L2 | 45" (20 pts) |
-| Rung L3 | 63" (30 pts) |
-
-### AprilTag Layout
-
-Uses `FieldType.WELDED` field variant. Layout loaded from `src/main/deploy/apriltags/`. On robot, reads from `/home/lvuser/deploy/`. In tests (HAL disabled), reads from source tree.
-
-`FieldConstants` uses Lombok annotations (`@Getter`, `@RequiredArgsConstructor`).
-
-## Utility Classes
-
-### TunableParameter (`frc.lib`)
-
-Live-tune numeric values via SmartDashboard without redeploying. Callback fires when value changes.
-
-```java
-new TunableParameter("Drive/kP", 0.5, (v) -> pidController.setP(v));
-// TunableParameter.updateAll() is called in Robot.robotPeriodic()
-```
-
-Remove tunable parameters before competition (SmartDashboard polling has overhead).
-
-### PS5Controller (`frc.lib`)
-
-Custom wrapper around WPILib's `Joystick`. All axes inverted so up/left = positive (matches WPILib field coords). Available fields: `leftVerticalJoystick`, `leftHorizontalJoystick`, `rightVerticalJoystick`, `rightHorizontalJoystick`, `leftBumper`, `rightBumper`, `leftTrigger`, `rightTrigger`, `triangleButton`, `circleButton`, `squareButton`, `crossButton`, `dUp`, `dDown`, `dLeft`, `dRight`, `touchpadButton`, `leftJoystickButton`, `rightJoystickButton`.
-
-### CTREConfig (`frc.lib`)
-
-Builder pattern for CTRE device configuration. Methods: `withName()`, `withCanID()`, `withBus()`, `withOptimizeBus()`. Creates devices via `createDevice(TalonFX::new)` with connection checks and bus optimization.
-
-### CTREUtil (`frc.lib`)
-
-Static retry utilities for CTRE Phoenix 6. `tryUntilOK()` retries up to 10 times. `applyConfiguration()` supports TalonFX, CANcoder, CANrange, CANdle.
-
-### LimelightHelpers (`frc.robot.util`)
-
-Official Limelight helper library v1.14 (requires LLOS 2026.0+). Key methods: `getTV()`, `getFiducialID()`, `getBotPoseEstimate_wpiBlue()`, `SetRobotOrientation()`.
+- **CTREConfig** — Builder for CTRE devices: `.withName()`, `.withCanID()`, `.withBus()`, `.createDevice(TalonFX::new)`
+- **CTREUtil** — `tryUntilOK()` retries CTRE calls up to 10x. `applyConfiguration()` for TalonFX/CANcoder/etc.
+- **PS5Controller** — WPILib Joystick wrapper. All axes inverted (up/left = positive). Fields: `leftVerticalJoystick`, `rightHorizontalJoystick`, `leftBumper`, `rightTrigger`, `crossButton`, etc.
+- **TunableParameter** — Live SmartDashboard tuning: `new TunableParameter("key", default, callback)`. Polled in `robotPeriodic()`.
 
 ## Adding a New Subsystem
 
-1. Create `frc/robot/subsystems/mysubsystem/MySubsystem.java` with singleton pattern
-2. Create `MySubsystemConstants.java` for hardware config
-3. Add reference in `Superstructure.java`
-4. Initialize in `Robot.java` constructor: `MySubsystem.getInstance();`
-5. Add controller bindings in `ControlBoard.java`
-6. Add SmartDashboard telemetry in `periodic()`
-7. Test in simulation before deploying
-
-Use `CTREConfig` builder for motor setup. Follow the request-based state machine pattern (see `Superstructure` or commented `ShooterSubsystem` for examples).
-
-## SmartDashboard / NetworkTables Telemetry
-
-| Key | Source | Description |
-|-----|--------|-------------|
-| `Swerve/Pose x`, `y`, `Rotation` | SwerveSubsystem | Robot pose |
-| `Odometry/X`, `Y`, `Rotation` | Odometry | Fused pose |
-| `Pigeon Yaw/Pitch/Roll` | Odometry | IMU readings |
-| `Interpolating?` | Odometry | Both Limelights have targets |
-| `Superstructure/loopCycleTime` | Superstructure | State machine timing |
-| `Field` | Odometry | Field2d visualization |
-| `Auto Chooser` | Robot | PathPlanner auto selector |
-
-## External Documentation Links
-
-### Core Framework
-- [WPILib Docs](https://docs.wpilib.org/en/stable/) | [Java API](https://github.wpilib.org/allwpilib/docs/release/java/) | [GitHub](https://github.com/wpilibsuite/allwpilib)
-- [Command-Based Programming](https://docs.wpilib.org/en/stable/docs/software/commandbased/index.html)
-- [WPILib Installation](https://docs.wpilib.org/en/stable/docs/zero-to-robot/step-2/wpilib-setup.html)
-- [2026 Game Data](https://docs.wpilib.org/en/stable/docs/yearly-overview/2026-game-data.html) | [2026 Changelog](https://docs.wpilib.org/en/stable/docs/yearly-overview/yearly-changelog.html)
-
-### CTRE Phoenix 6
-- [Phoenix 6 Docs](https://v6.docs.ctr-electronics.com/en/stable/) | [Latest](https://v6.docs.ctr-electronics.com/en/latest/) | [Java API](https://api.ctr-electronics.com/phoenix6/stable/java/)
-- [Swerve Overview](https://v6.docs.ctr-electronics.com/en/latest/docs/api-reference/mechanisms/swerve/swerve-overview.html) | [Swerve Requests](https://v6.docs.ctr-electronics.com/en/latest/docs/api-reference/mechanisms/swerve/swerve-requests.html)
-- [SwerveDrivetrain Javadoc](https://api.ctr-electronics.com/phoenix6/stable/java/com/ctre/phoenix6/swerve/SwerveDrivetrain.html)
-- [Tuner X Swerve Generator](https://v6.docs.ctr-electronics.com/en/latest/docs/tuner/tuner-swerve/index.html) | [Swerve System Requirements](https://v6.docs.ctr-electronics.com/en/latest/docs/tuner/tuner-swerve/swerve-system-requirements.html)
-- [FRC Installation](https://v6.docs.ctr-electronics.com/en/latest/docs/installation/installation-frc.html) | [Changelog](https://api.ctr-electronics.com/changelog.html)
-
-### PathPlanner
-- [PathPlanner Docs](https://pathplanner.dev/) | [Getting Started](https://pathplanner.dev/pplib-getting-started.html) | [Java API](https://pathplanner.dev/api/java/)
-- [AutoBuilder Javadoc](https://pathplanner.dev/api/java/com/pathplanner/lib/auto/AutoBuilder.html) | [Pathfinding](https://pathplanner.dev/pplib-pathfinding.html)
-- [GitHub](https://github.com/mjansen4857/pathplanner)
-
-### Vision
-- [Limelight Docs](https://docs.limelightvision.io/) | [Getting Started](https://docs.limelightvision.io/docs/docs-limelight/getting-started/summary)
-- [Limelight Lib API](https://docs.limelightvision.io/docs/docs-limelight/apis/limelight-lib) | [FRC Networking](https://docs.limelightvision.io/docs/docs-limelight/getting-started/FRC/networking)
-- [YALL GitHub](https://github.com/Yet-Another-Software-Suite/YALL) | [Vendordep JSON](https://Yet-Another-Software-Suite.github.io/YALL/yall.json)
-
-### REVLib
-- [REVLib Docs](https://docs.revrobotics.com/revlib) | [Java API](https://codedocs.revrobotics.com/java/com/revrobotics/package-summary.html)
-- [2026 Starter Bot](https://github.com/REVrobotics/2026-REV-ION-FRC-StarterBot)
-
-### Simulation
-- [MapleSim Docs](https://shenzhen-robotics-alliance.github.io/maple-sim/) | [GitHub](https://github.com/Shenzhen-Robotics-Alliance/maple-sim)
-- [Dyn4j](https://dyn4j.org/) | [Getting Started](https://dyn4j.org/pages/getting-started.html) | [GitHub](https://github.com/dyn4j/dyn4j)
-- [AdvantageScope Docs](https://docs.advantagescope.org/) | [3D Field](https://docs.advantagescope.org/tab-reference/3d-field/) | [GitHub](https://github.com/Mechanical-Advantage/AdvantageScope)
-- [WPILib Simulation Guide](https://docs.wpilib.org/en/stable/docs/software/wpilib-tools/robot-simulation/introduction.html)
-
-### 2026 REBUILT Game
-- [FIRST Game & Season](https://www.firstinspires.org/programs/frc/game-and-season) | [Game Manual (PDF)](https://firstfrc.blob.core.windows.net/frc2026/Manual/2026GameManual.pdf)
-- [Team Updates (PDF)](https://firstfrc.blob.core.windows.net/frc2026/Manual/TeamUpdates/REBUILT_TeamUpdate-Combined.pdf)
-- [FRCManual.com (browseable)](https://www.frcmanual.com/2026/introduction)
-- [Game Simulator](https://www.frc2026sim.com/) | [Points Calculator](https://dunkirk.sh/blog/frc-rebuilt-calculator/)
-
-### Community
-- [Chief Delphi](https://www.chiefdelphi.com/) | [FRC Discord](https://discord.gg/frc) | [The Blue Alliance](https://www.thebluealliance.com/) | [Statbotics](https://www.statbotics.io/)
-- [Spotless GitHub](https://github.com/diffplug/spotless) | [Google Java Format](https://github.com/google/google-java-format)
+1. Create `subsystems/mysubsystem/MySubsystem.java` with singleton pattern
+2. Create `MySubsystemConstants.java` with `CTREConfig` motor configs
+3. Add CAN IDs to `Constants.java`
+4. Add reference in `Superstructure.java`
+5. Initialize in `Robot.java` if needed outside Superstructure
+6. Add controller bindings in `ControlBoard.java`
+7. Follow request-based state machine pattern
 
 ## Detailed Documentation
 
-See `docs/` for comprehensive documentation:
-- `docs/architecture.md` — System diagram, lifecycle, design patterns, data flow
-- `docs/swerve-drive.md` — Hardware layout, PID tuning, operator controls, CTRE API reference
-- `docs/vision-and-odometry.md` — Limelight config, MegaTag2, odometry fusion, tuning vision
-- `docs/autonomous.md` — PathPlanner integration, creating autos, tuning path following
-- `docs/simulation.md` — MapleSim architecture, running sim, AdvantageScope visualization
-- `docs/field-constants.md` — 2026 field geometry, coordinate system, AprilTag layout
-- `docs/subsystems.md` — Detailed reference for every subsystem, adding new subsystems template
-- `docs/utilities.md` — TunableParameter, PS5Controller, CTREConfig, CTREUtil, ControlBoard
-- `docs/external-resources.md` — Complete list of all vendor documentation URLs and versions
-- `docs/getting-started.md` — Development environment setup, deploy, simulation quickstart
+See `docs/` for comprehensive reference:
+- `docs/architecture.md` — System design, lifecycle, data flow
+- `docs/swerve-drive.md` — Hardware, PID tuning, CTRE API
+- `docs/vision-and-odometry.md` — Limelight config, sensor fusion
+- `docs/autonomous.md` — PathPlanner, creating autos
+- `docs/simulation.md` — MapleSim, AdvantageScope
+- `docs/subsystems.md` — Subsystem reference, templates
+- `docs/external-resources.md` — All vendor docs and links
