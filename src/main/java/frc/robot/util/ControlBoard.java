@@ -121,11 +121,11 @@ public class ControlBoard {
     // TODO: old shooter bindings were for testing purposes. we gotta make entirely new ones
 
     /* Intake */
-    controller.dUp.whileTrue(
+    controller.rightTrigger.whileTrue(
         new StartEndCommand(
             () -> IntakeSubsystem.getInstance().requestIntaking(),
             () -> IntakeSubsystem.getInstance().requestIdle()));
-    controller.dDown.whileTrue(
+    controller.squareButton.whileTrue(
         new StartEndCommand(
             () -> IntakeSubsystem.getInstance().requestSpitting(),
             () -> IntakeSubsystem.getInstance().requestIdle()));
@@ -158,6 +158,7 @@ public class ControlBoard {
             .withName("Axis Align Toggle"));
 
     /* Climber */
+    // TODO: Make left trigger shoot(peter requested)
     controller.leftTrigger.whileTrue(
         new StartEndCommand(() -> climber.spinSlow(1), () -> climber.stopMotors()));
 
