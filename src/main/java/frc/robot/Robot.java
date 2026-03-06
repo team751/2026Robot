@@ -48,7 +48,7 @@ public class Robot extends TimedRobot {
 										+ " w/"
 										+ command.getRequirements()));
 
-		SignalLogger.setPath("/media/sda1/");
+		//SignalLogger.setPath("/media/sda1/");
   }
 
 

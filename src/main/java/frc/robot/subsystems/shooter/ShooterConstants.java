@@ -12,19 +12,24 @@ public class ShooterConstants {
 public static double flywheelSpeed = 1; // 12
 public static double backSpeed = 1;
 
+
+
+
+
 public static final CTREConfig<TalonFX, TalonFXConfiguration> flywheelMotorConfig = 
 	new CTREConfig<>(TalonFXConfiguration::new);
 
 	static {
-		flywheelMotorConfig.withName("Flywheel Main").withCanID(11).withBus(Robot.gamepiecebus);
+		flywheelMotorConfig.withName("Main Flywheel").withCanID(60).withBus(Robot.gamepiecebus);
 
 		TalonFXConfiguration flywheelConfig = flywheelMotorConfig.config;
 		flywheelConfig.Slot0.kP = 0.1; // Increase until speed oscillates
 		flywheelConfig.Slot0.kI = 0; // Don't touch
 		flywheelConfig.Slot0.kD = 0; // Increase until jitter
+
 		flywheelConfig.Slot0.kS = 0; // Increase until just before motor starts moving
 		flywheelConfig.Slot0.kA = 0; //
-		flywheelConfig.Slot0.kV = 0; //
+		flywheelConfig.Slot0.kV = 0.13; //
 		flywheelConfig.Slot0.kG = 0; // Don't touch
 
 		flywheelConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
@@ -35,7 +40,7 @@ public static final CTREConfig<TalonFX, TalonFXConfiguration> followMotorConfig 
 	new CTREConfig<>(TalonFXConfiguration::new);
 
 static {
-	followMotorConfig.withName("Flywheel Follow").withCanID(10).withBus(Robot.gamepiecebus);
+	followMotorConfig.withName("Flywheel Follow").withCanID(61).withBus(Robot.gamepiecebus);
 
 	TalonFXConfiguration followConfig = followMotorConfig.config;
 
