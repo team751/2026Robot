@@ -16,9 +16,9 @@ public class ShooterSubsystem extends SubsystemBase {
 	private final VoltageOut backControl = new VoltageOut(0);
 
 
-
 	/* State Machine Logic */
 	private enum ShooterState {
+		//TODO: Do flywheel as closed loop and add follower mode for motors
 		IDLE,
 		// SLOWSPIN, <- might want this so that we dont have to fully spin up the shooter everytime?
 		SPINNING

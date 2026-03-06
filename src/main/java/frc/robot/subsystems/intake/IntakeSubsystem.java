@@ -55,7 +55,7 @@ public class IntakeSubsystem extends SubsystemBase {
 	}
 
 
-
+	//TODO: Make extending and retracting seprate subsystem
 	@Override
 	public void periodic() {
 		IntakeState nextState = state;
