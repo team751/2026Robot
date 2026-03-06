@@ -16,6 +16,7 @@ import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.drive.SwerveConstants;
 import frc.robot.subsystems.drive.SwerveSubsystem;
+import frc.robot.subsystems.intake.ExtenderSubsystem;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.simulation.MapSimSwerveTelemetry;
@@ -130,12 +131,12 @@ public class ControlBoard {
             () -> IntakeSubsystem.getInstance().requestIdle()));
     controller.dLeft.whileTrue(
         new StartEndCommand(
-            () -> IntakeSubsystem.getInstance().requestRetracting(),
-            () -> IntakeSubsystem.getInstance().requestIdle()));
+            () -> ExtenderSubsystem.getInstance().requestRetracting(),
+            () -> ExtenderSubsystem.getInstance().requestIdle()));
     controller.dRight.whileTrue(
         new StartEndCommand(
-            () -> IntakeSubsystem.getInstance().requestExtending(),
-            () -> IntakeSubsystem.getInstance().requestIdle()));
+            () -> ExtenderSubsystem.getInstance().requestExtending(),
+            () -> ExtenderSubsystem.getInstance().requestIdle()));
 
     /* Swerve */
     controller.rightBumper.whileTrue(
