@@ -4,66 +4,69 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
 import frc.lib.CTREConfig;
 import frc.robot.Robot;
 import frc.robot.util.Constants;
 
 public class ClimberConstants {
-    // TODO: Set current limits and tune the motors. also name/find the canbus to put the motors on
-    public static double averageMotorError = 0.3; // might remove??
+  // TODO: Set current limits and tune the motors. also name/find the canbus to put the motors on
+  public static double averageMotorError = 0.3; // might remove??
 
+  public static final CTREConfig<TalonFX, TalonFXConfiguration> leftClimberConfig =
+      new CTREConfig<>(TalonFXConfiguration::new);
+  public static final CTREConfig<TalonFX, TalonFXConfiguration> rightClimberConfig =
+      new CTREConfig<>(TalonFXConfiguration::new);
 
-    public static final CTREConfig<TalonFX, TalonFXConfiguration> leftClimberConfig = 
-	    new CTREConfig<>(TalonFXConfiguration::new);
-    public static  final CTREConfig<TalonFX, TalonFXConfiguration> rightClimberConfig = 
-	    new CTREConfig<>(TalonFXConfiguration::new);
+  public static final int kServoPort = 0;
+  // Rotations per second at full speed (1.0). Tune by running full speed for
+  // 1 second and comparing getServoPosition() to actual shaft rotations.
+  public static final double kServoMaxRPS = 1.0;
 
-    public static final int kServoPort = 0;
-    // Rotations per second at full speed (1.0). Tune by running full speed for
-    // 1 second and comparing getServoPosition() to actual shaft rotations.
-    public static final double kServoMaxRPS = 1.0;
+  static {
+    leftClimberConfig
+        .withName("Left Climber")
+        .withCanID(Constants.leftClimberMotorID)
+        .withBus(Robot.climbbus);
 
-    static {
-        leftClimberConfig.withName("Left Climber").withCanID(Constants.leftClimberMotorID).withBus(Robot.climbbus);
+    TalonFXConfiguration leftConfig = leftClimberConfig.config;
+    leftConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    leftConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
-        TalonFXConfiguration leftConfig = leftClimberConfig.config;
-        leftConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        leftConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-    
-        leftConfig.Slot0.kP = 0.0;
-        leftConfig.Slot0.kI = 0.0; 
-        leftConfig.Slot0.kD = 0.0;
+    leftConfig.Slot0.kP = 0.0;
+    leftConfig.Slot0.kI = 0.0;
+    leftConfig.Slot0.kD = 0.0;
 
-        leftConfig.Slot0.kS = 0.0;
-        leftConfig.Slot0.kV = 0.0;
-        leftConfig.Slot0.kG = 0.0;
-        leftConfig.Slot0.kA = 0.0;
-        // leftClimberConfig.CurrentLimits.StatorCurrentLimit = 150;
-        // leftClimberConfig.CurrentLimits.StatorCurrentLimitEnable = false;
-        // leftClimberConfig.TorqueCurrent.PeakForwardTorqueCurrent = 45;
-        // leftClimberConfig.TorqueCurrent.PeakReverseTorqueCurrent = -45;
-    }
+    leftConfig.Slot0.kS = 0.0;
+    leftConfig.Slot0.kV = 0.0;
+    leftConfig.Slot0.kG = 0.0;
+    leftConfig.Slot0.kA = 0.0;
+    // leftClimberConfig.CurrentLimits.StatorCurrentLimit = 150;
+    // leftClimberConfig.CurrentLimits.StatorCurrentLimitEnable = false;
+    // leftClimberConfig.TorqueCurrent.PeakForwardTorqueCurrent = 45;
+    // leftClimberConfig.TorqueCurrent.PeakReverseTorqueCurrent = -45;
+  }
 
-    static {
-        rightClimberConfig.withName("Right Climber").withCanID(Constants.rightClimberMotorID).withBus(Robot.climbbus);
+  static {
+    rightClimberConfig
+        .withName("Right Climber")
+        .withCanID(Constants.rightClimberMotorID)
+        .withBus(Robot.climbbus);
 
-        TalonFXConfiguration rightConfig = rightClimberConfig.config;
-        rightConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        rightConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    TalonFXConfiguration rightConfig = rightClimberConfig.config;
+    rightConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    rightConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
-        rightConfig.Slot0.kP = 0.0;
-        rightConfig.Slot0.kI = 0.0; 
-        rightConfig.Slot0.kD = 0.0;
+    rightConfig.Slot0.kP = 0.0;
+    rightConfig.Slot0.kI = 0.0;
+    rightConfig.Slot0.kD = 0.0;
 
-        rightConfig.Slot0.kS = 0.0;
-        rightConfig.Slot0.kV = 0.0;
-        rightConfig.Slot0.kG = 0.0;
-        rightConfig.Slot0.kA = 0.0;
-        // rightClimberConfig.CurrentLimits.StatorCurrentLimit = 150;
-        // rightClimberConfig.CurrentLimits.StatorCurrentLimitEnable = false;
-        // rightClimberConfig.TorqueCurrent.PeakForwardTorqueCurrent = 35;
-        // rightClimberConfig.TorqueCurrent.PeakReverseTorqueCurrent = -35;
-    }
-
+    rightConfig.Slot0.kS = 0.0;
+    rightConfig.Slot0.kV = 0.0;
+    rightConfig.Slot0.kG = 0.0;
+    rightConfig.Slot0.kA = 0.0;
+    // rightClimberConfig.CurrentLimits.StatorCurrentLimit = 150;
+    // rightClimberConfig.CurrentLimits.StatorCurrentLimitEnable = false;
+    // rightClimberConfig.TorqueCurrent.PeakForwardTorqueCurrent = 35;
+    // rightClimberConfig.TorqueCurrent.PeakReverseTorqueCurrent = -35;
+  }
 }

@@ -25,25 +25,25 @@ import org.ironmaple.simulation.gamepieces.GamePieceProjectile;
  */
 public class RebuiltFuelOnFly extends GamePieceProjectile {
 
-	public RebuiltFuelOnFly(
-			Translation2d robotPosition,
-			Translation2d shooterPositionOnRobot,
-			ChassisSpeeds chassisSpeeds,
-			Rotation2d shooterFacing,
-			Distance initialHeight,
-			LinearVelocity launchingSpeed,
-			Angle shooterAngle) {
-		super(
-				RebuiltFuelOnField.REBUILT_FUEL_INFO,
-				robotPosition,
-				shooterPositionOnRobot,
-				chassisSpeeds,
-				shooterFacing,
-				initialHeight,
-				launchingSpeed,
-				shooterAngle);				
+  public RebuiltFuelOnFly(
+      Translation2d robotPosition,
+      Translation2d shooterPositionOnRobot,
+      ChassisSpeeds chassisSpeeds,
+      Rotation2d shooterFacing,
+      Distance initialHeight,
+      LinearVelocity launchingSpeed,
+      Angle shooterAngle) {
+    super(
+        RebuiltFuelOnField.REBUILT_FUEL_INFO,
+        robotPosition,
+        shooterPositionOnRobot,
+        chassisSpeeds,
+        shooterFacing,
+        initialHeight,
+        launchingSpeed,
+        shooterAngle);
 
-		super.withTouchGroundHeight(Inches.of(3).in(Meters));
-		super.enableBecomesGamePieceOnFieldAfterTouchGround();
-	}
+    super.withTouchGroundHeight(Inches.of(3).in(Meters));
+    super.enableBecomesGamePieceOnFieldAfterTouchGround();
+  }
 }

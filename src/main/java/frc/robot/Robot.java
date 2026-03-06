@@ -3,7 +3,6 @@ package frc.robot;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.auto.AutoBuilder;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -64,7 +63,8 @@ public class Robot extends TimedRobot {
     try {
       scheduler.run();
     } catch (Throwable t) {
-      DriverStation.reportError("Unhandled exception in CommandScheduler: " + t.toString(), t.getStackTrace());
+      DriverStation.reportError(
+          "Unhandled exception in CommandScheduler: " + t.toString(), t.getStackTrace());
       t.printStackTrace();
     }
     if (controlBoard != null) controlBoard.displayUI();

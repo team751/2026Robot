@@ -1,31 +1,59 @@
-// TODO: THIS IS AN OLD FILE THAT IS TUNED TO THE ROBOT BASE, IGNORE AND DO NOT USE FOR THE ACTUAL ROBOT
-// TODO: THIS IS AN OLD FILE THAT IS TUNED TO THE ROBOT BASE, IGNORE AND DO NOT USE FOR THE ACTUAL ROBOT
-// TODO: THIS IS AN OLD FILE THAT IS TUNED TO THE ROBOT BASE, IGNORE AND DO NOT USE FOR THE ACTUAL ROBOT
-// TODO: THIS IS AN OLD FILE THAT IS TUNED TO THE ROBOT BASE, IGNORE AND DO NOT USE FOR THE ACTUAL ROBOT
-// TODO: THIS IS AN OLD FILE THAT IS TUNED TO THE ROBOT BASE, IGNORE AND DO NOT USE FOR THE ACTUAL ROBOT
-// TODO: THIS IS AN OLD FILE THAT IS TUNED TO THE ROBOT BASE, IGNORE AND DO NOT USE FOR THE ACTUAL ROBOT
-// TODO: THIS IS AN OLD FILE THAT IS TUNED TO THE ROBOT BASE, IGNORE AND DO NOT USE FOR THE ACTUAL ROBOT
-// TODO: THIS IS AN OLD FILE THAT IS TUNED TO THE ROBOT BASE, IGNORE AND DO NOT USE FOR THE ACTUAL ROBOT
-// TODO: THIS IS AN OLD FILE THAT IS TUNED TO THE ROBOT BASE, IGNORE AND DO NOT USE FOR THE ACTUAL ROBOT
-// TODO: THIS IS AN OLD FILE THAT IS TUNED TO THE ROBOT BASE, IGNORE AND DO NOT USE FOR THE ACTUAL ROBOT
-// TODO: THIS IS AN OLD FILE THAT IS TUNED TO THE ROBOT BASE, IGNORE AND DO NOT USE FOR THE ACTUAL ROBOT
-// TODO: THIS IS AN OLD FILE THAT IS TUNED TO THE ROBOT BASE, IGNORE AND DO NOT USE FOR THE ACTUAL ROBOT
-// TODO: THIS IS AN OLD FILE THAT IS TUNED TO THE ROBOT BASE, IGNORE AND DO NOT USE FOR THE ACTUAL ROBOT
-// TODO: THIS IS AN OLD FILE THAT IS TUNED TO THE ROBOT BASE, IGNORE AND DO NOT USE FOR THE ACTUAL ROBOT
-// TODO: THIS IS AN OLD FILE THAT IS TUNED TO THE ROBOT BASE, IGNORE AND DO NOT USE FOR THE ACTUAL ROBOT
-// TODO: THIS IS AN OLD FILE THAT IS TUNED TO THE ROBOT BASE, IGNORE AND DO NOT USE FOR THE ACTUAL ROBOT
-// TODO: THIS IS AN OLD FILE THAT IS TUNED TO THE ROBOT BASE, IGNORE AND DO NOT USE FOR THE ACTUAL ROBOT
-// TODO: THIS IS AN OLD FILE THAT IS TUNED TO THE ROBOT BASE, IGNORE AND DO NOT USE FOR THE ACTUAL ROBOT
-// TODO: THIS IS AN OLD FILE THAT IS TUNED TO THE ROBOT BASE, IGNORE AND DO NOT USE FOR THE ACTUAL ROBOT
-// TODO: THIS IS AN OLD FILE THAT IS TUNED TO THE ROBOT BASE, IGNORE AND DO NOT USE FOR THE ACTUAL ROBOT
-// TODO: THIS IS AN OLD FILE THAT IS TUNED TO THE ROBOT BASE, IGNORE AND DO NOT USE FOR THE ACTUAL ROBOT
-// TODO: THIS IS AN OLD FILE THAT IS TUNED TO THE ROBOT BASE, IGNORE AND DO NOT USE FOR THE ACTUAL ROBOT
-// TODO: THIS IS AN OLD FILE THAT IS TUNED TO THE ROBOT BASE, IGNORE AND DO NOT USE FOR THE ACTUAL ROBOT
-// TODO: THIS IS AN OLD FILE THAT IS TUNED TO THE ROBOT BASE, IGNORE AND DO NOT USE FOR THE ACTUAL ROBOT
-// TODO: THIS IS AN OLD FILE THAT IS TUNED TO THE ROBOT BASE, IGNORE AND DO NOT USE FOR THE ACTUAL ROBOT
-// TODO: THIS IS AN OLD FILE THAT IS TUNED TO THE ROBOT BASE, IGNORE AND DO NOT USE FOR THE ACTUAL ROBOT
-// TODO: THIS IS AN OLD FILE THAT IS TUNED TO THE ROBOT BASE, IGNORE AND DO NOT USE FOR THE ACTUAL ROBOT
-// TODO: THIS IS AN OLD FILE THAT IS TUNED TO THE ROBOT BASE, IGNORE AND DO NOT USE FOR THE ACTUAL ROBOT
+// TODO: THIS IS AN OLD FILE THAT IS TUNED TO THE ROBOT BASE, IGNORE AND DO NOT USE FOR THE ACTUAL
+// ROBOT
+// TODO: THIS IS AN OLD FILE THAT IS TUNED TO THE ROBOT BASE, IGNORE AND DO NOT USE FOR THE ACTUAL
+// ROBOT
+// TODO: THIS IS AN OLD FILE THAT IS TUNED TO THE ROBOT BASE, IGNORE AND DO NOT USE FOR THE ACTUAL
+// ROBOT
+// TODO: THIS IS AN OLD FILE THAT IS TUNED TO THE ROBOT BASE, IGNORE AND DO NOT USE FOR THE ACTUAL
+// ROBOT
+// TODO: THIS IS AN OLD FILE THAT IS TUNED TO THE ROBOT BASE, IGNORE AND DO NOT USE FOR THE ACTUAL
+// ROBOT
+// TODO: THIS IS AN OLD FILE THAT IS TUNED TO THE ROBOT BASE, IGNORE AND DO NOT USE FOR THE ACTUAL
+// ROBOT
+// TODO: THIS IS AN OLD FILE THAT IS TUNED TO THE ROBOT BASE, IGNORE AND DO NOT USE FOR THE ACTUAL
+// ROBOT
+// TODO: THIS IS AN OLD FILE THAT IS TUNED TO THE ROBOT BASE, IGNORE AND DO NOT USE FOR THE ACTUAL
+// ROBOT
+// TODO: THIS IS AN OLD FILE THAT IS TUNED TO THE ROBOT BASE, IGNORE AND DO NOT USE FOR THE ACTUAL
+// ROBOT
+// TODO: THIS IS AN OLD FILE THAT IS TUNED TO THE ROBOT BASE, IGNORE AND DO NOT USE FOR THE ACTUAL
+// ROBOT
+// TODO: THIS IS AN OLD FILE THAT IS TUNED TO THE ROBOT BASE, IGNORE AND DO NOT USE FOR THE ACTUAL
+// ROBOT
+// TODO: THIS IS AN OLD FILE THAT IS TUNED TO THE ROBOT BASE, IGNORE AND DO NOT USE FOR THE ACTUAL
+// ROBOT
+// TODO: THIS IS AN OLD FILE THAT IS TUNED TO THE ROBOT BASE, IGNORE AND DO NOT USE FOR THE ACTUAL
+// ROBOT
+// TODO: THIS IS AN OLD FILE THAT IS TUNED TO THE ROBOT BASE, IGNORE AND DO NOT USE FOR THE ACTUAL
+// ROBOT
+// TODO: THIS IS AN OLD FILE THAT IS TUNED TO THE ROBOT BASE, IGNORE AND DO NOT USE FOR THE ACTUAL
+// ROBOT
+// TODO: THIS IS AN OLD FILE THAT IS TUNED TO THE ROBOT BASE, IGNORE AND DO NOT USE FOR THE ACTUAL
+// ROBOT
+// TODO: THIS IS AN OLD FILE THAT IS TUNED TO THE ROBOT BASE, IGNORE AND DO NOT USE FOR THE ACTUAL
+// ROBOT
+// TODO: THIS IS AN OLD FILE THAT IS TUNED TO THE ROBOT BASE, IGNORE AND DO NOT USE FOR THE ACTUAL
+// ROBOT
+// TODO: THIS IS AN OLD FILE THAT IS TUNED TO THE ROBOT BASE, IGNORE AND DO NOT USE FOR THE ACTUAL
+// ROBOT
+// TODO: THIS IS AN OLD FILE THAT IS TUNED TO THE ROBOT BASE, IGNORE AND DO NOT USE FOR THE ACTUAL
+// ROBOT
+// TODO: THIS IS AN OLD FILE THAT IS TUNED TO THE ROBOT BASE, IGNORE AND DO NOT USE FOR THE ACTUAL
+// ROBOT
+// TODO: THIS IS AN OLD FILE THAT IS TUNED TO THE ROBOT BASE, IGNORE AND DO NOT USE FOR THE ACTUAL
+// ROBOT
+// TODO: THIS IS AN OLD FILE THAT IS TUNED TO THE ROBOT BASE, IGNORE AND DO NOT USE FOR THE ACTUAL
+// ROBOT
+// TODO: THIS IS AN OLD FILE THAT IS TUNED TO THE ROBOT BASE, IGNORE AND DO NOT USE FOR THE ACTUAL
+// ROBOT
+// TODO: THIS IS AN OLD FILE THAT IS TUNED TO THE ROBOT BASE, IGNORE AND DO NOT USE FOR THE ACTUAL
+// ROBOT
+// TODO: THIS IS AN OLD FILE THAT IS TUNED TO THE ROBOT BASE, IGNORE AND DO NOT USE FOR THE ACTUAL
+// ROBOT
+// TODO: THIS IS AN OLD FILE THAT IS TUNED TO THE ROBOT BASE, IGNORE AND DO NOT USE FOR THE ACTUAL
+// ROBOT
+// TODO: THIS IS AN OLD FILE THAT IS TUNED TO THE ROBOT BASE, IGNORE AND DO NOT USE FOR THE ACTUAL
+// ROBOT
 
 // package frc.robot.subsystems.drive.generated;
 
@@ -44,15 +72,16 @@
 
 // /* TODO: TunerConstants.java info
 //  * This is where all the motors and encoders and the gyro is configured for driving.
-//  * Since the encoders and the gyro can be off or constistantly inaccurate 
+//  * Since the encoders and the gyro can be off or constistantly inaccurate
 //  * (ex: always 5 degrees off or smth), you can offset that here.
-//  * 
-//  * For example, our gyro (for whatever reason), is 90 degrees off. So we set and offset of -90 degrees
+//  *
+//  * For example, our gyro (for whatever reason), is 90 degrees off. So we set and offset of -90
+// degrees
 //  * to counteract it.
-//  * 
-//  * If you want, look through at the offsets and stuff for the motors and the encoders and the Pigeon2 (our gyro)
+//  *
+//  * If you want, look through at the offsets and stuff for the motors and the encoders and the
+// Pigeon2 (our gyro)
 //  */
-
 
 // // Generated by the Tuner X Swerve Project Generator
 // // https://v6.docs.ctr-electronics.com/en/stable/docs/tuner/tuner-swerve/index.html
@@ -120,7 +149,8 @@
 // 	private static final CANcoderConfiguration encoderInitialConfigs = new CANcoderConfiguration();
 // 	// Configs for the Pigeon 2; leave this null to skip applying Pigeon 2 configs
 // 	//private static final Pigeon2Configuration pigeonConfigs =
-// 	//		new Pigeon2Configuration().withMountPose(new MountPoseConfigs().withMountPoseYaw(91.76612091064453).withMountPoseRoll(178.90150451660156).withMountPosePitch(180));
+// 	//		new Pigeon2Configuration().withMountPose(new
+// MountPoseConfigs().withMountPoseYaw(91.76612091064453).withMountPoseRoll(178.90150451660156).withMountPosePitch(180));
 
 // 	// Mount pose: Pigeon mounted right-side up with +X toward front of robot
 // 	// Calibrated via Phoenix Tuner X
@@ -133,7 +163,6 @@
 // 	// New Yaw: -87.09540557861328
 // 	// New Pitch: 0.4624914824962616
 // 	// New Roll: -179.29147338867188
-
 
 // 	// CAN bus that the devices are located on;
 // 	// All swerve devices must share the same CAN bus
@@ -237,7 +266,7 @@
 // 	private static final int kBackRightSteerMotorId = 31;
 // 	private static final int kBackRightEncoderId = 32;
 // 	private static final Angle kBackRightEncoderOffset = Units.Rotations.of(-0.027100);
-// 	// 0.472168 
+// 	// 0.472168
 // 	private static final boolean kBackRightSteerMotorInverted = true;
 // 	private static final boolean kBackRightEncoderInverted = false;
 
@@ -297,12 +326,14 @@
 // 							kBackRightSteerMotorInverted,
 // 							kBackRightEncoderInverted);
 
-// 	/** Swerve Drive class utilizing CTR Electronics' Phoenix 6 API with the selected device types. */
+// 	/** Swerve Drive class utilizing CTR Electronics' Phoenix 6 API with the selected device types.
+// */
 // 	public static class TunerSwerveDrivetrain extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> {
 // 		/**
 // 		 * Constructs a CTRE SwerveDrivetrain using the specified constants.
 // 		 *
-// 		 * <p>This constructs the underlying hardware devices, so users should not construct the devices
+// 		 * <p>This constructs the underlying hardware devices, so users should not construct the
+// devices
 // 		 * themselves. If they need the devices, they can access them through getters in the classes.
 // 		 *
 // 		 * @param drivetrainConstants Drivetrain-wide constants for the swerve drive
@@ -316,7 +347,8 @@
 // 		/**
 // 		 * Constructs a CTRE SwerveDrivetrain using the specified constants.
 // 		 *
-// 		 * <p>This constructs the underlying hardware devices, so users should not construct the devices
+// 		 * <p>This constructs the underlying hardware devices, so users should not construct the
+// devices
 // 		 * themselves. If they need the devices, they can access them through getters in the classes.
 // 		 *
 // 		 * @param drivetrainConstants Drivetrain-wide constants for the swerve drive
@@ -340,7 +372,8 @@
 // 		/**
 // 		 * Constructs a CTRE SwerveDrivetrain using the specified constants.
 // 		 *
-// 		 * <p>This constructs the underlying hardware devices, so users should not construct the devices
+// 		 * <p>This constructs the underlying hardware devices, so users should not construct the
+// devices
 // 		 * themselves. If they need the devices, they can access them through getters in the classes.
 // 		 *
 // 		 * @param drivetrainConstants Drivetrain-wide constants for the swerve drive
