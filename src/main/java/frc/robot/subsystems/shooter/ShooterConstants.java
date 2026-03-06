@@ -16,7 +16,7 @@ public static final CTREConfig<TalonFX, TalonFXConfiguration> flywheelMotorConfi
 	new CTREConfig<>(TalonFXConfiguration::new);
 
 	static {
-		flywheelMotorConfig.withName("ID 11").withCanID(11).withBus(Robot.riobus);
+		flywheelMotorConfig.withName("Flywheel Main").withCanID(11).withBus(Robot.gamepiecebus);
 
 		TalonFXConfiguration flywheelConfig = flywheelMotorConfig.config;
 		flywheelConfig.Slot0.kP = 0.1; // Increase until speed oscillates
@@ -31,24 +31,24 @@ public static final CTREConfig<TalonFX, TalonFXConfiguration> flywheelMotorConfi
 		flywheelConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 	}
 
-public static final CTREConfig<TalonFX, TalonFXConfiguration> backMotorConfig = 
+public static final CTREConfig<TalonFX, TalonFXConfiguration> followMotorConfig = 
 	new CTREConfig<>(TalonFXConfiguration::new);
 
 static {
-	backMotorConfig.withName("Back Motor").withCanID(10).withBus(Robot.riobus);
+	followMotorConfig.withName("Flywheel Follow").withCanID(10).withBus(Robot.gamepiecebus);
 
-	TalonFXConfiguration backConfig = backMotorConfig.config;
+	TalonFXConfiguration followConfig = followMotorConfig.config;
 
-	backConfig.Slot0.kP = 0.1; // Increase until speed oscillates
-	backConfig.Slot0.kI = 0; // Don't touch haha im gunna touch it lol
-	backConfig.Slot0.kD = 0; // Increase until jitter
-	backConfig.Slot0.kS = 0; // Increase until just before motor starts moving
-	backConfig.Slot0.kA = 0; //
-	backConfig.Slot0.kV = 0; //
-	backConfig.Slot0.kG = 0; // Don't touch
+	followConfig.Slot0.kP = 0.1; // Increase until speed oscillates
+	followConfig.Slot0.kI = 0; // Don't touch haha im gunna touch it lol
+	followConfig.Slot0.kD = 0; // Increase until jitter
+	followConfig.Slot0.kS = 0; // Increase until just before motor starts moving
+	followConfig.Slot0.kA = 0; //
+	followConfig.Slot0.kV = 0; //
+	followConfig.Slot0.kG = 0; // Don't touch
 
-	backConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-	backConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+	followConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+	followConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 }
 
 }

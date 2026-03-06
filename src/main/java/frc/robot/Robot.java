@@ -11,7 +11,7 @@ import frc.lib.TunableParameter;
 import frc.robot.util.ControlBoard;
 
 public class Robot extends TimedRobot {
-  public static final CANBus riobus = new CANBus("rio");
+  public static final CANBus gamepiecebus = new CANBus("gamepiecebus");
   private final CommandScheduler scheduler;
   private final ControlBoard controlBoard;
 

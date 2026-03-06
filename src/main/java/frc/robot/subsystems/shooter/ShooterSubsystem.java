@@ -1,24 +1,16 @@
 package frc.robot.subsystems.shooter;
 
-import java.util.function.Consumer;
-
 import com.ctre.phoenix6.SignalLogger;
-import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
 
-import edu.wpi.first.units.Unit;
 import edu.wpi.first.units.Units;
-import edu.wpi.first.units.VelocityUnit;
-import edu.wpi.first.units.VoltageUnit;
-import edu.wpi.first.units.measure.Velocity;
-import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
 
 public class ShooterSubsystem extends SubsystemBase {
 private static ShooterSubsystem instance;
@@ -27,8 +19,8 @@ private static ShooterSubsystem instance;
 private final TalonFX flywheelMotor = ShooterConstants.flywheelMotorConfig.createDevice(TalonFX::new);
 private final VoltageOut flywheelControl = new VoltageOut(0);
 
-// private final TalonFX backMotor = ShooterConstants.backMotorConfig.createDevice(TalonFX::new);
-// private final VoltageOut backControl = new VoltageOut(0);
+private final TalonFX followMotor = ShooterConstants.followMotorConfig.createDevice(TalonFX::new);
+private final Follower followControl = new Follower(ShooterConstants.flywheelMotorConfig.canID, MotorAlignmentValue.Opposed);
 
 
 /* State Machine Logic */
@@ -49,6 +41,7 @@ public static ShooterSubsystem getInstance() {
 
 private ShooterSubsystem() {
 	setShooterMotor(0,0);
+	followMotor.setControl(followControl);
 }
 
 /**
