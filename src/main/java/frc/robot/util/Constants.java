@@ -36,8 +36,14 @@ public class Constants {
   public static final int rightServoPort = -1;
 
   // Intake Motor ID's
-  public static final int extenderMotorID = -1;
   public static final int intakeMotorID = -1;
+
+  // Extender Motor ID's
+  public static final int extenderMotorID = -1;
+
+  // Transfer Motor ID's
+  public static final int transfertopMotorID = -1;
+  public static final int transferbottomMotorID = -1;
 
   // /** Use {@link frc.robot.Robot#drivebus} instead */
   // @SuppressWarnings("DeprecatedIsStillUsed")
