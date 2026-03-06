@@ -67,6 +67,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public void requestIntaking() {
+    requestedIdle = false;
     requestedSpitting = false;
     requestedIntaking = true;
   }
@@ -77,6 +78,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public void requestSpitting() {
+    requestedIdle = false;
     requestedIntaking = false;
     requestedSpitting = true;
   }

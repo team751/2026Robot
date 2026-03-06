@@ -61,7 +61,7 @@ This stops the motor immediately, outside the state machine in `periodic()`. Can
 
 ## IntakeSubsystem
 
-### 6. `spitSpeed` is positive — same direction as intake (IntakeConstants.java:14)
+### 6. ✅ DONE: `spitSpeed` is positive — same direction as intake (IntakeConstants.java:14)
 
 ```java
 public static final double intakeSpeed = 3.5;
@@ -70,7 +70,7 @@ public static final double spitSpeed = 3.5;
 
 Both are positive. The motor is configured `CounterClockwise_Positive` with the comment `// Positive intake`. So SPITTING runs the motor at +3.5V — the **same direction and speed** as INTAKING. For spitting to reverse the motor, `spitSpeed` should be negative (e.g., `-3.5`).
 
-### 7. `requestIntaking()` and `requestSpitting()` don't clear `requestedIdle` (lines 69–82)
+### 7. ✅ DONE: `requestIntaking()` and `requestSpitting()` don't clear `requestedIdle` (lines 69–82)
 
 Neither method clears `requestedIdle`, so if `requestIdle()` was called in the same cycle, idle always wins since it's checked first in `periodic()`.
 
