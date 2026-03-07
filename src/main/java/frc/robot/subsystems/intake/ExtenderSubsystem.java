@@ -5,6 +5,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 
@@ -20,7 +21,7 @@ public class ExtenderSubsystem extends SubsystemBase {
   /* Control Signals */
   private final VoltageOut extenderControl = new VoltageOut(0);
 
-  private final ProfiledPIDController extenderPID = new ProfiledPIDController(1, 0.0, 0.0, new Constraints(20.0, 10.0));
+  private final PIDController extenderPID = new PIDController(0.25, 0.0, 0.0);//, new Constraints(20.0, 10.0));
 
   DigitalInput frontLeftLimit = new DigitalInput(IntakeConstants.FrontLeftLimitID);
   DigitalInput backLeftLimit = new DigitalInput(IntakeConstants.BackLeftLimitID);
@@ -94,7 +95,7 @@ public class ExtenderSubsystem extends SubsystemBase {
 
   private void calculateExtension() {
     if (isFullyExtended()) {
-      estimatedExtension = 0.0;
+      estimatedExtension = IntakeConstants.extenderLength;
     }else if (backRightLimit.get() && backLeftLimit.get()) {
       estimatedExtension = IntakeConstants.extenderLength;
     }else if (isFullyRetracted()) {
