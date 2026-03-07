@@ -28,6 +28,8 @@ public class Constants {
   public static final int flywheelMotorID = 33;
   public static final int followMotorID = 43;
 
+  public static final int shooterTransferMotorID = 34;
+
   // Climber Motor ID's
   public static final int leftClimberMotorID = 46;
   public static final int rightClimberMotorID = 36;

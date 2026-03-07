@@ -1,7 +1,7 @@
 package frc.robot.subsystems.shooter;
 
 import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 
@@ -14,10 +14,14 @@ public class ShooterSubsystem extends SubsystemBase {
   // Motors
   private final TalonFX flywheelMotor =
       ShooterConstants.flywheelMotorConfig.createDevice(TalonFX::new);
-  private final VoltageOut flywheelControl = new VoltageOut(0);
+  private final VelocityVoltage flywheelControl = new VelocityVoltage(0);
 
   private final TalonFX followMotor = ShooterConstants.followMotorConfig.createDevice(TalonFX::new);
   private final Follower followControl = new Follower(ShooterConstants.flywheelMotorConfig.canID, MotorAlignmentValue.Opposed);
+
+  private final TalonFX shooterTransferMotor = ShooterConstants.transferMotorConfig.createDevice(TalonFX::new);
+  private final Follower shooterTransferControl = new Follower(ShooterConstants.flywheelMotorConfig.canID, MotorAlignmentValue.Aligned);
+  //private final VoltageOut shooterTransferControl = new VoltageOut(0);
 
   /* State Machine Logic */
   private enum ShooterState {
@@ -40,6 +44,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
   private ShooterSubsystem() {
     followMotor.setControl(followControl);
+    shooterTransferMotor.setControl(shooterTransferControl);
 
     setShooterMotor(0);
   }
@@ -57,20 +62,14 @@ public class ShooterSubsystem extends SubsystemBase {
 
       switch (state) {
         case IDLE -> setShooterMotor(0);
-        case SLOWSPIN -> setShooterMotor(0);
+        case SLOWSPIN -> setShooterMotor(ShooterConstants.flywheelSpeed * ShooterConstants.slowPercent);
         case SPINNING -> setShooterMotor(ShooterConstants.flywheelSpeed);
       }
     }
   }
 
   private void setShooterMotor(double flywheelVoltage) {
-    flywheelMotor.setControl(flywheelControl.withOutput(flywheelVoltage));
-  }
-
-  public void newSpeed(double flySpeed, double followSpeed) {
-    ShooterConstants.flywheelSpeed = flySpeed;
-    ShooterConstants.followSpeed = followSpeed;
-    this.requestShoot();
+    flywheelMotor.setControl(flywheelControl.withVelocity(flywheelVoltage));
   }
 
   private void unsetAllRequests() {
