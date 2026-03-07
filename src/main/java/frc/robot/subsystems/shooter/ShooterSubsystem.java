@@ -26,7 +26,6 @@ public class ShooterSubsystem extends SubsystemBase {
 
   /* State Machine Logic */
   private enum ShooterState {
-    // TODO: Do flywheel as closed loop and add follower mode for motors
     IDLE,
     SLOWSPIN,
     SPINNING
@@ -44,6 +43,7 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   private ShooterSubsystem() {
+    flywheelMotor.setControl(flywheelControl);
     followMotor.setControl(followControl);
     shooterTransferMotor.setControl(shooterTransferControl);
 
@@ -69,18 +69,22 @@ public class ShooterSubsystem extends SubsystemBase {
     }
   }
 
+  /**Runs just the main flywheel motor */
   private void setShooterMotor(double flywheelVelocity) {
     flywheelMotor.setControl(flywheelControl.withVelocity(flywheelVelocity));
   }
 
+  /**Runs just the transfer motor on shooter*/
   private void setTransferMotor(double transferVoltage) {
     shooterTransferMotor.setControl(shooterTransferControl.withOutput(transferVoltage));
   }
 
+  /**Runs both the main shooter motor and transfer motor */
   private void setShooterSpeed(double flywheelVelocity, double transferVoltage) {
     flywheelMotor.setControl(flywheelControl.withVelocity(flywheelVelocity));
     shooterTransferMotor.setControl(shooterTransferControl.withOutput(transferVoltage));
   }
+
 
   private void unsetAllRequests() {
     requestedIdle = false;
