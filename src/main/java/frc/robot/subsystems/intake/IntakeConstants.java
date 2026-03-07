@@ -15,6 +15,9 @@ public class IntakeConstants {
   public static final double extenderSpeed = 2;
   public static final double retractorSpeed = -2;
 
+  public static final double extenderLength = 0.5; // meters
+  public static final double extenderGearRatio = 2.8321; // cm per rotation
+
   public static final CTREConfig<TalonFX, TalonFXConfiguration> intakeMotorConfig =
       new CTREConfig<>(TalonFXConfiguration::new);
 
