@@ -2,6 +2,7 @@ package frc.robot.subsystems.shooter;
 
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 
@@ -20,8 +21,8 @@ public class ShooterSubsystem extends SubsystemBase {
   private final Follower followControl = new Follower(ShooterConstants.flywheelMotorConfig.canID, MotorAlignmentValue.Opposed);
 
   private final TalonFX shooterTransferMotor = ShooterConstants.transferMotorConfig.createDevice(TalonFX::new);
-  private final Follower shooterTransferControl = new Follower(ShooterConstants.flywheelMotorConfig.canID, MotorAlignmentValue.Aligned);
-  //private final VoltageOut shooterTransferControl = new VoltageOut(0);
+  //private final Follower shooterTransferControl = new Follower(ShooterConstants.flywheelMotorConfig.canID, MotorAlignmentValue.Aligned);
+  private final VoltageOut shooterTransferControl = new VoltageOut(0);
 
   /* State Machine Logic */
   private enum ShooterState {
@@ -63,13 +64,22 @@ public class ShooterSubsystem extends SubsystemBase {
       switch (state) {
         case IDLE -> setShooterMotor(0);
         case SLOWSPIN -> setShooterMotor(ShooterConstants.flywheelSpeed * ShooterConstants.slowPercent);
-        case SPINNING -> setShooterMotor(ShooterConstants.flywheelSpeed);
+        case SPINNING -> setShooterSpeed(ShooterConstants.flywheelSpeed, ShooterConstants.transferVoltage);
       }
     }
   }
 
-  private void setShooterMotor(double flywheelVoltage) {
-    flywheelMotor.setControl(flywheelControl.withVelocity(flywheelVoltage));
+  private void setShooterMotor(double flywheelVelocity) {
+    flywheelMotor.setControl(flywheelControl.withVelocity(flywheelVelocity));
+  }
+
+  private void setTransferMotor(double transferVoltage) {
+    shooterTransferMotor.setControl(shooterTransferControl.withOutput(transferVoltage));
+  }
+
+  private void setShooterSpeed(double flywheelVelocity, double transferVoltage) {
+    flywheelMotor.setControl(flywheelControl.withVelocity(flywheelVelocity));
+    shooterTransferMotor.setControl(shooterTransferControl.withOutput(transferVoltage));
   }
 
   private void unsetAllRequests() {
