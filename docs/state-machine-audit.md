@@ -12,7 +12,7 @@ Comprehensive review of state machine logic across all subsystems.
 
 ## ExtenderSubsystem
 
-### 1. 🔴 CRITICAL: Operator precedence bug (lines 62, 65)
+### 1. ✅ DONE: Operator precedence bug (lines 62, 65)
 
 ```java
 if (state == ExtenderState.EXTENDING && (LeftLimit.get()) || (RightLimit.get())) {
@@ -30,13 +30,13 @@ If `RightLimit.get()` is true, the motor gets set to 0.5V **regardless of state*
 if (state == ExtenderState.EXTENDING && (LeftLimit.get() || RightLimit.get())) {
 ```
 
-### 2. 🔴 CRITICAL: Limit switch checks only run on state transition (lines 62–75)
+### 2. ✅ DONE: Limit switch checks only run on state transition (lines 62–75)
 
 All limit switch logic is inside `if (nextState != state)`. Limit switches are only evaluated at the **instant** of a state transition, not continuously while the motor is running. If the extender starts and then hits a limit switch on the next cycle, it won't be detected.
 
 **Fix:** Move limit switch checks **outside** the `if (nextState != state)` block.
 
-### 3. 🟡 MEDIUM: `requestExtending()` doesn't clear `requestedIdle` (lines 90–93)
+### 3. ✅ DONE: `requestExtending()` doesn't clear `requestedIdle` (lines 90–93)
 
 ```java
 public void requestExtending() {

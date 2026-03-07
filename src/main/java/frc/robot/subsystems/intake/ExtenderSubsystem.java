@@ -59,20 +59,21 @@ public class ExtenderSubsystem extends SubsystemBase {
         case EXTENDING -> setExtenderMotor(IntakeConstants.extenderSpeed);
         case RETRACTING -> setExtenderMotor(IntakeConstants.retractorSpeed);
       }
-      if (state == ExtenderState.EXTENDING && (LeftLimit.get()) || (RightLimit.get())) {
-        setExtenderMotor(0.5);
-      }
-      if (state == ExtenderState.RETRACTING && (LeftLimit.get()) || (RightLimit.get())) {
-        setExtenderMotor(0.5);
-      }
-      if (state == ExtenderState.RETRACTING && (RightLimit.get()) && (LeftLimit.get())) {
-        requestIdle();
-        setExtenderMotor(0);
-      }
-      if (state == ExtenderState.EXTENDING && (RightLimit.get()) && (LeftLimit.get())) {
-        requestIdle();
-        setExtenderMotor(0);
-      }
+    }
+
+    if (state == ExtenderState.EXTENDING && (LeftLimit.get() || RightLimit.get())) {
+      setExtenderMotor(0.5);
+    }
+    if (state == ExtenderState.RETRACTING && (LeftLimit.get() || RightLimit.get())) {
+      setExtenderMotor(0.5);
+    }
+    if (state == ExtenderState.RETRACTING && (RightLimit.get() && LeftLimit.get())) {
+      requestIdle();
+      setExtenderMotor(0);
+    }
+    if (state == ExtenderState.EXTENDING && (RightLimit.get() && LeftLimit.get())) {
+      requestIdle();
+      setExtenderMotor(0);
     }
     SmartDashboard.putNumber(
         "Extender/Extender Speed", extenderMotor.getVelocity().getValueAsDouble());
@@ -89,11 +90,13 @@ public class ExtenderSubsystem extends SubsystemBase {
 
   public void requestExtending() {
     requestedRetracting = false;
+    requestedIdle = false;
     requestedExtending = true;
   }
 
   public void requestRetracting() {
-    unsetAllRequests();
+    requestedExtending = false;
+    requestedIdle = false;
     requestedRetracting = true;
   }
 
