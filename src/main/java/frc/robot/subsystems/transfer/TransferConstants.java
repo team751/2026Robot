@@ -5,6 +5,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import frc.lib.CTREConfig;
+import frc.robot.Robot;
 import frc.robot.util.Constants;
 
 public class TransferConstants {
@@ -22,7 +23,8 @@ public class TransferConstants {
   static {
     transfertopconfig
         .withName("Transfer Top Motor")
-        .withCanID(Constants.transfertopMotorID) /*.withBus(Robot.TBD)*/;
+        .withCanID(Constants.rightTransferMotorID)
+        .withBus(Robot.gamepiecebus);
 
     TalonFXConfiguration transfertopConfig = transfertopconfig.config;
     transfertopConfig.Slot0.kP = 0.1; // Increase until speed oscillates
@@ -46,7 +48,8 @@ public class TransferConstants {
   static {
     transferbottomconfig
         .withName("Transfer Bottom Motor")
-        .withCanID(Constants.transferbottomMotorID) /*.withBus(Robot.TBD)*/;
+        .withCanID(Constants.leftTransferMotorID)
+        .withBus(Robot.gamepiecebus);
 
     TalonFXConfiguration transferbottomConfig = transferbottomconfig.config;
 

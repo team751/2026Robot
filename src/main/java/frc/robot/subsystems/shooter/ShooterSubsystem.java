@@ -1,7 +1,10 @@
 package frc.robot.subsystems.shooter;
 
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -13,20 +16,21 @@ public class ShooterSubsystem extends SubsystemBase {
       ShooterConstants.flywheelMotorConfig.createDevice(TalonFX::new);
   private final VoltageOut flywheelControl = new VoltageOut(0);
 
-  private final TalonFX backMotor = ShooterConstants.backMotorConfig.createDevice(TalonFX::new);
-  private final VoltageOut backControl = new VoltageOut(0);
+  private final TalonFX followMotor = ShooterConstants.followMotorConfig.createDevice(TalonFX::new);
+  private final Follower followControl = new Follower(ShooterConstants.flywheelMotorConfig.canID, MotorAlignmentValue.Opposed);
 
   /* State Machine Logic */
   private enum ShooterState {
     // TODO: Do flywheel as closed loop and add follower mode for motors
     IDLE,
-    // SLOWSPIN, <- might want this so that we dont have to fully spin up the shooter everytime?
+    SLOWSPIN,
     SPINNING
   }
 
   private ShooterState state = ShooterState.IDLE;
 
   private boolean requestedIdle = false;
+  private boolean requestedSlow = false;
   private boolean requestedShoot = false;
 
   public static ShooterSubsystem getInstance() {
@@ -35,13 +39,16 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   private ShooterSubsystem() {
-    setShooterMotor(0, 0);
+    followMotor.setControl(followControl);
+
+    setShooterMotor(0);
   }
 
   @Override
   public void periodic() {
     ShooterState nextState = state;
     if (requestedIdle) nextState = ShooterState.IDLE;
+    else if (requestedSlow) nextState = ShooterState.SLOWSPIN;
     else if (requestedShoot) nextState = ShooterState.SPINNING;
 
     if (nextState != state) {
@@ -49,29 +56,20 @@ public class ShooterSubsystem extends SubsystemBase {
       unsetAllRequests();
 
       switch (state) {
-        case IDLE -> setShooterMotor(0, 0);
-        case SPINNING -> setShooterMotor(
-            ShooterConstants.flywheelSpeed, ShooterConstants.backSpeed);
+        case IDLE -> setShooterMotor(0);
+        case SLOWSPIN -> setShooterMotor(0);
+        case SPINNING -> setShooterMotor(ShooterConstants.flywheelSpeed);
       }
     }
-
-    SmartDashboard.putNumber("Shooter/Back Speed", backMotor.getVelocity().getValueAsDouble());
-    SmartDashboard.putNumber("Shooter/Back Duty", backMotor.getDutyCycle().getValueAsDouble());
-
-    SmartDashboard.putNumber(
-        "Shooter/Flywheel Speed", flywheelMotor.getVelocity().getValueAsDouble());
-    SmartDashboard.putNumber(
-        "Shooter/Flywheel Duty", flywheelMotor.getDutyCycle().getValueAsDouble());
   }
 
-  private void setShooterMotor(double flywheelVoltage, double backVoltage) {
+  private void setShooterMotor(double flywheelVoltage) {
     flywheelMotor.setControl(flywheelControl.withOutput(flywheelVoltage));
-    backMotor.setControl(backControl.withOutput(backVoltage));
   }
 
-  public void newSpeed(double flySpeed, double backSpeed) {
+  public void newSpeed(double flySpeed, double followSpeed) {
     ShooterConstants.flywheelSpeed = flySpeed;
-    ShooterConstants.backSpeed = backSpeed;
+    ShooterConstants.followSpeed = followSpeed;
     this.requestShoot();
   }
 
@@ -81,8 +79,6 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public void requestIdle() {
-    newSpeed(0, 0);
-
     unsetAllRequests();
     requestedIdle = true;
   }

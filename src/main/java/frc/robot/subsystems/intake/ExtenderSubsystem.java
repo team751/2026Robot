@@ -17,9 +17,10 @@ public class ExtenderSubsystem extends SubsystemBase {
   private final VoltageOut extenderControl = new VoltageOut(0);
 
   /* Limit Switches */
-  DigitalInput RightLimit = new DigitalInput(3);
-
-  DigitalInput LeftLimit = new DigitalInput(2);
+  DigitalInput RightLimit = new DigitalInput(IntakeConstants.RightLimitID);
+  DigitalInput LeftLimit = new DigitalInput(IntakeConstants.LeftLimitID);
+  DigitalInput testLimit1 = new DigitalInput(0);
+  DigitalInput testLimit2 = new DigitalInput(1);
 
   /* State Machine Logic */
   private enum ExtenderState {
@@ -34,6 +35,7 @@ public class ExtenderSubsystem extends SubsystemBase {
   private boolean requestedExtending = false;
   private boolean requestedRetracting = false;
 
+
   public static ExtenderSubsystem getInstance() {
     if (instance == null) instance = new ExtenderSubsystem();
     return instance;
@@ -42,6 +44,7 @@ public class ExtenderSubsystem extends SubsystemBase {
   private ExtenderSubsystem() {
     setExtenderMotor(0);
   }
+
 
   @Override
   public void periodic() {
@@ -59,6 +62,11 @@ public class ExtenderSubsystem extends SubsystemBase {
         case EXTENDING -> setExtenderMotor(IntakeConstants.extenderSpeed);
         case RETRACTING -> setExtenderMotor(IntakeConstants.retractorSpeed);
       }
+
+      SmartDashboard.putBoolean("Intake Left Limit", LeftLimit.get());
+      SmartDashboard.putBoolean("Intake Right Limit", RightLimit.get());
+      SmartDashboard.putBoolean("Intake DO 0", testLimit1.get());
+      SmartDashboard.putBoolean("Intake DO 1", testLimit2.get());
     }
 
     if (state == ExtenderState.EXTENDING && (LeftLimit.get() || RightLimit.get())) {

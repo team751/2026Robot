@@ -20,9 +20,12 @@ import frc.robot.subsystems.vision.LimelightSubsystem;
 import frc.robot.util.ControlBoard;
 
 public class Robot extends TimedRobot {
+    /**CANBus only used for climber*/
   public static final CANBus riobus = new CANBus("rio");
+    /**CANBus only used for swerve*/
   public static final CANBus drivebus = new CANBus("drivebus");
-  public static final CANBus climbbus = new CANBus("climbbus");
+  /**CANBus used for everything but climber and swerve*/
+  public static final CANBus gamepiecebus = new CANBus("gamepiecebus");
 
   private final ControlBoard controlBoard;
   private final CommandScheduler scheduler;
