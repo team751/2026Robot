@@ -86,6 +86,11 @@ public class ExtenderSubsystem extends SubsystemBase {
 
     SmartDashboard.putNumber(
         "Extender/Extender Speed", extenderMotor.getVelocity().getValueAsDouble());
+
+      SmartDashboard.putBoolean("Left Limit", LeftLimit.get());
+      SmartDashboard.putBoolean("Right Limit", RightLimit.get());
+      SmartDashboard.putBoolean("DO 0", frontLeftLimit.get());
+      SmartDashboard.putBoolean("DO 1", backLeftLimit.get());
   }
 
   /**
