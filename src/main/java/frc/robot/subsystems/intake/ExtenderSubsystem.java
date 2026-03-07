@@ -5,7 +5,6 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 
@@ -21,7 +20,7 @@ public class ExtenderSubsystem extends SubsystemBase {
   /* Control Signals */
   private final VoltageOut extenderControl = new VoltageOut(0);
 
-  private final PIDController extenderPID = new PIDController(0.05, 0.0, 0.0);//, new Constraints(2.0, 1.0));
+  private final ProfiledPIDController extenderPID = new ProfiledPIDController(1, 0.0, 0.0, new Constraints(20.0, 10.0));
 
   DigitalInput frontLeftLimit = new DigitalInput(IntakeConstants.FrontLeftLimitID);
   DigitalInput backLeftLimit = new DigitalInput(IntakeConstants.BackLeftLimitID);
@@ -37,7 +36,6 @@ public class ExtenderSubsystem extends SubsystemBase {
   }
 
   private ExtenderState state = ExtenderState.RETRACTED;
-  private ExtenderState previousState = ExtenderState.RETRACTED;
 
   public static ExtenderSubsystem getInstance() {
     if (instance == null) instance = new ExtenderSubsystem();
@@ -51,39 +49,30 @@ public class ExtenderSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (previousState != state) {
-      previousState = state;
-
-      switch (state) {
-        case EXTENDING -> controlMotor(IntakeConstants.extenderLength + 5);
-        case RETRACTING -> controlMotor(-5);
-        case EXTENDED, RETRACTED -> setExtenderMotor(0);
-      }
+    double motorOutput = 0;
+    switch (state) {
+      case EXTENDING -> motorOutput = calculateMotorControl(IntakeConstants.extenderLength + 5);
+      case RETRACTING -> motorOutput = calculateMotorControl(-5);        
+      case EXTENDED, RETRACTED -> motorOutput = 0;
     }
 
-    if (frontRightLimit.get() && frontLeftLimit.get()){
-      estimatedExtension = 0.0;
-    }else if (backRightLimit.get() && backLeftLimit.get()) {
-      estimatedExtension = IntakeConstants.extenderLength;
-    }{
-      estimatedExtension += extenderMotor.getVelocity().getValueAsDouble() * IntakeConstants.extenderGearRatio * 0.02; // 0.02 is the loop time in seconds
+    if (state == ExtenderState.EXTENDING && isPartiallyExtended()) {
+      motorOutput = IntakeConstants.extenderSpeed*0.25;
+    }else if (state == ExtenderState.RETRACTING && isPartiallyRetracted()) {
+      motorOutput = IntakeConstants.retractorSpeed*0.25;
     }
 
-    if (state == ExtenderState.EXTENDING && (backLeftLimit.get() || backRightLimit.get())) {
-      setExtenderMotor(IntakeConstants.extenderSpeed*0.25);
-    }else if (state == ExtenderState.RETRACTING && (frontLeftLimit.get() || frontRightLimit.get())) {
-      setExtenderMotor(IntakeConstants.retractorSpeed*0.25);
-    }
+    setExtenderMotor(motorOutput);
+
+    calculateExtension();
 
 
-    if (state == ExtenderState.EXTENDING && (backRightLimit.get() && backLeftLimit.get())) {
+    if (state == ExtenderState.EXTENDING && isFullyExtended()) {
       state = ExtenderState.EXTENDED;
-    } else if (state == ExtenderState.RETRACTING && (frontRightLimit.get() && frontLeftLimit.get())) {
+    } else if (state == ExtenderState.RETRACTING && isFullyRetracted()) {
       state = ExtenderState.RETRACTED;
     }
 
-    SmartDashboard.putNumber(
-        "Extender/Extender Speed", extenderMotor.getVelocity().getValueAsDouble());
     SmartDashboard.putNumber(
         "Extender/Extension", estimatedExtension);
   }
@@ -97,10 +86,38 @@ public class ExtenderSubsystem extends SubsystemBase {
     extenderMotor.setControl(extenderControl.withOutput(voltage));
   }
 
-  private void controlMotor(double target) {
+  private double calculateMotorControl(double target) {
     double pidOutput = extenderPID.calculate(estimatedExtension, target);
     SmartDashboard.putNumber("Extender/PIDThing", pidOutput);
-    setExtenderMotor(pidOutput);
+    return pidOutput;
+  }
+
+  private void calculateExtension() {
+    if (isFullyExtended()) {
+      estimatedExtension = 0.0;
+    }else if (backRightLimit.get() && backLeftLimit.get()) {
+      estimatedExtension = IntakeConstants.extenderLength;
+    }else if (isFullyRetracted()) {
+      estimatedExtension = 0.0;
+    }else{
+      estimatedExtension += extenderMotor.getVelocity().getValueAsDouble() * IntakeConstants.extenderGearRatio * 0.02; // 0.02 is the loop time in seconds
+    }
+  }
+
+  private boolean isFullyExtended() {
+    return backLeftLimit.get() && backRightLimit.get();
+  }
+
+  private boolean isFullyRetracted() {
+    return frontLeftLimit.get() && frontRightLimit.get();
+  }
+
+  private boolean isPartiallyExtended() {
+    return backLeftLimit.get() || backRightLimit.get();
+  }
+
+  private boolean isPartiallyRetracted() {
+    return frontLeftLimit.get() || frontRightLimit.get();
   }
 
   public void requestExtension() {
