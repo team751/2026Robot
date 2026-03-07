@@ -130,16 +130,12 @@ public class ControlBoard {
         new StartEndCommand(
             () -> IntakeSubsystem.getInstance().requestSpitting(),
             () -> IntakeSubsystem.getInstance().requestIdle()));
-
-    // controller.dLeft.whileTrue(
-    //     new StartEndCommand(
-    //         () -> ExtenderSubsystem.getInstance().requestRetracting(),
-    //         () -> ExtenderSubsystem.getInstance().requestIdle()));
-
-    // controller.dRight.whileTrue(
-    //     new StartEndCommand(
-    //         () -> ExtenderSubsystem.getInstance().requestExtending(),
-    //         () -> ExtenderSubsystem.getInstance().requestIdle()));
+    controller.dLeft.whileTrue(
+        new InstantCommand(
+            () -> ExtenderSubsystem.getInstance().requestExtension()));
+    controller.dRight.whileTrue(
+        new InstantCommand(
+            () -> ExtenderSubsystem.getInstance().requestRetraction()));
 
     /* Swerve */
     controller.rightBumper.whileTrue(

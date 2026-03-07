@@ -5,6 +5,8 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 
 public class ExtenderSubsystem extends SubsystemBase {
   private static ExtenderSubsystem instance;
@@ -18,28 +20,23 @@ public class ExtenderSubsystem extends SubsystemBase {
   /* Control Signals */
   private final VoltageOut extenderControl = new VoltageOut(0);
 
-  /* Limit Switches */
-  DigitalInput frontLeftLimit = new DigitalInput(IntakeConstants.FrontLeftLimitID);
-  DigitalInput backLeftLimit = new DigitalInput(IntakeConstants.BackLeftLimitID);
+  private final ProfiledPIDController extenderPID = new ProfiledPIDController(1.0, 0.0, 0.1, new Constraints(1.0, 1.0));
 
-  DigitalInput frontRightLimit = new DigitalInput(IntakeConstants.FrontRightLimitID);
-  DigitalInput backRightLimit = new DigitalInput(IntakeConstants.BackRightLimitID);
+  DigitalInput frontLeftLimit = new DigitalInput(0);
+  DigitalInput backLeftLimit = new DigitalInput(1);
+  DigitalInput frontRightLimit = new DigitalInput(2);
+  DigitalInput backRightLimit = new DigitalInput(3);
 
   /* State Machine Logic */
   private enum ExtenderState {
     EXTENDED,
-	RETRACTED,
+    RETRACTED,
     EXTENDING,
     RETRACTING,
   }
 
   private ExtenderState state = ExtenderState.RETRACTED;
   private ExtenderState previousState = ExtenderState.RETRACTED;
-
-  private boolean requestedIdle = false;
-  private boolean requestedExtending = false;
-  private boolean requestedRetracting = false;
-
 
   public static ExtenderSubsystem getInstance() {
     if (instance == null) instance = new ExtenderSubsystem();
@@ -59,16 +56,17 @@ public class ExtenderSubsystem extends SubsystemBase {
       switch (state) {
         case EXTENDING -> setExtenderMotor(IntakeConstants.extenderSpeed);
         case RETRACTING -> setExtenderMotor(IntakeConstants.retractorSpeed);
-		case EXTENDED -> setExtenderMotor(0);
-		case RETRACTED -> setExtenderMotor(0);
+        case EXTENDED, RETRACTED -> setExtenderMotor(0);
       }
     }
+    // dw paigus
+    controlMotor();
 
-	if (backRightLimit.get() && backLeftLimit.get()){
-		estimatedExtension = 0.0;
-	}else{
-		//estimatedExtension += extenderMotor.
-	}
+    if (backRightLimit.get() && backLeftLimit.get()){
+      estimatedExtension = 0.0;
+    }else{
+      estimatedExtension += extenderMotor.getVelocity().getValueAsDouble() * IntakeConstants.extenderGearRatio * 0.02; // 0.02 is the loop time in seconds
+    }
 
     if (state == ExtenderState.EXTENDING && (frontLeftLimit.get() || frontRightLimit.get())) {
       setExtenderMotor(IntakeConstants.extenderSpeed*0.25);
@@ -101,13 +99,19 @@ public class ExtenderSubsystem extends SubsystemBase {
     extenderMotor.setControl(extenderControl.withOutput(voltage));
   }
 
+  private void controlMotor() {
+    double pidOutput = extenderPID.calculate(estimatedExtension, state == ExtenderState.EXTENDING ? IntakeConstants.extenderLength : 0);
+    SmartDashboard.putNumber("Extender/PIDThing", pidOutput);
+    //setExtenderMotor(pidOutput);
+  }
+
   public void requestExtension() {
-	state = ExtenderState.EXTENDING;
+    state = ExtenderState.EXTENDING;
   }
   public void requestRetraction() {
-	state = ExtenderState.RETRACTING;
+    state = ExtenderState.RETRACTING;
   }
   public ExtenderState getState(){
-	return state;
+    return state;
   }
 }
