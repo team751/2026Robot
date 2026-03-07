@@ -1,6 +1,7 @@
 package frc.robot.subsystems.shooter;
 
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
@@ -14,14 +15,17 @@ public class ShooterSubsystem extends SubsystemBase {
   // Motors
   private final TalonFX flywheelMotor =
       ShooterConstants.flywheelMotorConfig.createDevice(TalonFX::new);
-  private final VoltageOut flywheelControl = new VoltageOut(0);
+  private final VelocityVoltage flywheelControl = new VelocityVoltage(0);
 
   private final TalonFX followMotor = ShooterConstants.followMotorConfig.createDevice(TalonFX::new);
   private final Follower followControl = new Follower(ShooterConstants.flywheelMotorConfig.canID, MotorAlignmentValue.Opposed);
 
+  private final TalonFX shooterTransferMotor = ShooterConstants.transferMotorConfig.createDevice(TalonFX::new);
+  //private final Follower shooterTransferControl = new Follower(ShooterConstants.flywheelMotorConfig.canID, MotorAlignmentValue.Aligned);
+  private final VoltageOut shooterTransferControl = new VoltageOut(0);
+
   /* State Machine Logic */
   private enum ShooterState {
-    // TODO: Do flywheel as closed loop and add follower mode for motors
     IDLE,
     SLOWSPIN,
     SPINNING
@@ -39,7 +43,9 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   private ShooterSubsystem() {
+    flywheelMotor.setControl(flywheelControl);
     followMotor.setControl(followControl);
+    shooterTransferMotor.setControl(shooterTransferControl);
 
     setShooterMotor(0);
   }
@@ -57,21 +63,28 @@ public class ShooterSubsystem extends SubsystemBase {
 
       switch (state) {
         case IDLE -> setShooterMotor(0);
-        case SLOWSPIN -> setShooterMotor(0);
-        case SPINNING -> setShooterMotor(ShooterConstants.flywheelSpeed);
+        case SLOWSPIN -> setShooterMotor(ShooterConstants.flywheelSpeed * ShooterConstants.slowPercent);
+        case SPINNING -> setShooterSpeed(ShooterConstants.flywheelSpeed, ShooterConstants.transferVoltage);
       }
     }
   }
 
-  private void setShooterMotor(double flywheelVoltage) {
-    flywheelMotor.setControl(flywheelControl.withOutput(flywheelVoltage));
+  /**Runs just the main flywheel motor */
+  private void setShooterMotor(double flywheelVelocity) {
+    flywheelMotor.setControl(flywheelControl.withVelocity(flywheelVelocity));
   }
 
-  public void newSpeed(double flySpeed, double followSpeed) {
-    ShooterConstants.flywheelSpeed = flySpeed;
-    ShooterConstants.followSpeed = followSpeed;
-    this.requestShoot();
+  /**Runs just the transfer motor on shooter*/
+  private void setTransferMotor(double transferVoltage) {
+    shooterTransferMotor.setControl(shooterTransferControl.withOutput(transferVoltage));
   }
+
+  /**Runs both the main shooter motor and transfer motor */
+  private void setShooterSpeed(double flywheelVelocity, double transferVoltage) {
+    flywheelMotor.setControl(flywheelControl.withVelocity(flywheelVelocity));
+    shooterTransferMotor.setControl(shooterTransferControl.withOutput(transferVoltage));
+  }
+
 
   private void unsetAllRequests() {
     requestedIdle = false;

@@ -23,6 +23,14 @@ import frc.robot.subsystems.simulation.MapSimSwerveTelemetry;
 
 // TODO: Clean up the controller bindings for this
 // TODO: Fix intake commands
+
+// TODO: shift button! \/\/\/
+// controller.circleButton.and(controller.crossButton).whileTrue(
+//   new StartEndCommand(() -> ShooterSubsystem.getInstance().requestShoot(), () -> ShooterSubsystem.getInstance().requestIdle())
+// );
+// we get basically double the buttons that we have now. could also help us test stuff without ruining previous keybinds
+// could also be helpful during comp for re-zeroing components mid match if we need to (like intake explodes and dies and we need to align it again)
+
 public class ControlBoard {
   private static ControlBoard instance;
 
@@ -119,6 +127,9 @@ public class ControlBoard {
     // We have way to many shooter buttons. We can probably cut some and also make more efficient
     // bindings.
     // TODO: old shooter bindings were for testing purposes. we gotta make entirely new ones
+    controller.triangleButton.and(controller.rightTrigger).whileTrue(
+      new StartEndCommand(() -> ShooterSubsystem.getInstance().requestShoot(), () -> ShooterSubsystem.getInstance().requestIdle())
+    );
 
     /* Intake */
     controller.rightTrigger.whileTrue(

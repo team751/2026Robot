@@ -4,20 +4,26 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+
 import frc.lib.CTREConfig;
 import frc.robot.Robot;
 import frc.robot.util.Constants;
 
 public class ShooterConstants {
   // TODO: Set current limits and tune the motors. also name/find the canbus to put the motors on
-  public static double flywheelSpeed = 1; // 12
-  public static double followSpeed = 1;
+  public static double flywheelSpeed = 10; // 12
+  public static double transferVoltage = 2;
+  public static double slowPercent = 0.5;
 
   public static final CTREConfig<TalonFX, TalonFXConfiguration> flywheelMotorConfig =
       new CTREConfig<>(TalonFXConfiguration::new);
 
   public static final CTREConfig<TalonFX, TalonFXConfiguration> followMotorConfig =
       new CTREConfig<>(TalonFXConfiguration::new);
+
+
+  public static final CTREConfig<TalonFX, TalonFXConfiguration> transferMotorConfig = 
+    new CTREConfig<>(TalonFXConfiguration::new);
 
   static {
     flywheelMotorConfig
@@ -68,4 +74,28 @@ public class ShooterConstants {
     // followConfig.TorqueCurrent.PeakForwardTorqueCurrent = 40;
     // followConfig.TorqueCurrent.PeakReverseTorqueCurrent = -40;
   }
+
+
+  static {
+    transferMotorConfig
+      .withName("Shooter Transfer")
+      .withCanID(Constants.shooterTransferMotorID)
+      .withBus(Robot.gamepiecebus);
+
+      TalonFXConfiguration shooterTransferConfig = transferMotorConfig.config;
+
+      shooterTransferConfig.Slot0.kP = 0.1;
+      shooterTransferConfig.Slot0.kI = 0.0;
+      shooterTransferConfig.Slot0.kD = 0.0;
+
+      shooterTransferConfig.Slot0.kS = 0.0;
+      shooterTransferConfig.Slot0.kA = 0.0;
+      shooterTransferConfig.Slot0.kV = 0.0;
+      shooterTransferConfig.Slot0.kG = 0.0;
+
+      shooterTransferConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+      shooterTransferConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+      // just copy from above 
+  }
+
 }
