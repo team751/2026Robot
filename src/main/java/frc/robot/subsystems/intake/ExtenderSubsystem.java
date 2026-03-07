@@ -103,7 +103,6 @@ public class ExtenderSubsystem extends SubsystemBase {
   public void requestIdle() {
     unsetAllRequests();
     requestedIdle = true;
-    setExtenderMotor(0);
   }
 
   private void unsetAllRequests() {
