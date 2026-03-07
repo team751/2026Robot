@@ -15,6 +15,8 @@ public class IntakeConstants {
   public static final double spitSpeed = -3.5;
   public static final double extenderSpeed = 2;
   public static final double retractorSpeed = -2;
+  public static final double jiggleMax = 28;
+  public static final double jiggleMin = 5;
   
   public static final int FrontLeftLimitID = 0;
   public static final int BackLeftLimitID = 1;
