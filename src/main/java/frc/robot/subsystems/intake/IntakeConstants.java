@@ -5,6 +5,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import frc.lib.CTREConfig;
+import frc.robot.Robot;
 import frc.robot.util.Constants;
 
 public class IntakeConstants {
@@ -27,7 +28,8 @@ public class IntakeConstants {
   static {
     intakeMotorConfig
         .withName("Intake Motor")
-        .withCanID(Constants.intakeMotorID) /*.withBus(Robot.TBD)*/;
+        .withCanID(Constants.intakeMotorID)
+        .withBus(Robot.gamepiecebus);
 
     TalonFXConfiguration intakeConfig = intakeMotorConfig.config;
     intakeConfig.Slot0.kP = 0; // Increase until speed oscillates
@@ -54,7 +56,8 @@ public class IntakeConstants {
   static {
     extenderMotorConfig
         .withName("Extender Motor")
-        .withCanID(Constants.extenderMotorID) /*.withBus(Robot.TBD) */;
+        .withCanID(Constants.extenderMotorID)
+        .withBus(Robot.gamepiecebus);
 
     TalonFXConfiguration extenderConfig = extenderMotorConfig.config;
     extenderConfig.Slot0.kP = 0; // Increase until speed oscillates

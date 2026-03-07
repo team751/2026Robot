@@ -19,8 +19,8 @@ public class ClimberSubsystem extends SubsystemBase {
       ClimberConstants.rightClimberConfig.createDevice(TalonFX::new);
   private final Servo m_servo = new Servo(ClimberConstants.kServoPort);
 
-  private final DigitalInput LimitL = new DigitalInput(8);
-  private final DigitalInput LimitR = new DigitalInput(7);
+  private final DigitalInput LeftLimit = new DigitalInput(8);
+  private final DigitalInput RightLimit = new DigitalInput(7);
 
   private final PositionVoltage positionRequest = new PositionVoltage(0);
 
@@ -55,6 +55,9 @@ public class ClimberSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Left Motor Pos", leftClimber.getPosition().getValueAsDouble());
     SmartDashboard.putNumber("Right Motor Pos", rightClimber.getPosition().getValueAsDouble());
     SmartDashboard.putNumber("Servo Position (rotations)", m_servoPosition);
+
+    SmartDashboard.putBoolean("Climb Left Limit", LeftLimit.get());
+    SmartDashboard.putBoolean("Climb Right Limit", RightLimit.get());
 
     // Spin to target check
     if (spinning) {

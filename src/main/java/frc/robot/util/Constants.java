@@ -25,25 +25,31 @@ public class Constants {
   public static final int backRightEncoderID = 32;
 
   // Shooter Motor ID's
-  public static final int flywheelMotorID = -1;
-  public static final int backMotorID = -1;
+  public static final int flywheelMotorID = 33;
+  public static final int followMotorID = 43;
 
   // Climber Motor ID's
-  public static final int leftClimberMotorID = -1;
-  public static final int rightClimberMotorID = -1;
+  public static final int leftClimberMotorID = 46;
+  public static final int rightClimberMotorID = 36;
 
   public static final int leftServoPort = -1;
   public static final int rightServoPort = -1;
 
   // Intake Motor ID's
-  public static final int intakeMotorID = -1;
+  public static final int intakeMotorID = 23;
+  public static final int extenderMotorID = 13;
 
-  // Extender Motor ID's
-  public static final int extenderMotorID = -1;
 
   // Transfer Motor ID's
-  public static final int transfertopMotorID = -1;
-  public static final int transferbottomMotorID = -1;
+  /**
+   * This is the motor that controls the top of intake.
+   * Naming it the right motor because it is physically located on the same plane as the other intake motor but on the right*/
+  public static final int rightTransferMotorID = 35;
+
+  /**
+   * This is the motor that controls the bottom of intake.
+   * Naming it the left motor because it is physically located on the same plane as the other intake motor but on the left.*/
+  public static final int leftTransferMotorID = 45;  
 
   // /** Use {@link frc.robot.Robot#drivebus} instead */
   // @SuppressWarnings("DeprecatedIsStillUsed")

@@ -125,6 +125,7 @@ public class ControlBoard {
         new StartEndCommand(
             () -> IntakeSubsystem.getInstance().requestIntaking(),
             () -> IntakeSubsystem.getInstance().requestIdle()));
+
     controller.squareButton.whileTrue(
         new StartEndCommand(
             () -> IntakeSubsystem.getInstance().requestSpitting(),

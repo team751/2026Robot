@@ -18,6 +18,9 @@ public class ClimberConstants {
       new CTREConfig<>(TalonFXConfiguration::new);
 
   public static final int kServoPort = 0;
+  public static final int rightServoPort = Constants.rightServoPort;
+  public static final int leftServoPort = Constants.leftServoPort;
+
   // Rotations per second at full speed (1.0). Tune by running full speed for
   // 1 second and comparing getServoPosition() to actual shaft rotations.
   public static final double kServoMaxRPS = 1.0;
@@ -26,7 +29,7 @@ public class ClimberConstants {
     leftClimberConfig
         .withName("Left Climber")
         .withCanID(Constants.leftClimberMotorID)
-        .withBus(Robot.climbbus);
+        .withBus(Robot.riobus);
 
     TalonFXConfiguration leftConfig = leftClimberConfig.config;
     leftConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -50,7 +53,7 @@ public class ClimberConstants {
     rightClimberConfig
         .withName("Right Climber")
         .withCanID(Constants.rightClimberMotorID)
-        .withBus(Robot.climbbus);
+        .withBus(Robot.riobus);
 
     TalonFXConfiguration rightConfig = rightClimberConfig.config;
     rightConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;

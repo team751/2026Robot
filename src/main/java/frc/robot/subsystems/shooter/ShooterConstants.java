@@ -5,23 +5,25 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import frc.lib.CTREConfig;
+import frc.robot.Robot;
 import frc.robot.util.Constants;
 
 public class ShooterConstants {
   // TODO: Set current limits and tune the motors. also name/find the canbus to put the motors on
   public static double flywheelSpeed = 1; // 12
-  public static double backSpeed = 1;
+  public static double followSpeed = 1;
 
   public static final CTREConfig<TalonFX, TalonFXConfiguration> flywheelMotorConfig =
       new CTREConfig<>(TalonFXConfiguration::new);
 
-  public static final CTREConfig<TalonFX, TalonFXConfiguration> backMotorConfig =
+  public static final CTREConfig<TalonFX, TalonFXConfiguration> followMotorConfig =
       new CTREConfig<>(TalonFXConfiguration::new);
 
   static {
     flywheelMotorConfig
-        .withName("Flywheel Motor")
-        .withCanID(Constants.flywheelMotorID) /*.withBus(Robot.TBD)*/;
+        .withName("Main Flywheel")
+        .withCanID(Constants.flywheelMotorID)
+		.withBus(Robot.gamepiecebus);
 
     TalonFXConfiguration flywheelConfig = flywheelMotorConfig.config;
     flywheelConfig.Slot0.kP = 0.1; // Increase until speed oscillates
@@ -43,24 +45,27 @@ public class ShooterConstants {
   }
 
   static {
-    backMotorConfig.withName("Back Motor").withCanID(Constants.backMotorID) /*.withBus(Robot.TBD)*/;
+    followMotorConfig
+		.withName("Follow Flywheel")
+		.withCanID(Constants.followMotorID)
+		.withBus(Robot.gamepiecebus);
 
-    TalonFXConfiguration backConfig = backMotorConfig.config;
+    TalonFXConfiguration followConfig = followMotorConfig.config;
 
-    backConfig.Slot0.kP = 0.1; // Increase until speed oscillates
-    backConfig.Slot0.kI = 0; // Don't touch haha im gunna touch it lol
-    backConfig.Slot0.kD = 0; // Increase until jitter
+    followConfig.Slot0.kP = 0.1; // Increase until speed oscillates
+    followConfig.Slot0.kI = 0; // Don't touch haha im gunna touch it lol
+    followConfig.Slot0.kD = 0; // Increase until jitter
 
-    backConfig.Slot0.kS = 0; // Increase until just before motor starts moving
-    backConfig.Slot0.kA = 0; //
-    backConfig.Slot0.kV = 0; //
-    backConfig.Slot0.kG = 0; // Don't touch
+    followConfig.Slot0.kS = 0; // Increase until just before motor starts moving
+    followConfig.Slot0.kA = 0; //
+    followConfig.Slot0.kV = 0; //
+    followConfig.Slot0.kG = 0; // Don't touch
 
-    backConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-    backConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-    // backConfig.CurrentLimits.StatorCurrentLimit = 120;
-    // backConfig.CurrentLimits.StatorCurrentLimitEnable = false;
-    // backConfig.TorqueCurrent.PeakForwardTorqueCurrent = 40;
-    // backConfig.TorqueCurrent.PeakReverseTorqueCurrent = -40;
+    followConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    followConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    // followConfig.CurrentLimits.StatorCurrentLimit = 120;
+    // followConfig.CurrentLimits.StatorCurrentLimitEnable = false;
+    // followConfig.TorqueCurrent.PeakForwardTorqueCurrent = 40;
+    // followConfig.TorqueCurrent.PeakReverseTorqueCurrent = -40;
   }
 }

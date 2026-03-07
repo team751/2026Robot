@@ -22,14 +22,10 @@ public class ExtenderSubsystem extends SubsystemBase {
 
   private final ProfiledPIDController extenderPID = new ProfiledPIDController(1.0, 0.0, 0.1, new Constraints(1.0, 1.0));
 
-  /* Limit Switches */
-  DigitalInput frontRightLimit = new DigitalInput(3);
-
-  DigitalInput frontLeftLimit = new DigitalInput(2);
-
-  DigitalInput backRightLimit = new DigitalInput(4);
-
-  DigitalInput backLeftLimit = new DigitalInput(5);
+  DigitalInput frontLeftLimit = new DigitalInput(0);
+  DigitalInput backLeftLimit = new DigitalInput(1);
+  DigitalInput frontRightLimit = new DigitalInput(2);
+  DigitalInput backRightLimit = new DigitalInput(3);
 
   /* State Machine Logic */
   private enum ExtenderState {
@@ -42,11 +38,15 @@ public class ExtenderSubsystem extends SubsystemBase {
   private ExtenderState state = ExtenderState.RETRACTED;
   private ExtenderState previousState = ExtenderState.RETRACTED;
 
-
   public static ExtenderSubsystem getInstance() {
     if (instance == null) instance = new ExtenderSubsystem();
     return instance;
   }
+
+  private ExtenderSubsystem() {
+    setExtenderMotor(0);
+  }
+
 
   @Override
   public void periodic() {
