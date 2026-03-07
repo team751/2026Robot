@@ -20,7 +20,7 @@ public class ClimberSubsystem extends SubsystemBase {
   private final Servo m_servo = new Servo(ClimberConstants.kServoPort);
 
   private final DigitalInput LeftLimit = new DigitalInput(8);
-  private final DigitalInput RightLimit = new DigitalInput(7);
+  private final DigitalInput RightLimit = new DigitalInput(9);
 
   private final PositionVoltage positionRequest = new PositionVoltage(0);
 

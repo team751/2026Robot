@@ -16,8 +16,10 @@ public class IntakeConstants {
   public static final double extenderSpeed = 2;
   public static final double retractorSpeed = -2;
   
-  public static final int LeftLimitID = 2;
-  public static final int RightLimitID = 3;
+  public static final int FrontLeftLimitID = 0;
+  public static final int BackLeftLimitID = 1;
+  public static final int FrontRightLimitID = 2;
+  public static final int BackRightLimitID = 3;
   
   public static final CTREConfig<TalonFX, TalonFXConfiguration> intakeMotorConfig =
       new CTREConfig<>(TalonFXConfiguration::new);

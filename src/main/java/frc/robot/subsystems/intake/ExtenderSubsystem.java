@@ -19,12 +19,11 @@ public class ExtenderSubsystem extends SubsystemBase {
   private final VoltageOut extenderControl = new VoltageOut(0);
 
   /* Limit Switches */
-  DigitalInput RightLimit = new DigitalInput(IntakeConstants.RightLimitID);
-  DigitalInput LeftLimit = new DigitalInput(IntakeConstants.LeftLimitID);
-  DigitalInput frontLeftLimit = new DigitalInput(0);
-  DigitalInput backLeftLimit = new DigitalInput(1);
-  DigitalInput frontRightLimit = new DigitalInput(2);
-  DigitalInput backRightLimit = new DigitalInput(3);
+  DigitalInput frontLeftLimit = new DigitalInput(IntakeConstants.FrontLeftLimitID);
+  DigitalInput backLeftLimit = new DigitalInput(IntakeConstants.BackLeftLimitID);
+
+  DigitalInput frontRightLimit = new DigitalInput(IntakeConstants.FrontRightLimitID);
+  DigitalInput backRightLimit = new DigitalInput(IntakeConstants.BackRightLimitID);
 
   /* State Machine Logic */
   private enum ExtenderState {
@@ -87,10 +86,10 @@ public class ExtenderSubsystem extends SubsystemBase {
     SmartDashboard.putNumber(
         "Extender/Extender Speed", extenderMotor.getVelocity().getValueAsDouble());
 
-      SmartDashboard.putBoolean("Left Limit", LeftLimit.get());
-      SmartDashboard.putBoolean("Right Limit", RightLimit.get());
-      SmartDashboard.putBoolean("DO 0", frontLeftLimit.get());
-      SmartDashboard.putBoolean("DO 1", backLeftLimit.get());
+      SmartDashboard.putBoolean("Front Right Limit", frontRightLimit.get());
+      SmartDashboard.putBoolean("Back Right Limit", backRightLimit.get());
+      SmartDashboard.putBoolean("Front Left Limit", frontLeftLimit.get());
+      SmartDashboard.putBoolean("Back Left Limit", backLeftLimit.get());
   }
 
   /**

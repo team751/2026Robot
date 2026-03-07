@@ -14,9 +14,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.lib.TunableParameter;
 import frc.robot.subsystems.climber.ClimberSubsystem;
-import frc.robot.subsystems.drive.Odometry;
+//import frc.robot.subsystems.drive.Odometry;
 import frc.robot.subsystems.drive.SwerveSubsystem;
-import frc.robot.subsystems.vision.LimelightSubsystem;
+//import frc.robot.subsystems.vision.LimelightSubsystem;
 import frc.robot.util.ControlBoard;
 
 public class Robot extends TimedRobot {
@@ -35,7 +35,7 @@ public class Robot extends TimedRobot {
   private SendableChooser<Command> autoChooser;
 
   public Robot() {
-    Odometry.getInstance();
+    //Odometry.getInstance();
     scheduler = CommandScheduler.getInstance();
     swerve = SwerveSubsystem.getInstance();
 
@@ -106,7 +106,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    LimelightSubsystem.getInstance();
+    //LimelightSubsystem.getInstance();
     ClimberSubsystem.getInstance().zeroClimber();
 
     var rot = Rotation2d.kZero;
