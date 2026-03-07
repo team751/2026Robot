@@ -47,7 +47,7 @@ public void requestExtending() {
 
 If `requestIdle()` was called (sets `requestedIdle = true`) and then `requestExtending()` is called before `periodic()` runs, `requestedIdle` is still true. Since `periodic()` checks `requestedIdle` first, idle wins and extending is ignored. Note: `requestRetracting()` does call `unsetAllRequests()`, so only `requestExtending()` has this inconsistency.
 
-### 4. 🟢 LOW: `requestIdle()` bypasses the state machine (line 103)
+### 4. ✅ DONE: `requestIdle()` bypasses the state machine (line 103)
 
 ```java
 public void requestIdle() {
