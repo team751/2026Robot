@@ -32,7 +32,7 @@ public class ShooterConstants {
 
     flywheelConfig.Slot0.kS = 0; // Increase until just before motor starts moving
     flywheelConfig.Slot0.kA = 0; //
-    flywheelConfig.Slot0.kV = 0; //
+    flywheelConfig.Slot0.kV = 0.13; //
     flywheelConfig.Slot0.kG = 0; // Don't touch
 
     flywheelConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
