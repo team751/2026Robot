@@ -22,10 +22,10 @@ public class ExtenderSubsystem extends SubsystemBase {
 
   private final ProfiledPIDController extenderPID = new ProfiledPIDController(1.0, 0.0, 0.1, new Constraints(1.0, 1.0));
 
-  DigitalInput frontLeftLimit = new DigitalInput(0);
-  DigitalInput backLeftLimit = new DigitalInput(1);
-  DigitalInput frontRightLimit = new DigitalInput(2);
-  DigitalInput backRightLimit = new DigitalInput(3);
+  DigitalInput frontLeftLimit = new DigitalInput(IntakeConstants.FrontLeftLimitID);
+  DigitalInput backLeftLimit = new DigitalInput(IntakeConstants.BackLeftLimitID);
+  DigitalInput frontRightLimit = new DigitalInput(IntakeConstants.FrontRightLimitID);
+  DigitalInput backRightLimit = new DigitalInput(IntakeConstants.BackRightLimitID);
 
   /* State Machine Logic */
   private enum ExtenderState {
