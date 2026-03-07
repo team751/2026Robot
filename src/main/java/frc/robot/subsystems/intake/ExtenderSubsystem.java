@@ -13,23 +13,29 @@ public class ExtenderSubsystem extends SubsystemBase {
   private final TalonFX extenderMotor =
       IntakeConstants.extenderMotorConfig.createDevice(TalonFX::new);
 
+  private double estimatedExtension = 0.0;
+
   /* Control Signals */
   private final VoltageOut extenderControl = new VoltageOut(0);
 
   /* Limit Switches */
   DigitalInput RightLimit = new DigitalInput(IntakeConstants.RightLimitID);
   DigitalInput LeftLimit = new DigitalInput(IntakeConstants.LeftLimitID);
-  DigitalInput testLimit1 = new DigitalInput(0);
-  DigitalInput testLimit2 = new DigitalInput(1);
+  DigitalInput frontLeftLimit = new DigitalInput(0);
+  DigitalInput backLeftLimit = new DigitalInput(1);
+  DigitalInput frontRightLimit = new DigitalInput(2);
+  DigitalInput backRightLimit = new DigitalInput(3);
 
   /* State Machine Logic */
   private enum ExtenderState {
-    IDLE,
+    EXTENDED,
+	RETRACTED,
     EXTENDING,
     RETRACTING,
   }
 
-  private ExtenderState state = ExtenderState.IDLE;
+  private ExtenderState state = ExtenderState.RETRACTED;
+  private ExtenderState previousState = ExtenderState.RETRACTED;
 
   private boolean requestedIdle = false;
   private boolean requestedExtending = false;
@@ -48,41 +54,36 @@ public class ExtenderSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    ExtenderState nextState = state;
-    if (requestedIdle) nextState = ExtenderState.IDLE;
-    else if (requestedExtending) nextState = ExtenderState.EXTENDING;
-    else if (requestedRetracting) nextState = ExtenderState.RETRACTING;
-
-    if (nextState != state) {
-      state = nextState;
-      unsetAllRequests();
+    if (previousState != state) {
+      previousState = state;
 
       switch (state) {
-        case IDLE -> setExtenderMotor(0);
         case EXTENDING -> setExtenderMotor(IntakeConstants.extenderSpeed);
         case RETRACTING -> setExtenderMotor(IntakeConstants.retractorSpeed);
+		case EXTENDED -> setExtenderMotor(0);
+		case RETRACTED -> setExtenderMotor(0);
       }
-
-      SmartDashboard.putBoolean("Intake Left Limit", LeftLimit.get());
-      SmartDashboard.putBoolean("Intake Right Limit", RightLimit.get());
-      SmartDashboard.putBoolean("Intake DO 0", testLimit1.get());
-      SmartDashboard.putBoolean("Intake DO 1", testLimit2.get());
     }
 
-    if (state == ExtenderState.EXTENDING && (LeftLimit.get() || RightLimit.get())) {
-      setExtenderMotor(0.5);
+	if (backRightLimit.get() && backLeftLimit.get()){
+		estimatedExtension = 0.0;
+	}else{
+		//estimatedExtension += extenderMotor.
+	}
+
+    if (state == ExtenderState.EXTENDING && (frontLeftLimit.get() || frontRightLimit.get())) {
+      setExtenderMotor(IntakeConstants.extenderSpeed*0.25);
+    }else if (state == ExtenderState.RETRACTING && (backLeftLimit.get() || backRightLimit.get())) {
+      setExtenderMotor(IntakeConstants.retractorSpeed*0.25);
     }
-    if (state == ExtenderState.RETRACTING && (LeftLimit.get() || RightLimit.get())) {
-      setExtenderMotor(0.5);
+
+
+    if (state == ExtenderState.EXTENDING && (frontRightLimit.get() && frontLeftLimit.get())) {
+      state = ExtenderState.EXTENDED;
+    } else if (state == ExtenderState.RETRACTING && (backRightLimit.get() && backLeftLimit.get())) {
+      state = ExtenderState.RETRACTED;
     }
-    if (state == ExtenderState.RETRACTING && (RightLimit.get() && LeftLimit.get())) {
-      requestIdle();
-      setExtenderMotor(0);
-    }
-    if (state == ExtenderState.EXTENDING && (RightLimit.get() && LeftLimit.get())) {
-      requestIdle();
-      setExtenderMotor(0);
-    }
+
     SmartDashboard.putNumber(
         "Extender/Extender Speed", extenderMotor.getVelocity().getValueAsDouble());
   }
@@ -96,26 +97,13 @@ public class ExtenderSubsystem extends SubsystemBase {
     extenderMotor.setControl(extenderControl.withOutput(voltage));
   }
 
-  public void requestExtending() {
-    requestedRetracting = false;
-    requestedIdle = false;
-    requestedExtending = true;
+  public void requestExtension() {
+	state = ExtenderState.EXTENDING;
   }
-
-  public void requestRetracting() {
-    requestedExtending = false;
-    requestedIdle = false;
-    requestedRetracting = true;
+  public void requestRetraction() {
+	state = ExtenderState.RETRACTING;
   }
-
-  public void requestIdle() {
-    unsetAllRequests();
-    requestedIdle = true;
-  }
-
-  private void unsetAllRequests() {
-    requestedIdle = false;
-    requestedExtending = false;
-    requestedRetracting = false;
+  public ExtenderState getState(){
+	return state;
   }
 }
