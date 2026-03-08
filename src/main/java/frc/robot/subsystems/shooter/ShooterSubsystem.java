@@ -62,7 +62,7 @@ public class ShooterSubsystem extends SubsystemBase {
       unsetAllRequests();
 
       switch (state) {
-        case IDLE -> setShooterMotor(0);
+        case IDLE -> setShooterSpeed(0,0);
         case SLOWSPIN -> setShooterMotor(ShooterConstants.flywheelSpeed * ShooterConstants.slowPercent);
         case SPINNING -> setShooterSpeed(ShooterConstants.flywheelSpeed, ShooterConstants.transferVoltage);
       }
@@ -75,7 +75,8 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   /**Runs just the transfer motor on shooter*/
-  private void setTransferMotor(double transferVoltage) {
+  // TODO: change to private, made public for testing stuff
+  public void setTransferMotor(double transferVoltage) {
     shooterTransferMotor.setControl(shooterTransferControl.withOutput(transferVoltage));
   }
 
