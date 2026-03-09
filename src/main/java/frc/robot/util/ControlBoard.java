@@ -124,6 +124,7 @@ public class ControlBoard {
 
   /* Driver bindings */
   private void configureDriverBindings(PS5Controller controller) {
+    // TODO: guys read please
     // OKOKOK, so, i changed how this works a little to include our amazing epic shift button.
     // we noticed while testing shooter and the shift button, that if you bind 
     // the shift button (we'll say triangleButton for now) with another button that has both

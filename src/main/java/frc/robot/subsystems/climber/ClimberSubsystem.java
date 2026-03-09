@@ -13,6 +13,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class ClimberSubsystem extends SubsystemBase {
   // TODO: figure out how to we want the climber to work. should the motors runtoposition? just run
   // until driver says so? what seems more efficient/convienent/helpful?
+  //
+  // also we need to test climber.
 
   private final TalonFX leftClimber = ClimberConstants.leftClimberConfig.createDevice(TalonFX::new);
   private final TalonFX rightClimber =
