@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.lib.PS5Controller;
@@ -123,13 +124,56 @@ public class ControlBoard {
 
   /* Driver bindings */
   private void configureDriverBindings(PS5Controller controller) {
+    // OKOKOK, so, i changed how this works a little to include our amazing epic shift button.
+    // we noticed while testing shooter and the shift button, that if you bind 
+    // the shift button (we'll say triangleButton for now) with another button that has both
+    // a shift and a non shifted command (we'll say rightTrigger), then when you run the shifted command
+    // it will run both the shifted and unshifted command
+    // ex: triangleButton + rightTrigger runs shooter and just rightTrigger runs intake
+    // if you run triangleButton + rightTrigger, it will run both shooter AND intake
+    // we dont want this, we want triangleButton + rightTrigger to run JUST shooter, and 
+    // rightTrigger BY ITSELF should run JUST intake.
+
+    // Anyways, chatgpt locked in and told me about ConditionalCommands, but they
+    // can only be implemented if we like completely redo everything .-.
+    // so software should prolly talk about it. cause the shift button might be really helpful 
+    // for increasing # of buttons we have. and could be especially helpful for debugging/re-zeroing mid game.
+
+    // heres how it would more or less work:
+    // // Command for running intake. same as you would normally make it
+    // StartEndCommand runIntake = new StartEndCommand(
+    //     () -> IntakeSubsystem.getInstance().requestIntaking(),
+    //     () -> IntakeSubsystem.getInstance().requestIdle()
+    //   );
+    //
+    // // Command for running shooter. same as you would noramlly make it
+    // StartEndCommand runShooter = new StartEndCommand(
+    //   () -> ShooterSubsystem.getInstance().requestShoot(),
+    //   () -> ShooterSubsystem.getInstance().requestIdle()
+    // );
+    //
+    // // This is the primary button who's action will be modified by the shift button. 
+    // // we use a conditional command for this
+    // controller.rightTrigger.onTrue(new ConditionalCommand(
+    //
+    //  // first arg is when the conditional is met (shift button pressed)
+    //   runShooter,
+    //
+    //  // second arg is when the conditional is not met (shift button not pressed)
+    //   runIntake,
+    //
+    //  // This is the conditional, aka our shift button.
+    //   () -> controller.triangleButton.getAsBoolean())
+    // );
+    //
+    // Writing the commands this way is also helpful cause each command is a variable and can have a more descriptive name other than
+    // ... = new StartEndCommand(() -> ShooterSubsystem.testMethod69420(), () -> ShooterSubsystem.stopMethod6767());
+
     /* Shooter */
     // We have way to many shooter buttons. We can probably cut some and also make more efficient
     // bindings.
     // TODO: old shooter bindings were for testing purposes. we gotta make entirely new ones
-    controller.triangleButton.and(controller.rightTrigger).whileTrue(
-      new StartEndCommand(() -> ShooterSubsystem.getInstance().requestShoot(), () -> ShooterSubsystem.getInstance().requestIdle())
-    );
+    
 
     /* Intake */
     controller.rightTrigger.whileTrue(
@@ -148,7 +192,7 @@ public class ControlBoard {
         new InstantCommand(
             () -> ExtenderSubsystem.getInstance().requestRetraction()));
 
-    /* Swerve */
+    /* Swerve */ //TODO: don't touch this one. it scares me and i dont wanna break something.
     controller.rightBumper.whileTrue(
         new StartEndCommand(() -> preciseControl = true, () -> preciseControl = false)
             .withName("Precise Control Toggle")); // Fight me owen
