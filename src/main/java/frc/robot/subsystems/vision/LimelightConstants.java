@@ -18,7 +18,7 @@
 
 // public class LimelightConstants {
 //   public static class LimelightFront {
-//     public static final String version = "3G"; // TODO: check the versions for both cameras
+//     public static final String version = "3G";
 //     public static final String streamIp = "http://10.7.51.71:5800";
 //     // For ShuffleBoard. Hopefully this is never used :D
 //     public static final String shuffleStreamIp = "mjpeg:http://10.7.51.71:5800";
