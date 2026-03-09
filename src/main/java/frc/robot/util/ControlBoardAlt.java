@@ -6,6 +6,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -17,6 +18,7 @@ import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.drive.SwerveConstants;
 import frc.robot.subsystems.drive.SwerveSubsystem;
+import frc.robot.subsystems.drive.Odometry;
 import frc.robot.subsystems.intake.ExtenderSubsystem;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
@@ -214,8 +216,12 @@ public class ControlBoardAlt {
 
   /* Operator bindings */
   private void configureOperatorBindings(PS5Controller controller) {
+
+    InstantCommand robotRotationByAlliance = new InstantCommand(() -> drive.setRobotRotationByAlliance());
+    InstantCommand resetRobotPose = new InstantCommand(() -> drive.resetPose(new Pose2d(0,0, new Rotation2d(0.0))));
+
     controller.leftJoystickButton.onTrue(
-        new InstantCommand(() -> drive.setRobotRotationByAlliance()));
+        new ConditionalCommand(resetRobotPose,robotRotationByAlliance, () -> controller.crossButton.getAsBoolean()));
 
     controller.squareButton.whileTrue(
         new StartEndCommand(() -> autoAim = true, () -> autoAim = false)
@@ -234,7 +240,7 @@ public class ControlBoardAlt {
     controller.leftTrigger.whileTrue(
         new StartEndCommand(() -> climber.spinSlow(-1), () -> climber.stopMotors()));
 
-    controller.crossButton.whileTrue(new InstantCommand(() -> climber.stopMotors()));
+    controller.circleButton.whileTrue(new InstantCommand(() -> climber.stopMotors()));
   }
 
   public SwerveRequest getDriverRequest() {
