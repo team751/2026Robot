@@ -19,7 +19,7 @@
 // public class LimelightConstants {
 //   public static class LimelightFront {
 //     public static final String version = "3G";
-//     public static final String streamIp = "http://10.7.51.71:5800";
+//     public static final String streamIp = "http://10.7.51.71:5800"; // TODO: put this ip into your browser to see one of the cameras: 10.7.51.71:5801
 //     // For ShuffleBoard. Hopefully this is never used :D
 //     public static final String shuffleStreamIp = "mjpeg:http://10.7.51.71:5800";
 //     public static final String dashboardIp = "http://10.7.51.71:5801";
@@ -40,7 +40,7 @@
 
 //   public static class LimelightBack {
 //     public static final String version = "2";
-//     public static final String streamIp = "http://10.7.51.75:5800";
+//     public static final String streamIp = "http://10.7.51.75:5800"; // TODO: put this ip into your browser to see another one of the cameras: 10.7.55.71:5801
 //     public static final String shuffleStreamIp = "mjpeg:http://10.7.51.75:5800";
 //     public static final String dashboardIp = "http://10.7.51.75:5801";
 //     public static final String name = "limelight-back";
