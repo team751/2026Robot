@@ -3,8 +3,6 @@ package frc.robot.util;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveModule;
 import com.ctre.phoenix6.swerve.SwerveRequest;
-import com.pathplanner.lib.auto.NamedCommands;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -189,15 +187,15 @@ public class ControlBoardAlt {
             () -> ShooterSubsystem.getInstance().requestIdle()));
 
     /* Intake */
-    StartEndCommand intake = new StartEndCommand(
-        () -> IntakeSubsystem.getInstance().requestIntaking(),
-        () -> IntakeSubsystem.getInstance().requestIdle()
-      );
-      
-      StartEndCommand spit = new StartEndCommand(
-          () -> IntakeSubsystem.getInstance().requestSpitting(), 
-          () -> IntakeSubsystem.getInstance().requestIdle()
-        );
+    StartEndCommand intake =
+        new StartEndCommand(
+            () -> IntakeSubsystem.getInstance().requestIntaking(),
+            () -> IntakeSubsystem.getInstance().requestIdle());
+
+    StartEndCommand spit =
+        new StartEndCommand(
+            () -> IntakeSubsystem.getInstance().requestSpitting(),
+            () -> IntakeSubsystem.getInstance().requestIdle());
 
     controller.leftTrigger.whileTrue(
         new ConditionalCommand(spit, intake, () -> controller.crossButton.getAsBoolean()));
