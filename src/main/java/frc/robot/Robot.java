@@ -36,10 +36,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.lib.TunableParameter;
+import com.pathplanner.lib.auto.NamedCommands;
 // import frc.robot.subsystems.climber.ClimberSubsystem;
 // import frc.robot.subsystems.drive.Odometry;
 import frc.robot.subsystems.drive.SwerveSubsystem;
+import frc.robot.subsystems.intake.IntakeSubsystem;
+import frc.robot.subsystems.shooter.ShooterSubsystem;
+import frc.robot.subsystems.transfer.TransferSubsystem;
 // import frc.robot.subsystems.vision.LimelightSubsystem;
 import frc.robot.util.ControlBoard;
 
@@ -59,28 +65,6 @@ public class Robot extends TimedRobot {
 
   private Command autonomousCommand;
   private SendableChooser<Command> autoChooser;
-
-  // COMMANDS FOR NAMED COMMANDS
-  // StartEndCommand shoot =
-  //     new StartEndCommand(
-  //         () -> ShooterSubsystem.getInstance().requestShoot(),
-  //         () -> ShooterSubsystem.getInstance().requestIdle());
-  // InstantCommand stopShoot = new InstantCommand(() -> shoot.cancel());
-
-  // StartEndCommand intake =
-  //     new StartEndCommand(
-  //         () -> IntakeSubsystem.getInstance().requestIntaking(),
-  //         () -> IntakeSubsystem.getInstance().requestIdle());
-  // InstantCommand stopIntake = new InstantCommand(() -> intake.cancel());
-
-  // StartEndCommand transfer =
-  //     new StartEndCommand(
-  //         () -> TransferSubsystem.getInstance().requestTransferring(),
-  //         () -> TransferSubsystem.getInstance().requestIdle());
-  // InstantCommand stopTransfer = new InstantCommand(() -> transfer.cancel());
-  // InstantCommand [name] = new InstantCommand(() -> [method]);
-  // StartEndCommand [name] = new StartEndCommand(() -> [method to run on start], () -> [method to
-  // run on end]);
 
   public Robot() {
     // Odometry.getInstance();
@@ -103,9 +87,31 @@ public class Robot extends TimedRobot {
     for (int port = 5800; port <= 5809; port++) {
       PortForwarder.add(port, "limelight.local", port);
     }
+  // COMMANDS FOR NAMED COMMANDS
+  StartEndCommand shoot =
+      new StartEndCommand(
+          () -> ShooterSubsystem.getInstance().requestShoot(),
+          () -> ShooterSubsystem.getInstance().requestIdle());
+  InstantCommand stopShoot = new InstantCommand(() -> shoot.cancel());
 
-    // NamedCommands.registerCommand("shoot", shoot);
-    // NamedCommands.registerCommand("stopShoot", stopShoot);
+  StartEndCommand intake =
+      new StartEndCommand(
+          () -> IntakeSubsystem.getInstance().requestIntaking(),
+          () -> IntakeSubsystem.getInstance().requestIdle());
+  InstantCommand stopIntake = new InstantCommand(() -> intake.cancel());
+
+  StartEndCommand transfer =
+      new StartEndCommand(
+          () -> TransferSubsystem.getInstance().requestTransferring(),
+          () -> TransferSubsystem.getInstance().requestIdle());
+  InstantCommand stopTransfer = new InstantCommand(() -> transfer.cancel());
+
+  NamedCommands.registerCommand("shoot", shoot);
+  NamedCommands.registerCommand("stopShoot", stopShoot);
+  NamedCommands.registerCommand("intake", intake);
+  NamedCommands.registerCommand("stopIntake", stopIntake);
+  NamedCommands.registerCommand("transfer", transfer);
+  NamedCommands.registerCommand("stopTransfer", stopTransfer);
 
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
