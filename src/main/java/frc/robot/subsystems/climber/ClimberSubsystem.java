@@ -11,12 +11,14 @@
 // import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 // public class ClimberSubsystem extends SubsystemBase {
-//   // TODO: figure out how to we want the climber to work. should the motors runtoposition? just run
+//   // TODO: figure out how to we want the climber to work. should the motors runtoposition? just
+// run
 //   // until driver says so? what seems more efficient/convienent/helpful?
 //   //
 //   // also we need to test climber.
 
-//   private final TalonFX leftClimber = ClimberConstants.leftClimberConfig.createDevice(TalonFX::new);
+//   private final TalonFX leftClimber =
+// ClimberConstants.leftClimberConfig.createDevice(TalonFX::new);
 //   private final TalonFX rightClimber =
 //       ClimberConstants.rightClimberConfig.createDevice(TalonFX::new);
 //   private final Servo m_servo = new Servo(ClimberConstants.kServoPort);
@@ -65,7 +67,8 @@
 //     if (spinning) {
 //       SmartDashboard.putNumber("SpinUntil/Target", spinTarget);
 
-//       // If its not inverted, check if the value of the motor is greater than or equal to the target
+//       // If its not inverted, check if the value of the motor is greater than or equal to the
+// target
 //       // and then
 //       if (!inverted && leftClimber.getPosition().getValueAsDouble() >= spinTarget) {
 //         // stop the motors and set the spinning value to false
@@ -74,7 +77,8 @@
 //         zeroClimber();
 //       }
 
-//       // If it is inverted, check if the value of the motor is less than or equal to the target and
+//       // If it is inverted, check if the value of the motor is less than or equal to the target
+// and
 //       // then
 //       if (inverted && leftClimber.getPosition().getValueAsDouble() <= spinTarget) {
 //         // stop the motors and set the spinning value to false.

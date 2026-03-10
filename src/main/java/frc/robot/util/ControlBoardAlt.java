@@ -33,7 +33,8 @@
 // // );
 // // we get basically double the buttons that we have now. could also help us test stuff without
 // // ruining previous keybinds
-// // could also be helpful during comp for re-zeroing components mid match if we need to (like intake
+// // could also be helpful during comp for re-zeroing components mid match if we need to (like
+// intake
 // // explodes and dies and we need to align it again)
 
 // public class ControlBoardAlt {
@@ -93,7 +94,8 @@
 
 //       drive.setDefaultCommand(drive.applyRequest(this::getDriverRequest));
 //       if (Utils.isSimulation())
-//         drive.registerTelemetry(new MapSimSwerveTelemetry(SwerveConstants.maxSpeed)::telemeterize);
+//         drive.registerTelemetry(new
+// MapSimSwerveTelemetry(SwerveConstants.maxSpeed)::telemeterize);
 //       System.out.println("Driver Initialized");
 //     }
 
@@ -143,7 +145,8 @@
 //     // Anyways, chatgpt locked in and told me about ConditionalCommands, but they
 //     // can only be implemented if we like completely redo everything .-.
 //     // so software should prolly talk about it. cause the shift button might be really helpful
-//     // for increasing # of buttons we have. and could be especially helpful for debugging/re-zeroing
+//     // for increasing # of buttons we have. and could be especially helpful for
+// debugging/re-zeroing
 //     // mid game.
 
 //     // heres how it would more or less work:
@@ -173,7 +176,8 @@
 //     //   () -> controller.triangleButton.getAsBoolean())
 //     // );
 //     //
-//     // Writing the commands this way is also helpful cause each command is a variable and can have a
+//     // Writing the commands this way is also helpful cause each command is a variable and can
+// have a
 //     // more descriptive name other than
 //     // ... = new StartEndCommand(() -> ShooterSubsystem.testMethod69420(), () ->
 //     // ShooterSubsystem.stopMethod6767());
@@ -223,7 +227,8 @@
 
 //     controller.leftJoystickButton.onTrue(
 //         new ConditionalCommand(
-//             resetRobotPose, robotRotationByAlliance, () -> controller.crossButton.getAsBoolean()));
+//             resetRobotPose, robotRotationByAlliance, () ->
+// controller.crossButton.getAsBoolean()));
 
 //     controller.squareButton.whileTrue(
 //         new StartEndCommand(() -> autoAim = true, () -> autoAim = false)
@@ -263,7 +268,8 @@
 //       double angleDiff =
 //           Math.toDegrees(
 //               Math.atan2(hubPose.getY() - robotPose.getY(), hubPose.getX() - robotPose.getX()));
-//       SmartDashboard.putNumber("target offness", angleDiff - robotPose.getRotation().getDegrees());
+//       SmartDashboard.putNumber("target offness", angleDiff -
+// robotPose.getRotation().getDegrees());
 //       rot = autoAimController.calculate(robotPose.getRotation().getDegrees(), angleDiff);
 //       SmartDashboard.putNumber("pid value", rot);
 //     }

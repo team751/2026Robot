@@ -55,9 +55,9 @@ public class TransferSubsystem extends SubsystemBase {
       switch (state) {
         case IDLE -> setMotors(0, 0);
         case TRANSFERRING -> setMotors(
-            TransferConstants.transfertopspeed, TransferConstants.transferbottom);
+            TransferConstants.transfertopspeed, TransferConstants.transferbottomspeed);
         case REVERSING -> setMotors(
-            -TransferConstants.transfertopspeed, -TransferConstants.transferbottom);
+            -TransferConstants.transfertopspeed, -TransferConstants.transferbottomspeed);
       }
     }
 

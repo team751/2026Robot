@@ -9,12 +9,11 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.lib.PS5Controller;
 import frc.robot.subsystems.Superstructure;
-//import frc.robot.subsystems.climber.ClimberSubsystem;
+// import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.drive.SwerveConstants;
 import frc.robot.subsystems.drive.SwerveSubsystem;
 import frc.robot.subsystems.intake.ExtenderSubsystem;
@@ -44,7 +43,7 @@ public class ControlBoard {
   private PS5Controller operator = null;
   private SwerveSubsystem drive = SwerveSubsystem.getInstance();
   private ShooterSubsystem shooter = ShooterSubsystem.getInstance();
-  //private ClimberSubsystem climber = ClimberSubsystem.getInstance();
+  // private ClimberSubsystem climber = ClimberSubsystem.getInstance();
   private boolean preciseControl = false;
   private boolean autoAim = false;
   private boolean axisAlign = false;
@@ -184,30 +183,53 @@ public class ControlBoard {
     // TODO: old shooter bindings were for testing purposes. we gotta make entirely new ones
 
     /* Intake */
-    controller.rightTrigger.whileTrue(
+    StartEndCommand runIntaking =
         new StartEndCommand(
             () -> IntakeSubsystem.getInstance().requestIntaking(),
-            () -> IntakeSubsystem.getInstance().requestIdle()));
+            () -> IntakeSubsystem.getInstance().requestIdle());
 
-    controller.squareButton.whileTrue(
+    StartEndCommand runSpitting =
         new StartEndCommand(
             () -> IntakeSubsystem.getInstance().requestSpitting(),
-            () -> IntakeSubsystem.getInstance().requestIdle()));
-    controller.dUp.whileTrue(
-        new InstantCommand(() -> ExtenderSubsystem.getInstance().requestExtension()));
-    controller.dDown.whileTrue(
-        new InstantCommand(() -> ExtenderSubsystem.getInstance().requestRetraction()));
+            () -> IntakeSubsystem.getInstance().requestIdle());
 
-    StartEndCommand transfer = new StartEndCommand(() -> TransferSubsystem.getInstance().requestTransferring(), () -> TransferSubsystem.getInstance().requestIdle());
-    StartEndCommand reverse = new StartEndCommand(() -> TransferSubsystem.getInstance().requestReversing(), () -> TransferSubsystem.getInstance().requestIdle());
+    /* Extender */
+    StartEndCommand extenderExtend =
+        new StartEndCommand(
+            () -> ExtenderSubsystem.getInstance().requestExtending(),
+            () -> ExtenderSubsystem.getInstance().requestIdle());
+
+    StartEndCommand extenderRetract =
+        new StartEndCommand(
+            () -> ExtenderSubsystem.getInstance().requestRetracting(),
+            () -> ExtenderSubsystem.getInstance().requestIdle());
+
+    /* Transfer */
+    StartEndCommand transfer =
+        new StartEndCommand(
+            () -> TransferSubsystem.getInstance().requestTransferring(),
+            () -> TransferSubsystem.getInstance().requestIdle());
+
+    StartEndCommand transferReverse =
+        new StartEndCommand(
+            () -> TransferSubsystem.getInstance().requestReversing(),
+            () -> TransferSubsystem.getInstance().requestIdle());
 
     // controller.touchpadButton.whileTrue(
     //   new ConditionalCommand(transfer, reverse, () -> controller.circleButton.getAsBoolean())
     // );
-
+    /* Transfer */
     controller.dLeft.whileTrue(transfer);
-    
-    controller.dRight.whileTrue(reverse);
+
+    controller.dRight.whileTrue(transferReverse);
+    /* Extender */
+    controller.dDown.whileTrue(extenderRetract);
+
+    controller.dUp.whileTrue(extenderExtend);
+    /* Intake */
+    controller.squareButton.whileTrue(runSpitting);
+
+    controller.rightTrigger.whileTrue(runIntaking);
 
     /* Swerve */
     // don't touch this one. it scares me and i dont wanna break something.

@@ -27,7 +27,6 @@ package frc.robot;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -37,15 +36,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.lib.TunableParameter;
-//import frc.robot.subsystems.climber.ClimberSubsystem;
+// import frc.robot.subsystems.climber.ClimberSubsystem;
 // import frc.robot.subsystems.drive.Odometry;
 import frc.robot.subsystems.drive.SwerveSubsystem;
-import frc.robot.subsystems.intake.IntakeSubsystem;
-import frc.robot.subsystems.shooter.ShooterSubsystem;
-import frc.robot.subsystems.transfer.TransferSubsystem;
 // import frc.robot.subsystems.vision.LimelightSubsystem;
 import frc.robot.util.ControlBoard;
 
@@ -72,7 +66,7 @@ public class Robot extends TimedRobot {
   //         () -> ShooterSubsystem.getInstance().requestShoot(),
   //         () -> ShooterSubsystem.getInstance().requestIdle());
   // InstantCommand stopShoot = new InstantCommand(() -> shoot.cancel());
-  
+
   // StartEndCommand intake =
   //     new StartEndCommand(
   //         () -> IntakeSubsystem.getInstance().requestIntaking(),
@@ -115,7 +109,7 @@ public class Robot extends TimedRobot {
 
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
-    //ClimberSubsystem.getInstance().zeroClimber();
+    // ClimberSubsystem.getInstance().zeroClimber();
   }
 
   @Override
@@ -165,7 +159,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     // LimelightSubsystem.getInstance();
-    //ClimberSubsystem.getInstance().zeroClimber();
+    // ClimberSubsystem.getInstance().zeroClimber();
 
     var rot = Rotation2d.kZero;
     if (DriverStation.getAlliance().get() == Alliance.Red) {
