@@ -19,6 +19,10 @@ package frc.robot;
 // intaking many balls at once
 // shooting while moving(?)
 // maybe possibly ram intake into something while extended??
+//
+// Limelight:
+// calibrate and get it ready
+// orientation and offset
 
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.SignalLogger;
