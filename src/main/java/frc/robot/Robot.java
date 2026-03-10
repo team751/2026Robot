@@ -1,5 +1,25 @@
 package frc.robot;
 
+// TODO: stuff to test on the robot
+// Transfer first:
+// Nothing jams, etc
+// Balls actually move
+//
+// Intake:
+// Extending and retracting - try to confuse it and see how robust it is
+// intaking a ball
+// spitting a ball
+//
+// Shooter:
+// still works and scores
+// more calibration?
+//
+// Drive:
+// moving w transfer and see if it still transfers
+// intaking many balls at once
+// shooting while moving(?)
+// maybe possibly ram intake into something while extended??
+
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.auto.AutoBuilder;
