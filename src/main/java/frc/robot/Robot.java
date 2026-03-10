@@ -4,7 +4,6 @@ import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -21,7 +20,7 @@ import frc.robot.subsystems.climber.ClimberSubsystem;
 // import frc.robot.subsystems.drive.Odometry;
 import frc.robot.subsystems.drive.SwerveSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
-//import frc.robot.subsystems.vision.LimelightSubsystem;
+// import frc.robot.subsystems.vision.LimelightSubsystem;
 import frc.robot.util.ControlBoard;
 
 public class Robot extends TimedRobot {
@@ -41,15 +40,16 @@ public class Robot extends TimedRobot {
   private Command autonomousCommand;
   private SendableChooser<Command> autoChooser;
 
-
   // COMMANDS FOR NAMED COMMANDS
-  StartEndCommand shoot = new StartEndCommand(() -> ShooterSubsystem.getInstance().requestShoot(), () -> ShooterSubsystem.getInstance().requestIdle());
+  StartEndCommand shoot =
+      new StartEndCommand(
+          () -> ShooterSubsystem.getInstance().requestShoot(),
+          () -> ShooterSubsystem.getInstance().requestIdle());
   InstantCommand stopShoot = new InstantCommand(() -> shoot.cancel());
 
   // InstantCommand [name] = new InstantCommand(() -> [method]);
-  // StartEndCommand [name] = new StartEndCommand(() -> [method to run on start], () -> [method to run on end]);
-
-
+  // StartEndCommand [name] = new StartEndCommand(() -> [method to run on start], () -> [method to
+  // run on end]);
 
   public Robot() {
     // Odometry.getInstance();
@@ -76,13 +76,9 @@ public class Robot extends TimedRobot {
     NamedCommands.registerCommand("shoot", shoot);
     NamedCommands.registerCommand("stopShoot", stopShoot);
 
-
-
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
     ClimberSubsystem.getInstance().zeroClimber();
-
-    
   }
 
   @Override
