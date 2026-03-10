@@ -3,6 +3,8 @@ package frc.robot.util;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveModule;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.pathplanner.lib.auto.NamedCommands;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -187,7 +189,7 @@ public class ControlBoardAlt {
         () -> IntakeSubsystem.getInstance().requestIntaking(),
         () -> IntakeSubsystem.getInstance().requestIdle()
       );
-
+      
       StartEndCommand spit = new StartEndCommand(
           () -> IntakeSubsystem.getInstance().requestSpitting(), 
           () -> IntakeSubsystem.getInstance().requestIdle()
