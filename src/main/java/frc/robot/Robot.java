@@ -27,6 +27,9 @@ package frc.robot;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+// import frc.robot.subsystems.climber.ClimberSubsystem;
+// import frc.robot.subsystems.drive.Odometry;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -39,9 +42,6 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.lib.TunableParameter;
-import com.pathplanner.lib.auto.NamedCommands;
-// import frc.robot.subsystems.climber.ClimberSubsystem;
-// import frc.robot.subsystems.drive.Odometry;
 import frc.robot.subsystems.drive.SwerveSubsystem;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
@@ -87,31 +87,32 @@ public class Robot extends TimedRobot {
     for (int port = 5800; port <= 5809; port++) {
       PortForwarder.add(port, "limelight.local", port);
     }
-  // COMMANDS FOR NAMED COMMANDS
-  StartEndCommand shoot =
-      new StartEndCommand(
-          () -> ShooterSubsystem.getInstance().requestShoot(),
-          () -> ShooterSubsystem.getInstance().requestIdle());
-  InstantCommand stopShoot = new InstantCommand(() -> shoot.cancel());
+    // COMMANDS FOR NAMED COMMANDS
+    // TODO: Make the commands end auton
+    StartEndCommand shoot =
+        new StartEndCommand(
+            () -> ShooterSubsystem.getInstance().requestShoot(),
+            () -> ShooterSubsystem.getInstance().requestIdle());
+    InstantCommand stopShoot = new InstantCommand(() -> shoot.cancel());
 
-  StartEndCommand intake =
-      new StartEndCommand(
-          () -> IntakeSubsystem.getInstance().requestIntaking(),
-          () -> IntakeSubsystem.getInstance().requestIdle());
-  InstantCommand stopIntake = new InstantCommand(() -> intake.cancel());
+    StartEndCommand intake =
+        new StartEndCommand(
+            () -> IntakeSubsystem.getInstance().requestIntaking(),
+            () -> IntakeSubsystem.getInstance().requestIdle());
+    InstantCommand stopIntake = new InstantCommand(() -> intake.cancel());
 
-  StartEndCommand transfer =
-      new StartEndCommand(
-          () -> TransferSubsystem.getInstance().requestTransferring(),
-          () -> TransferSubsystem.getInstance().requestIdle());
-  InstantCommand stopTransfer = new InstantCommand(() -> transfer.cancel());
+    StartEndCommand transfer =
+        new StartEndCommand(
+            () -> TransferSubsystem.getInstance().requestTransferring(),
+            () -> TransferSubsystem.getInstance().requestIdle());
+    InstantCommand stopTransfer = new InstantCommand(() -> transfer.cancel());
 
-  NamedCommands.registerCommand("shoot", shoot);
-  NamedCommands.registerCommand("stopShoot", stopShoot);
-  NamedCommands.registerCommand("intake", intake);
-  NamedCommands.registerCommand("stopIntake", stopIntake);
-  NamedCommands.registerCommand("transfer", transfer);
-  NamedCommands.registerCommand("stopTransfer", stopTransfer);
+    NamedCommands.registerCommand("shoot", shoot);
+    NamedCommands.registerCommand("stopShoot", stopShoot);
+    NamedCommands.registerCommand("intake", intake);
+    NamedCommands.registerCommand("stopIntake", stopIntake);
+    NamedCommands.registerCommand("transfer", transfer);
+    NamedCommands.registerCommand("stopTransfer", stopTransfer);
 
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
