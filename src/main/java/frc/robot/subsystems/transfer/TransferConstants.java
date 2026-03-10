@@ -10,9 +10,8 @@ import frc.robot.util.Constants;
 
 public class TransferConstants {
   // TODO: Set current limits and tune the motors. also name/find the canbus to put the motors on
-  // Top is reversed one
-  public static double transfertopspeed = 2;
-  public static double transferbottom = 2;
+  public static double transfertopspeed = 3;
+  public static double transferbottomspeed = 3;
 
   public static final CTREConfig<TalonFX, TalonFXConfiguration> transfertopconfig =
       new CTREConfig<>(TalonFXConfiguration::new);
@@ -62,7 +61,7 @@ public class TransferConstants {
     transferbottomConfig.Slot0.kV = 0; //
     transferbottomConfig.Slot0.kG = 0; // Don't touch
 
-    transferbottomConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    transferbottomConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     transferbottomConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
     // transferbottomConfig.CurrentLimits.StatorCurrentLimit = 120;
     // transferbottomConfig.CurrentLimits.StatorCurrentLimitEnable = false;
