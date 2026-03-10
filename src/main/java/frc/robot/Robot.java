@@ -19,7 +19,9 @@ import frc.lib.TunableParameter;
 import frc.robot.subsystems.climber.ClimberSubsystem;
 // import frc.robot.subsystems.drive.Odometry;
 import frc.robot.subsystems.drive.SwerveSubsystem;
+import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
+import frc.robot.subsystems.transfer.TransferSubsystem;
 // import frc.robot.subsystems.vision.LimelightSubsystem;
 import frc.robot.util.ControlBoard;
 
@@ -46,7 +48,18 @@ public class Robot extends TimedRobot {
           () -> ShooterSubsystem.getInstance().requestShoot(),
           () -> ShooterSubsystem.getInstance().requestIdle());
   InstantCommand stopShoot = new InstantCommand(() -> shoot.cancel());
+  
+  StartEndCommand intake =
+      new StartEndCommand(
+          () -> IntakeSubsystem.getInstance().requestIntaking(),
+          () -> IntakeSubsystem.getInstance().requestIdle());
+  InstantCommand stopIntake = new InstantCommand(() -> intake.cancel());
 
+  StartEndCommand transfer =
+      new StartEndCommand(
+          () -> TransferSubsystem.getInstance().requestTransferring(),
+          () -> TransferSubsystem.getInstance().requestIdle());
+  InstantCommand stopTransfer = new InstantCommand(() -> transfer.cancel());
   // InstantCommand [name] = new InstantCommand(() -> [method]);
   // StartEndCommand [name] = new StartEndCommand(() -> [method to run on start], () -> [method to
   // run on end]);
