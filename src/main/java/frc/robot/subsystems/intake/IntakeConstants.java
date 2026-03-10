@@ -17,15 +17,15 @@ public class IntakeConstants {
   public static final double retractorSpeed = -2;
   public static final double jiggleMax = 28;
   public static final double jiggleMin = 5;
-  
+
   public static final int FrontLeftLimitID = 0;
   public static final int BackLeftLimitID = 1;
   public static final int FrontRightLimitID = 2;
   public static final int BackRightLimitID = 3;
 
   public static final double extenderLength = 32.385; // cm
-  public static final double extenderGearRatio = 2.73; //cm per rotation
-  
+  public static final double extenderGearRatio = 2.73; // cm per rotation
+
   public static final CTREConfig<TalonFX, TalonFXConfiguration> intakeMotorConfig =
       new CTREConfig<>(TalonFXConfiguration::new);
 
@@ -83,8 +83,7 @@ public class IntakeConstants {
     extenderConfig.TorqueCurrent.PeakForwardTorqueCurrent = 40;
     extenderConfig.TorqueCurrent.PeakReverseTorqueCurrent = -40;
 
-    extenderConfig.MotorOutput.Inverted =
-        InvertedValue.Clockwise_Positive; // Positive intake
+    extenderConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive; // Positive intake
     extenderConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
   }
 }

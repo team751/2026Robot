@@ -41,17 +41,18 @@ public class Constants {
   public static final int intakeMotorID = 23;
   public static final int extenderMotorID = 13;
 
-
   // Transfer Motor ID's
   /**
-   * This is the motor that controls the top of intake.
-   * Naming it the right motor because it is physically located on the same plane as the other intake motor but on the right*/
+   * This is the motor that controls the top of intake. Naming it the right motor because it is
+   * physically located on the same plane as the other intake motor but on the right
+   */
   public static final int rightTransferMotorID = 35;
 
   /**
-   * This is the motor that controls the bottom of intake.
-   * Naming it the left motor because it is physically located on the same plane as the other intake motor but on the left.*/
-  public static final int leftTransferMotorID = 45;  
+   * This is the motor that controls the bottom of intake. Naming it the left motor because it is
+   * physically located on the same plane as the other intake motor but on the left.
+   */
+  public static final int leftTransferMotorID = 45;
 
   // /** Use {@link frc.robot.Robot#drivebus} instead */
   // @SuppressWarnings("DeprecatedIsStillUsed")
