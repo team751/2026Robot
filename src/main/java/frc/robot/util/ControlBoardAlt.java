@@ -20,7 +20,6 @@ import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.drive.SwerveConstants;
 import frc.robot.subsystems.drive.SwerveSubsystem;
-import frc.robot.subsystems.drive.Odometry;
 import frc.robot.subsystems.intake.ExtenderSubsystem;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
@@ -31,10 +30,13 @@ import frc.robot.subsystems.simulation.MapSimSwerveTelemetry;
 
 // TODO: shift button! \/\/\/
 // controller.circleButton.and(controller.crossButton).whileTrue(
-//   new StartEndCommand(() -> ShooterSubsystem.getInstance().requestShoot(), () -> ShooterSubsystem.getInstance().requestIdle())
+//   new StartEndCommand(() -> ShooterSubsystem.getInstance().requestShoot(), () ->
+// ShooterSubsystem.getInstance().requestIdle())
 // );
-// we get basically double the buttons that we have now. could also help us test stuff without ruining previous keybinds
-// could also be helpful during comp for re-zeroing components mid match if we need to (like intake explodes and dies and we need to align it again)
+// we get basically double the buttons that we have now. could also help us test stuff without
+// ruining previous keybinds
+// could also be helpful during comp for re-zeroing components mid match if we need to (like intake
+// explodes and dies and we need to align it again)
 
 public class ControlBoardAlt {
   private static ControlBoardAlt instance;
@@ -130,19 +132,21 @@ public class ControlBoardAlt {
   private void configureDriverBindings(PS5Controller controller) {
     // TODO: guys read please
     // OKOKOK, so, i changed how this works a little to include our amazing epic shift button.
-    // we noticed while testing shooter and the shift button, that if you bind 
+    // we noticed while testing shooter and the shift button, that if you bind
     // the shift button (we'll say triangleButton for now) with another button that has both
-    // a shift and a non shifted command (we'll say rightTrigger), then when you run the shifted command
+    // a shift and a non shifted command (we'll say rightTrigger), then when you run the shifted
+    // command
     // it will run both the shifted and unshifted command
     // ex: triangleButton + rightTrigger runs shooter and just rightTrigger runs intake
     // if you run triangleButton + rightTrigger, it will run both shooter AND intake
-    // we dont want this, we want triangleButton + rightTrigger to run JUST shooter, and 
+    // we dont want this, we want triangleButton + rightTrigger to run JUST shooter, and
     // rightTrigger BY ITSELF should run JUST intake.
 
     // Anyways, chatgpt locked in and told me about ConditionalCommands, but they
     // can only be implemented if we like completely redo everything .-.
-    // so software should prolly talk about it. cause the shift button might be really helpful 
-    // for increasing # of buttons we have. and could be especially helpful for debugging/re-zeroing mid game.
+    // so software should prolly talk about it. cause the shift button might be really helpful
+    // for increasing # of buttons we have. and could be especially helpful for debugging/re-zeroing
+    // mid game.
 
     // heres how it would more or less work:
     // // Command for running intake. same as you would normally make it
@@ -157,7 +161,7 @@ public class ControlBoardAlt {
     //   () -> ShooterSubsystem.getInstance().requestIdle()
     // );
     //
-    // // This is the primary button who's action will be modified by the shift button. 
+    // // This is the primary button who's action will be modified by the shift button.
     // // we use a conditional command for this
     // controller.rightTrigger.whileTrue(new ConditionalCommand(
     //
@@ -171,18 +175,18 @@ public class ControlBoardAlt {
     //   () -> controller.triangleButton.getAsBoolean())
     // );
     //
-    // Writing the commands this way is also helpful cause each command is a variable and can have a more descriptive name other than
-    // ... = new StartEndCommand(() -> ShooterSubsystem.testMethod69420(), () -> ShooterSubsystem.stopMethod6767());
+    // Writing the commands this way is also helpful cause each command is a variable and can have a
+    // more descriptive name other than
+    // ... = new StartEndCommand(() -> ShooterSubsystem.testMethod69420(), () ->
+    // ShooterSubsystem.stopMethod6767());
 
     /* Shooter */
     // We have way to many shooter buttons. We can probably cut some and also make more efficient
     // bindings.
     controller.rightTrigger.whileTrue(
-      new StartEndCommand(
-        () -> ShooterSubsystem.getInstance().requestShoot(),
-        () -> ShooterSubsystem.getInstance().requestIdle()
-      )
-    );
+        new StartEndCommand(
+            () -> ShooterSubsystem.getInstance().requestShoot(),
+            () -> ShooterSubsystem.getInstance().requestIdle()));
 
     /* Intake */
     StartEndCommand intake = new StartEndCommand(
@@ -196,21 +200,16 @@ public class ControlBoardAlt {
         );
 
     controller.leftTrigger.whileTrue(
-        new ConditionalCommand(
-            spit,
-            intake,
-            () -> controller.crossButton.getAsBoolean())
-      );    
+        new ConditionalCommand(spit, intake, () -> controller.crossButton.getAsBoolean()));
 
     controller.dLeft.whileTrue(
-        new InstantCommand(
-            () -> ExtenderSubsystem.getInstance().requestExtension()));
+        new InstantCommand(() -> ExtenderSubsystem.getInstance().requestExtension()));
 
     controller.dRight.whileTrue(
-        new InstantCommand(
-            () -> ExtenderSubsystem.getInstance().requestRetraction()));
+        new InstantCommand(() -> ExtenderSubsystem.getInstance().requestRetraction()));
 
-    /* Swerve */ //TODO: don't touch this one. it scares me and i dont wanna break something.
+    /* Swerve */
+    // TODO: don't touch this one. it scares me and i dont wanna break something.
     controller.rightBumper.whileTrue(
         new StartEndCommand(() -> preciseControl = true, () -> preciseControl = false)
             .withName("Precise Control Toggle")); // Fight me owen
@@ -219,11 +218,14 @@ public class ControlBoardAlt {
   /* Operator bindings */
   private void configureOperatorBindings(PS5Controller controller) {
 
-    InstantCommand robotRotationByAlliance = new InstantCommand(() -> drive.setRobotRotationByAlliance());
-    InstantCommand resetRobotPose = new InstantCommand(() -> drive.resetPose(new Pose2d(0,0, new Rotation2d(0.0))));
+    InstantCommand robotRotationByAlliance =
+        new InstantCommand(() -> drive.setRobotRotationByAlliance());
+    InstantCommand resetRobotPose =
+        new InstantCommand(() -> drive.resetPose(new Pose2d(0, 0, new Rotation2d(0.0))));
 
     controller.leftJoystickButton.onTrue(
-        new ConditionalCommand(resetRobotPose,robotRotationByAlliance, () -> controller.crossButton.getAsBoolean()));
+        new ConditionalCommand(
+            resetRobotPose, robotRotationByAlliance, () -> controller.crossButton.getAsBoolean()));
 
     controller.squareButton.whileTrue(
         new StartEndCommand(() -> autoAim = true, () -> autoAim = false)
