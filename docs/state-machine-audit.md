@@ -84,81 +84,19 @@ Neither method clears `requestedIdle`, so if `requestIdle()` was called in the s
 
 ## ShooterSubsystem
 
-### 8. 🟠 HIGH: `requestIdle()` permanently zeroes the shared speed constants (line 84)
+### 8. ✅ DONE: `requestIdle()` permanently zeroes the shared speed constants (line 84)
 
-```java
-public void requestIdle() {
-    newSpeed(0, 0);  // sets ShooterConstants.flywheelSpeed = 0, ShooterConstants.backSpeed = 0
-    unsetAllRequests();
-    requestedIdle = true;
-}
-```
+`newSpeed()` was removed entirely and `requestIdle()` no longer calls it — it just clears request flags. Constants are no longer mutated on idle.
 
-`newSpeed(0, 0)` writes `0` into `ShooterConstants.flywheelSpeed` and `ShooterConstants.backSpeed`. After calling `requestIdle()`, any subsequent `requestShoot()` (without `newSpeed`) will transition to SPINNING with 0 voltage — the shooter won't spin.
+### 9. ✅ DONE: `newSpeed()` while already SPINNING doesn't update motors (line 72)
 
-### 9. 🟠 HIGH: `newSpeed()` while already SPINNING doesn't update motors (line 72)
-
-```java
-public void newSpeed(double flySpeed, double backSpeed) {
-    ShooterConstants.flywheelSpeed = flySpeed;
-    ShooterConstants.backSpeed = backSpeed;
-    this.requestShoot();
-}
-```
-
-If already in SPINNING, `nextState == state` so the transition block never runs. The new speeds are stored in constants but **never applied** to the motors until the next full state transition (e.g., idle -> spinning).
-
----
-
-## ClimberSubsystem
-
-### 10. 🟡 MEDIUM: Limit switches declared but never used (lines 22–23)
-
-`LimitL` and `LimitR` are created on DIO 7 and 8 but never referenced in any logic. The climber has no limit-switch safety stops.
-
-### 11. 🟠 HIGH: `spinSlow()` only drives the left motor (lines 83–85)
-
-```java
-public void spinSlow(int direction) {
-    leftClimber.setControl(new DutyCycleOut(direction * 0.1));
-}
-```
-
-The right motor is not controlled — it holds whatever command it had before, or is undriven.
-
-### 12. 🟢 LOW: `StrictFollower(10)` hardcoded CAN ID (lines 100, 106)
-
-```java
-rightClimber.setControl(new StrictFollower(10));
-```
-
-The `10` should reference the left climber's CAN ID from constants. If the CAN ID changes, this will silently follow the wrong device.
-
-### 13. 🟡 MEDIUM: `moveUp180()`/`moveDown180()` will do nothing — all PID gains are zero (ClimberConstants.java:35–42)
-
-`PositionVoltage` uses Slot0 PID, but all gains (kP, kI, kD, kS, kV, kG, kA) are `0.0`. With kP=0, the position controller outputs 0 voltage regardless of error. These methods are dead code until gains are tuned.
-
-### 14. 🟡 MEDIUM: `moveUp180()`/`moveDown180()` compute target from left motor only (lines 123, 131)
-
-Both methods read `leftClimber.getPosition()` to calculate `targetPosition`, then apply that same target to both motors. If the motors have drifted to different positions, the right motor gets a wrong target.
-
-### 15. 🟠 HIGH: Error averaging formula is mathematically wrong (line 116)
-
-```java
-ClimberConstants.averageMotorError = (ClimberConstants.averageMotorError + error) / 3;
-```
-
-This isn't a running average — it converges toward 0 regardless of actual error. For a proper exponential moving average: `alpha * error + (1 - alpha) * averageMotorError`.
-
-### 16. 🟢 LOW: `stopSpinUntil()` then `spinning = false` is redundant (lines 67–68)
-
-In `periodic()`, `stopSpinUntil()` already sets `spinning = false` on line 112. Line 68 sets it again. Not harmful, just redundant.
+`newSpeed()` method was removed entirely. Speed is now read directly from `ShooterConstants` at transition time, so this race condition no longer exists.
 
 ---
 
 ## TransferSubsystem
 
-### 17. 🟡 MEDIUM: `requestTransferring()` and `requestReversing()` don't clear `requestedIdle` (lines 72–79)
+### 10. 🟡 MEDIUM: `requestTransferring()` and `requestReversing()` don't clear `requestedIdle` (lines 72–79)
 
 Same pattern as Intake/Extender. If `requestIdle()` was called and then `requestTransferring()` follows before `periodic()`, idle wins.
 
@@ -166,7 +104,7 @@ Same pattern as Intake/Extender. If `requestIdle()` was called and then `request
 
 ## Superstructure
 
-### 18. 🟠 HIGH: Request flags are never read — state machine is frozen (lines 51–55)
+### 11. 🟠 HIGH: Request flags are never read — state machine is frozen (lines 51–55)
 
 ```java
 switch (systemState) {
@@ -182,6 +120,6 @@ switch (systemState) {
 
 ## Cross-Cutting Issue
 
-### 19. 🟡 MEDIUM: Inconsistent request method patterns across all subsystems
+### 12. 🟡 MEDIUM: Inconsistent request method patterns across all subsystems
 
 `requestIdle()` in every subsystem calls `unsetAllRequests()` before setting its flag. But non-idle request methods (e.g., `requestIntaking()`, `requestExtending()`, `requestTransferring()`) only selectively clear the opposing request and **don't** clear `requestedIdle`. This means idle always wins in a race condition. Either all request methods should call `unsetAllRequests()`, or the selective clearing should also include `requestedIdle`.
