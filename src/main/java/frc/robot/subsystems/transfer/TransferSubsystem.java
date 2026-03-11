@@ -72,11 +72,13 @@ public class TransferSubsystem extends SubsystemBase {
   }
 
   public void requestTransferring() {
+    requestedIdle = false;
     requestedReversing = false;
     requestedTransferring = true;
   }
 
   public void requestReversing() {
+    requestedIdle = false;
     requestedTransferring = false;
     requestedReversing = true;
   }
