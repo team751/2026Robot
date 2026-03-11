@@ -9,17 +9,19 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.lib.PS5Controller;
 import frc.robot.subsystems.Superstructure;
-import frc.robot.subsystems.climber.ClimberSubsystem;
+//import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.drive.SwerveConstants;
 import frc.robot.subsystems.drive.SwerveSubsystem;
 import frc.robot.subsystems.intake.ExtenderSubsystem;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.simulation.MapSimSwerveTelemetry;
+import frc.robot.subsystems.transfer.TransferSubsystem;
 
 // TODO: Clean up the controller bindings for this
 // TODO: Fix intake commands
@@ -42,7 +44,7 @@ public class ControlBoard {
   private PS5Controller operator = null;
   private SwerveSubsystem drive = SwerveSubsystem.getInstance();
   private ShooterSubsystem shooter = ShooterSubsystem.getInstance();
-  private ClimberSubsystem climber = ClimberSubsystem.getInstance();
+  //private ClimberSubsystem climber = ClimberSubsystem.getInstance();
   private boolean preciseControl = false;
   private boolean autoAim = false;
   private boolean axisAlign = false;
@@ -191,10 +193,21 @@ public class ControlBoard {
         new StartEndCommand(
             () -> IntakeSubsystem.getInstance().requestSpitting(),
             () -> IntakeSubsystem.getInstance().requestIdle()));
-    controller.dLeft.whileTrue(
+    controller.dUp.whileTrue(
         new InstantCommand(() -> ExtenderSubsystem.getInstance().requestExtension()));
-    controller.dRight.whileTrue(
+    controller.dDown.whileTrue(
         new InstantCommand(() -> ExtenderSubsystem.getInstance().requestRetraction()));
+
+    StartEndCommand transfer = new StartEndCommand(() -> TransferSubsystem.getInstance().requestTransferring(), () -> TransferSubsystem.getInstance().requestIdle());
+    StartEndCommand reverse = new StartEndCommand(() -> TransferSubsystem.getInstance().requestReversing(), () -> TransferSubsystem.getInstance().requestIdle());
+
+    // controller.touchpadButton.whileTrue(
+    //   new ConditionalCommand(transfer, reverse, () -> controller.circleButton.getAsBoolean())
+    // );
+
+    controller.dLeft.whileTrue(transfer);
+    
+    controller.dRight.whileTrue(reverse);
 
     /* Swerve */
     // don't touch this one. it scares me and i dont wanna break something.
@@ -218,13 +231,13 @@ public class ControlBoard {
 
     /* Climber */
     // TODO: Make left trigger shoot(peter requested)
-    controller.leftTrigger.whileTrue(
-        new StartEndCommand(() -> climber.spinSlow(1), () -> climber.stopMotors()));
+    // controller.leftTrigger.whileTrue(
+    //     new StartEndCommand(() -> climber.spinSlow(1), () -> climber.stopMotors()));
 
-    controller.crossButton.whileTrue(
-        new StartEndCommand(() -> climber.spinSlow(-1), () -> climber.stopMotors()));
+    // controller.crossButton.whileTrue(
+    //     new StartEndCommand(() -> climber.spinSlow(-1), () -> climber.stopMotors()));
 
-    controller.circleButton.whileTrue(new InstantCommand(() -> climber.stopMotors()));
+    // controller.circleButton.whileTrue(new InstantCommand(() -> climber.stopMotors()));
   }
 
   public SwerveRequest getDriverRequest() {
