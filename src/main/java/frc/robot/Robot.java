@@ -106,11 +106,13 @@ public class Robot extends TimedRobot {
             () -> TransferSubsystem.getInstance().requestTransferring(),
             () -> TransferSubsystem.getInstance().requestIdle());
     InstantCommand stopTransfer = new InstantCommand(() -> transfer.cancel());
-
+    /*Shooter */
     NamedCommands.registerCommand("shoot", shoot);
     NamedCommands.registerCommand("stopShoot", stopShoot);
+    /*Intake */
     NamedCommands.registerCommand("intake", intake);
     NamedCommands.registerCommand("stopIntake", stopIntake);
+    /*Transfer */
     NamedCommands.registerCommand("transfer", transfer);
     NamedCommands.registerCommand("stopTransfer", stopTransfer);
 
