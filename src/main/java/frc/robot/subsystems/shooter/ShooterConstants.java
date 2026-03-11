@@ -10,9 +10,9 @@ import frc.robot.util.Constants;
 
 public class ShooterConstants {
   // TODO: Set current limits and tune the motors. also name/find the canbus to put the motors on
-  public static double flywheelSpeed = 40; // 12
-  public static double transferVoltage = 2;
-  public static double slowPercent = 0.5;
+  public static double flywheelSpeed = 49; // Rotations per Second
+  public static double transferVoltage = 2; // Volts
+  public static double slowPercent = 0.5; // Percent 0.0-1.0
 
   public static final CTREConfig<TalonFX, TalonFXConfiguration> flywheelMotorConfig =
       new CTREConfig<>(TalonFXConfiguration::new);

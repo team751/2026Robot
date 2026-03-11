@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.lib.PS5Controller;
@@ -204,6 +205,10 @@ public class ControlBoard {
             () -> ExtenderSubsystem.getInstance().requestRetracting(),
             () -> ExtenderSubsystem.getInstance().requestIdle());
 
+      InstantCommand extenderIdle = 
+        new InstantCommand(
+          () -> ExtenderSubsystem.getInstance().requestIdle());
+
     /* Transfer */
     StartEndCommand transfer =
         new StartEndCommand(
@@ -215,9 +220,19 @@ public class ControlBoard {
             () -> TransferSubsystem.getInstance().requestReversing(),
             () -> TransferSubsystem.getInstance().requestIdle());
 
+
+
+    /* Shooter */
+    StartEndCommand runShooter = 
+      new StartEndCommand(
+        () -> ShooterSubsystem.getInstance().requestShoot(),
+        () -> ShooterSubsystem.getInstance().requestIdle());
+
+    // // MY SHIFT BUTTON YAYAYAYAYAYAAYYYA (hopefully it works :) ))
     // controller.touchpadButton.whileTrue(
-    //   new ConditionalCommand(transfer, reverse, () -> controller.circleButton.getAsBoolean())
+    //   new ConditionalCommand(transferReverse, transfer, () -> controller.circleButton.getAsBoolean())
     // );
+
     /* Transfer */
     controller.dLeft.whileTrue(transfer);
 
@@ -230,6 +245,10 @@ public class ControlBoard {
     controller.squareButton.whileTrue(runSpitting);
 
     controller.rightTrigger.whileTrue(runIntaking);
+
+    controller.leftTrigger.whileTrue(runShooter);
+
+    controller.triangleButton.onTrue(extenderIdle);
 
     /* Swerve */
     // don't touch this one. it scares me and i dont wanna break something.
