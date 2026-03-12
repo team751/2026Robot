@@ -7,43 +7,43 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Startingpath"
+            "pathName": "RedStartingpath"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "grabdepotp1"
+            "pathName": "redgrabdepotp1"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "grabdepotbluepart2"
+            "pathName": "grabdepotredpart2"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Scoredepotblue"
+            "pathName": "Scoredepotred"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "intake"
+            "pathName": "redintake"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "intakepart2"
+            "pathName": "redintakepart2"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Score Intake"
+            "pathName": "Red Score Intake"
           }
         }
       ]

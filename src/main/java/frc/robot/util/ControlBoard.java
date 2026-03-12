@@ -9,7 +9,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.lib.PS5Controller;
@@ -196,16 +195,13 @@ public class ControlBoard {
 
     /* Extender */
     InstantCommand extenderExtend =
-        new InstantCommand(
-            () -> ExtenderSubsystem.getInstance().requestExtending());
+        new InstantCommand(() -> ExtenderSubsystem.getInstance().requestExtending());
 
     InstantCommand extenderRetract =
-        new InstantCommand(
-            () -> ExtenderSubsystem.getInstance().requestRetracting());
+        new InstantCommand(() -> ExtenderSubsystem.getInstance().requestRetracting());
 
-      InstantCommand extenderIdle = 
-        new InstantCommand(
-          () -> ExtenderSubsystem.getInstance().requestIdle());
+    InstantCommand extenderIdle =
+        new InstantCommand(() -> ExtenderSubsystem.getInstance().requestIdle());
 
     /* Transfer */
     StartEndCommand transfer =
@@ -218,29 +214,27 @@ public class ControlBoard {
             () -> TransferSubsystem.getInstance().requestReversing(),
             () -> TransferSubsystem.getInstance().requestIdle());
 
-
-
     /* Shooter */
-    StartEndCommand runShooter = 
-      new StartEndCommand(
-        () -> ShooterSubsystem.getInstance().requestShoot(),
-        () -> ShooterSubsystem.getInstance().requestIdle());
+    StartEndCommand runShooter =
+        new StartEndCommand(
+            () -> ShooterSubsystem.getInstance().requestShoot(),
+            () -> ShooterSubsystem.getInstance().requestIdle());
 
     InstantCommand shootSpeedUp =
-      new InstantCommand(() -> ShooterSubsystem.getInstance().increaseSpeed());
+        new InstantCommand(() -> ShooterSubsystem.getInstance().increaseSpeed());
 
     InstantCommand shootSpeedDown =
-      new InstantCommand(() -> ShooterSubsystem.getInstance().decreaseSpeed());
-    
-    InstantCommand resetSpeed =
-      new InstantCommand(() -> ShooterSubsystem.getInstance().resetSpeed());
+        new InstantCommand(() -> ShooterSubsystem.getInstance().decreaseSpeed());
 
-    InstantCommand setSpeed30 =
-      new InstantCommand(() -> ShooterSubsystem.getInstance().speed30());
+    InstantCommand resetSpeed =
+        new InstantCommand(() -> ShooterSubsystem.getInstance().resetSpeed());
+
+    InstantCommand setSpeed30 = new InstantCommand(() -> ShooterSubsystem.getInstance().speed30());
 
     // // MY SHIFT BUTTON YAYAYAYAYAYAAYYYA (hopefully it works :) ))
     // controller.touchpadButton.whileTrue(
-    //   new ConditionalCommand(transferReverse, transfer, () -> controller.circleButton.getAsBoolean())
+    //   new ConditionalCommand(transferReverse, transfer, () ->
+    // controller.circleButton.getAsBoolean())
     // );
 
     // /* Transfer */
