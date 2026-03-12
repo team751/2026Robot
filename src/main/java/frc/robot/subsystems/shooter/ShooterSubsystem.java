@@ -5,6 +5,8 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ShooterSubsystem extends SubsystemBase {
@@ -70,6 +72,8 @@ public class ShooterSubsystem extends SubsystemBase {
             ShooterConstants.flywheelSpeed, ShooterConstants.transferVoltage);
       }
     }
+
+    SmartDashboard.putNumber("Requested Speed", ShooterConstants.flywheelSpeed);
   }
 
   /** Runs just the main flywheel motor */
@@ -87,6 +91,22 @@ public class ShooterSubsystem extends SubsystemBase {
   private void setShooterSpeed(double flywheelVelocity, double transferVoltage) {
     flywheelMotor.setControl(flywheelControl.withVelocity(flywheelVelocity));
     shooterTransferMotor.setControl(shooterTransferControl.withOutput(transferVoltage));
+  }
+
+  public void increaseSpeed() {
+    ShooterConstants.flywheelSpeed++;
+  }
+
+  public void decreaseSpeed() {
+    ShooterConstants.flywheelSpeed--;
+  }
+
+  public void speed30() {
+    ShooterConstants.flywheelSpeed = 30;
+  }
+
+  public void resetSpeed() {
+    ShooterConstants.flywheelSpeed = 49;
   }
 
   private void unsetAllRequests() {

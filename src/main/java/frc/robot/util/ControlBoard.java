@@ -195,15 +195,13 @@ public class ControlBoard {
             () -> IntakeSubsystem.getInstance().requestIdle());
 
     /* Extender */
-    StartEndCommand extenderExtend =
-        new StartEndCommand(
-            () -> ExtenderSubsystem.getInstance().requestExtending(),
-            () -> ExtenderSubsystem.getInstance().requestIdle());
+    InstantCommand extenderExtend =
+        new InstantCommand(
+            () -> ExtenderSubsystem.getInstance().requestExtending());
 
-    StartEndCommand extenderRetract =
-        new StartEndCommand(
-            () -> ExtenderSubsystem.getInstance().requestRetracting(),
-            () -> ExtenderSubsystem.getInstance().requestIdle());
+    InstantCommand extenderRetract =
+        new InstantCommand(
+            () -> ExtenderSubsystem.getInstance().requestRetracting());
 
       InstantCommand extenderIdle = 
         new InstantCommand(
@@ -228,27 +226,44 @@ public class ControlBoard {
         () -> ShooterSubsystem.getInstance().requestShoot(),
         () -> ShooterSubsystem.getInstance().requestIdle());
 
+    InstantCommand shootSpeedUp =
+      new InstantCommand(() -> ShooterSubsystem.getInstance().increaseSpeed());
+
+    InstantCommand shootSpeedDown =
+      new InstantCommand(() -> ShooterSubsystem.getInstance().decreaseSpeed());
+    
+    InstantCommand resetSpeed =
+      new InstantCommand(() -> ShooterSubsystem.getInstance().resetSpeed());
+
+    InstantCommand setSpeed30 =
+      new InstantCommand(() -> ShooterSubsystem.getInstance().speed30());
+
     // // MY SHIFT BUTTON YAYAYAYAYAYAAYYYA (hopefully it works :) ))
     // controller.touchpadButton.whileTrue(
     //   new ConditionalCommand(transferReverse, transfer, () -> controller.circleButton.getAsBoolean())
     // );
 
-    /* Transfer */
-    controller.dLeft.whileTrue(transfer);
+    // /* Transfer */
+    // controller.dLeft.whileTrue(transfer);
 
-    controller.dRight.whileTrue(transferReverse);
-    /* Extender */
-    controller.dDown.whileTrue(extenderRetract);
+    // controller.dRight.whileTrue(transferReverse);
+    // /* Extender */
+    // controller.dDown.whileTrue(extenderRetract);
 
-    controller.dUp.whileTrue(extenderExtend);
-    /* Intake */
-    controller.squareButton.whileTrue(runSpitting);
+    // controller.dUp.whileTrue(extenderExtend);
+    // /* Intake */
+    // controller.squareButton.whileTrue(runSpitting);
 
-    controller.rightTrigger.whileTrue(runIntaking);
+    // controller.rightTrigger.whileTrue(runIntaking);
+
+    controller.dUp.onTrue(shootSpeedUp);
+    controller.dDown.onTrue(shootSpeedDown);
+    controller.dLeft.onTrue(setSpeed30);
+    controller.dRight.onTrue(resetSpeed);
+
+    controller.rightTrigger.whileTrue(transfer);
 
     controller.leftTrigger.whileTrue(runShooter);
-
-    controller.triangleButton.onTrue(extenderIdle);
 
     /* Swerve */
     // don't touch this one. it scares me and i dont wanna break something.

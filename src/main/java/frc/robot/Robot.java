@@ -3,15 +3,8 @@ package frc.robot;
 // TODO: stuff to test on the robot
 // Transfer first:
 // Nothing jams, etc
-// Balls actually move
-//
-// Intake:
-// Extending and retracting - try to confuse it and see how robust it is
-// intaking a ball
-// spitting a ball
 //
 // Shooter:
-// still works and scores
 // more calibration?
 //
 // Drive:
@@ -21,8 +14,8 @@ package frc.robot;
 // maybe possibly ram intake into something while extended??
 //
 // Limelight:
-// calibrate and get it ready
-// orientation and offset
+// calibrate and get it ready 
+// orientation and offset - side camera done
 
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.SignalLogger;

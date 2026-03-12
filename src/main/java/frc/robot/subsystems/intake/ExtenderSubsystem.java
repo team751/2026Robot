@@ -26,7 +26,7 @@ public class ExtenderSubsystem extends SubsystemBase {
   private enum ExtenderState {
     IDLE,
     EXTENDING,
-    RETRACTING,
+    RETRACTING
   }
 
   private ExtenderState state = ExtenderState.IDLE;
@@ -62,14 +62,23 @@ public class ExtenderSubsystem extends SubsystemBase {
       }
     }
 
-    if (frontLeftLimit.get()
-        || backLeftLimit.get()
-        || frontRightLimit.get()
-        || backRightLimit.get()) {
-      state = ExtenderState.IDLE;
+    if ((frontLeftLimit.get() || frontRightLimit.get()) && state == ExtenderState.RETRACTING) {
+      requestIdle();
     }
+
+    if ((backLeftLimit.get() || backRightLimit.get()) && state == ExtenderState.EXTENDING) {
+      requestIdle();
+    }
+
     SmartDashboard.putNumber(
         "Extender/Extender Speed", extenderMotor.getVelocity().getValueAsDouble());
+
+    SmartDashboard.putString("Extender/State", state.toString());
+
+    SmartDashboard.putBoolean("Extender/Front Left Limit", frontLeftLimit.get());
+    SmartDashboard.putBoolean("Extender/Back Left Limit", backLeftLimit.get());
+    SmartDashboard.putBoolean("Extender/Front Right Limit", frontRightLimit.get());
+    SmartDashboard.putBoolean("Extender/Back Right Limit", backRightLimit.get());
   }
 
   /**
@@ -82,15 +91,17 @@ public class ExtenderSubsystem extends SubsystemBase {
   }
 
   public void requestExtending() {
-    requestedRetracting = false;
-    requestedIdle = false;
-    requestedExtending = true;
+    if (!backLeftLimit.get() && !backRightLimit.get()) {
+      unsetAllRequests();
+      requestedExtending = true;
+    }
   }
 
   public void requestRetracting() {
-    requestedExtending = false;
-    requestedIdle = false;
-    requestedRetracting = true;
+    if (!frontLeftLimit.get() && !frontRightLimit.get()) {
+      unsetAllRequests();
+      requestedRetracting = true;
+    }
   }
 
   public void requestIdle() {

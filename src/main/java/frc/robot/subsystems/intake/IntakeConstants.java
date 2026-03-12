@@ -11,8 +11,8 @@ import frc.robot.util.Constants;
 public class IntakeConstants {
   // TODO: Set current limits and tune the motors. also name/find the canbus to put the motors on
 
-  public static final double intakeSpeed = 3.5; // Volts
-  public static final double spitSpeed = -3.5; // Volts
+  public static final double intakeSpeed = 6; // Volts
+  public static final double spitSpeed = -6; // Volts
   public static final double extenderSpeed = 2; // Volts
   public static final double retractorSpeed = -2; // Volts
 
@@ -54,7 +54,7 @@ public class IntakeConstants {
     intakeConfig.TorqueCurrent.PeakForwardTorqueCurrent = 40;
     intakeConfig.TorqueCurrent.PeakReverseTorqueCurrent = -40;
 
-    intakeConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive; // Positive intake
+    intakeConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive; // Positive intake
     intakeConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
   }
 
