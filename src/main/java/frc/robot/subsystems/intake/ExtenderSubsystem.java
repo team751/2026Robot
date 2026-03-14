@@ -65,16 +65,9 @@ public class ExtenderSubsystem extends SubsystemBase {
       case EXTENDED, RETRACTED -> motorOutput = 0;
     }
 
-    if (state == ExtenderState.EXTENDING && isPartiallyExtended()) {
-      motorOutput = IntakeConstants.extenderSpeed*0.25;
-    }else if (state == ExtenderState.RETRACTING && isPartiallyRetracted()) {
-      motorOutput = IntakeConstants.retractorSpeed*0.25;
-    }
-
     setExtenderMotor(motorOutput);
 
     calculateExtension();
-
 
     if (state == ExtenderState.EXTENDING && isFullyExtended()) {
       state = ExtenderState.EXTENDED;
@@ -119,18 +112,10 @@ public class ExtenderSubsystem extends SubsystemBase {
   }
 
   private boolean isFullyExtended() {
-    return backLeftLimit.get() && backRightLimit.get();
-  }
-
-  private boolean isFullyRetracted() {
-    return frontLeftLimit.get() && frontRightLimit.get();
-  }
-
-  private boolean isPartiallyExtended() {
     return backLeftLimit.get() || backRightLimit.get();
   }
 
-  private boolean isPartiallyRetracted() {
+  private boolean isFullyRetracted() {
     return frontLeftLimit.get() || frontRightLimit.get();
   }
 
