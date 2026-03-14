@@ -42,7 +42,6 @@ public class ControlBoard {
   private PS5Controller driver = null;
   private PS5Controller operator = null;
   private SwerveSubsystem drive = SwerveSubsystem.getInstance();
-  private ShooterSubsystem shooter = ShooterSubsystem.getInstance();
   private boolean preciseControl = false;
   private boolean autoAim = false;
   private boolean axisAlign = false;

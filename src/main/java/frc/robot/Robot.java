@@ -80,39 +80,6 @@ public class Robot extends TimedRobot {
     for (int port = 5800; port <= 5809; port++) {
       PortForwarder.add(port, "limelight.local", port);
     }
-    // COMMANDS FOR NAMED COMMANDS
-    // TODO: Make the commands end auton
-    StartEndCommand shoot =
-        new StartEndCommand(
-            () -> ShooterSubsystem.getInstance().requestShoot(),
-            () -> ShooterSubsystem.getInstance().requestIdle());
-    InstantCommand stopShoot = new InstantCommand(() -> shoot.cancel());
-
-    StartEndCommand intake =
-        new StartEndCommand(
-            () -> IntakeSubsystem.getInstance().requestIntaking(),
-            () -> IntakeSubsystem.getInstance().requestIdle());
-    InstantCommand stopIntake = new InstantCommand(() -> intake.cancel());
-
-    StartEndCommand transfer =
-        new StartEndCommand(
-            () -> TransferSubsystem.getInstance().requestTransferring(),
-            () -> TransferSubsystem.getInstance().requestIdle());
-    InstantCommand stopTransfer = new InstantCommand(() -> transfer.cancel());
-
-    /*Shooter */
-    NamedCommands.registerCommand("shoot", shoot);
-    NamedCommands.registerCommand("stopShoot", stopShoot);
-    /*Intake */
-    NamedCommands.registerCommand("intake", intake);
-    NamedCommands.registerCommand("stopIntake", stopIntake);
-    /*Transfer */
-    NamedCommands.registerCommand("transfer", transfer);
-    NamedCommands.registerCommand("stopTransfer", stopTransfer);
-
-    autoChooser = AutoBuilder.buildAutoChooser();
-    SmartDashboard.putData("Auto Chooser", autoChooser);
-    // ClimberSubsystem.getInstance().zeroClimber();
   }
 
   @Override

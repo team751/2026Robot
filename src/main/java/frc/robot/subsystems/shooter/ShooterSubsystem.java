@@ -112,6 +112,8 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   private void unsetAllRequests() {
+    requestedReversing = false;
+    requestedSlow = false;
     requestedIdle = false;
     requestedShoot = false;
   }

@@ -8,6 +8,7 @@ import frc.robot.subsystems.drive.SwerveSubsystem;
 import frc.robot.subsystems.intake.ExtenderSubsystem;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
+import frc.robot.subsystems.transfer.TransferSubsystem;
 
 // import frc.robot.subsystems.intake.IntakeSubsystem;
 
@@ -21,9 +22,10 @@ public class Superstructure extends SubsystemBase {
 
   private final SwerveSubsystem swerveSubsystem = SwerveSubsystem.getInstance();
   private final ShooterSubsystem shooterSubsystem = ShooterSubsystem.getInstance();
-  // private final ClimberSubsystem climberSubsystem = ClimberSubsystem.getInstance();
   private final IntakeSubsystem intakeSubsystem = IntakeSubsystem.getInstance();
   private final ExtenderSubsystem extenderSubsystem = ExtenderSubsystem.getInstance();
+  private final TransferSubsystem transferSubsystem = TransferSubsystem.getInstance();
+  // private final ClimberSubsystem climberSubsystem = ClimberSubsystem.getInstance();
 
   boolean requestHome = false;
   boolean requestIdle = false;
