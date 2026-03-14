@@ -35,15 +35,33 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "Retract"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "Scoredepotblue"
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "intake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake"
           }
         },
         {
@@ -56,6 +74,12 @@
           "type": "path",
           "data": {
             "pathName": "Score Intake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
           }
         }
       ]
