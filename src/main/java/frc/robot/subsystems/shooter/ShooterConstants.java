@@ -4,16 +4,22 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
 import frc.lib.CTREConfig;
 import frc.robot.Robot;
 import frc.robot.util.Constants;
 
 public class ShooterConstants {
   // TODO: Set current limits and tune the motors. also name/find the canbus to put the motors on
-  public static double flywheelSpeed = 35; // 12
-  public static double transferVoltage = 4;
-  public static double slowPercent = 0.5;
+  public static double flywheelSpeed = 49; // Rotations per Second
+  public static double transferVoltage = 2; // Volts
+  public static double slowPercent = 0.5; // Percent 0.0-1.0
+
+  public static final double shooterDistanceCurveYIntercept = -384.0; // RPM at 0 distance
+  public static final double shooterDistanceCurveSlope = 16.8; // RPM per cm
+  public static final double minShootingDistance =
+      50.0; // cm, distance at which to use minimum shooter speed
+  public static final double maxShootingDistance =
+      600.0; // cm, distance at which to use maximum shooter speed
 
   public static final CTREConfig<TalonFX, TalonFXConfiguration> flywheelMotorConfig =
       new CTREConfig<>(TalonFXConfiguration::new);
@@ -21,15 +27,14 @@ public class ShooterConstants {
   public static final CTREConfig<TalonFX, TalonFXConfiguration> followMotorConfig =
       new CTREConfig<>(TalonFXConfiguration::new);
 
-
-  public static final CTREConfig<TalonFX, TalonFXConfiguration> transferMotorConfig = 
-    new CTREConfig<>(TalonFXConfiguration::new);
+  public static final CTREConfig<TalonFX, TalonFXConfiguration> transferMotorConfig =
+      new CTREConfig<>(TalonFXConfiguration::new);
 
   static {
     flywheelMotorConfig
         .withName("Main Flywheel")
         .withCanID(Constants.flywheelMotorID)
-		.withBus(Robot.gamepiecebus);
+        .withBus(Robot.gamepiecebus);
 
     TalonFXConfiguration flywheelConfig = flywheelMotorConfig.config;
     flywheelConfig.Slot0.kP = 0.1; // Increase until speed oscillates
@@ -52,9 +57,9 @@ public class ShooterConstants {
 
   static {
     followMotorConfig
-		.withName("Follow Flywheel")
-		.withCanID(Constants.followMotorID)
-		.withBus(Robot.gamepiecebus);
+        .withName("Follow Flywheel")
+        .withCanID(Constants.followMotorID)
+        .withBus(Robot.gamepiecebus);
 
     TalonFXConfiguration followConfig = followMotorConfig.config;
 
@@ -75,27 +80,25 @@ public class ShooterConstants {
     // followConfig.TorqueCurrent.PeakReverseTorqueCurrent = -40;
   }
 
-
   static {
     transferMotorConfig
-      .withName("Shooter Transfer")
-      .withCanID(Constants.shooterTransferMotorID)
-      .withBus(Robot.gamepiecebus);
+        .withName("Shooter Transfer")
+        .withCanID(Constants.shooterTransferMotorID)
+        .withBus(Robot.gamepiecebus);
 
-      TalonFXConfiguration shooterTransferConfig = transferMotorConfig.config;
+    TalonFXConfiguration shooterTransferConfig = transferMotorConfig.config;
 
-      shooterTransferConfig.Slot0.kP = 0.1;
-      shooterTransferConfig.Slot0.kI = 0.0;
-      shooterTransferConfig.Slot0.kD = 0.0;
+    shooterTransferConfig.Slot0.kP = 0.1;
+    shooterTransferConfig.Slot0.kI = 0.0;
+    shooterTransferConfig.Slot0.kD = 0.0;
 
-      shooterTransferConfig.Slot0.kS = 0.0;
-      shooterTransferConfig.Slot0.kA = 0.0;
-      shooterTransferConfig.Slot0.kV = 0.0;
-      shooterTransferConfig.Slot0.kG = 0.0;
+    shooterTransferConfig.Slot0.kS = 0.0;
+    shooterTransferConfig.Slot0.kA = 0.0;
+    shooterTransferConfig.Slot0.kV = 0.0;
+    shooterTransferConfig.Slot0.kG = 0.0;
 
-      shooterTransferConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-      shooterTransferConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-      // just copy from above 
+    shooterTransferConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    shooterTransferConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    // just copy from above
   }
-
 }

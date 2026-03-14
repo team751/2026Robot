@@ -5,6 +5,8 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+// TODO: need to test this
+
 public class TransferSubsystem extends SubsystemBase {
   private static TransferSubsystem instance;
 
@@ -53,9 +55,9 @@ public class TransferSubsystem extends SubsystemBase {
       switch (state) {
         case IDLE -> setMotors(0, 0);
         case TRANSFERRING -> setMotors(
-            TransferConstants.transfertopspeed, TransferConstants.transferbottom);
+            TransferConstants.transfertopspeed, TransferConstants.transferbottomspeed);
         case REVERSING -> setMotors(
-            -TransferConstants.transfertopspeed, -TransferConstants.transferbottom);
+            -TransferConstants.transfertopspeed, -TransferConstants.transferbottomspeed);
       }
     }
 
@@ -70,11 +72,14 @@ public class TransferSubsystem extends SubsystemBase {
   }
 
   public void requestTransferring() {
+    requestedIdle = false;
     requestedReversing = false;
+    requestedIdle = false;
     requestedTransferring = true;
   }
 
   public void requestReversing() {
+    requestedIdle = false;
     requestedTransferring = false;
     requestedReversing = true;
   }

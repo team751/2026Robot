@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.lib.PS5Controller;
 import frc.robot.subsystems.Superstructure;
-import frc.robot.subsystems.climber.ClimberSubsystem;
+// import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.drive.SwerveConstants;
 import frc.robot.subsystems.drive.SwerveSubsystem;
 import frc.robot.subsystems.intake.ExtenderSubsystem;
@@ -26,10 +26,13 @@ import frc.robot.subsystems.simulation.MapSimSwerveTelemetry;
 
 // TODO: shift button! \/\/\/
 // controller.circleButton.and(controller.crossButton).whileTrue(
-//   new StartEndCommand(() -> ShooterSubsystem.getInstance().requestShoot(), () -> ShooterSubsystem.getInstance().requestIdle())
+//   new StartEndCommand(() -> ShooterSubsystem.getInstance().requestShoot(), () ->
+// ShooterSubsystem.getInstance().requestIdle())
 // );
-// we get basically double the buttons that we have now. could also help us test stuff without ruining previous keybinds
-// could also be helpful during comp for re-zeroing components mid match if we need to (like intake explodes and dies and we need to align it again)
+// we get basically double the buttons that we have now. could also help us test stuff without
+// ruining previous keybinds
+// could also be helpful during comp for re-zeroing components mid match if we need to (like intake
+// explodes and dies and we need to align it again)
 
 public class ControlBoard {
   private static ControlBoard instance;
@@ -39,7 +42,6 @@ public class ControlBoard {
   private PS5Controller operator = null;
   private SwerveSubsystem drive = SwerveSubsystem.getInstance();
   private ShooterSubsystem shooter = ShooterSubsystem.getInstance();
-  private ClimberSubsystem climber = ClimberSubsystem.getInstance();
   private boolean preciseControl = false;
   private boolean autoAim = false;
   private boolean axisAlign = false;
@@ -127,9 +129,6 @@ public class ControlBoard {
     // We have way to many shooter buttons. We can probably cut some and also make more efficient
     // bindings.
     // TODO: old shooter bindings were for testing purposes. we gotta make entirely new ones
-    controller.triangleButton.and(controller.rightTrigger).whileTrue(
-      new StartEndCommand(() -> ShooterSubsystem.getInstance().requestShoot(), () -> ShooterSubsystem.getInstance().requestIdle())
-    );
 
     /* Intake */
     controller.rightTrigger.whileTrue(
@@ -142,11 +141,10 @@ public class ControlBoard {
             () -> IntakeSubsystem.getInstance().requestSpitting(),
             () -> IntakeSubsystem.getInstance().requestIdle()));
     controller.dLeft.whileTrue(
-        new InstantCommand(
-            () -> ExtenderSubsystem.getInstance().requestExtension()));
+        new InstantCommand(() -> ExtenderSubsystem.getInstance().requestExtension()));
     controller.dRight.whileTrue(
-        new InstantCommand(
-            () -> ExtenderSubsystem.getInstance().requestRetraction()));
+        new InstantCommand(() -> ExtenderSubsystem.getInstance().requestRetraction()));
+    controller.circleButton.onTrue(new InstantCommand(() -> drive.setRobotRotationByAlliance()));
 
     /* Swerve */
     controller.rightBumper.whileTrue(
@@ -169,13 +167,12 @@ public class ControlBoard {
 
     /* Climber */
     // TODO: Make left trigger shoot(peter requested)
-    controller.leftTrigger.whileTrue(
-        new StartEndCommand(() -> climber.spinSlow(1), () -> climber.stopMotors()));
+    // controller.leftTrigger.whileTrue(
+    //     new StartEndCommand(() -> climber.spinSlow(1), () -> climber.stopMotors()));
 
-    controller.crossButton.whileTrue(
-        new StartEndCommand(() -> climber.spinSlow(-1), () -> climber.stopMotors()));
+    // controller.crossButton.whileTrue(
+    //     new StartEndCommand(() -> climber.spinSlow(-1), () -> climber.stopMotors()));
 
-    controller.circleButton.whileTrue(new InstantCommand(() -> climber.stopMotors()));
   }
 
   public SwerveRequest getDriverRequest() {

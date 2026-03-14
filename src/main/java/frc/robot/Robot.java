@@ -1,8 +1,28 @@
 package frc.robot;
 
+// TODO: stuff to test on the robot
+// Transfer first:
+// Nothing jams, etc
+//
+// Shooter:
+// more calibration?
+//
+// Drive:
+// moving w transfer and see if it still transfers
+// intaking many balls at once
+// shooting while moving(?)
+// maybe possibly ram intake into something while extended??
+//
+// Limelight:
+// calibrate and get it ready
+// orientation and offset - side camera done
+
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+// import frc.robot.subsystems.climber.ClimberSubsystem;
+// import frc.robot.subsystems.drive.Odometry;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -12,19 +32,24 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.lib.TunableParameter;
-import frc.robot.subsystems.climber.ClimberSubsystem;
-//import frc.robot.subsystems.drive.Odometry;
 import frc.robot.subsystems.drive.SwerveSubsystem;
-//import frc.robot.subsystems.vision.LimelightSubsystem;
+import frc.robot.subsystems.intake.IntakeSubsystem;
+import frc.robot.subsystems.shooter.ShooterSubsystem;
+import frc.robot.subsystems.transfer.TransferSubsystem;
+// import frc.robot.subsystems.vision.LimelightSubsystem;
 import frc.robot.util.ControlBoard;
 
 public class Robot extends TimedRobot {
-    /**CANBus only used for climber*/
+  /** CANBus only used for climber */
   public static final CANBus riobus = new CANBus("rio");
-    /**CANBus only used for swerve*/
+
+  /** CANBus only used for swerve */
   public static final CANBus drivebus = new CANBus("drivebus");
-  /**CANBus used for everything but climber and swerve*/
+
+  /** CANBus used for everything but climber and swerve */
   public static final CANBus gamepiecebus = new CANBus("gamepiecebus");
 
   private final ControlBoard controlBoard;
@@ -35,7 +60,7 @@ public class Robot extends TimedRobot {
   private SendableChooser<Command> autoChooser;
 
   public Robot() {
-    //Odometry.getInstance();
+    // Odometry.getInstance();
     scheduler = CommandScheduler.getInstance();
     swerve = SwerveSubsystem.getInstance();
 
@@ -55,9 +80,39 @@ public class Robot extends TimedRobot {
     for (int port = 5800; port <= 5809; port++) {
       PortForwarder.add(port, "limelight.local", port);
     }
+    // COMMANDS FOR NAMED COMMANDS
+    // TODO: Make the commands end auton
+    StartEndCommand shoot =
+        new StartEndCommand(
+            () -> ShooterSubsystem.getInstance().requestShoot(),
+            () -> ShooterSubsystem.getInstance().requestIdle());
+    InstantCommand stopShoot = new InstantCommand(() -> shoot.cancel());
+
+    StartEndCommand intake =
+        new StartEndCommand(
+            () -> IntakeSubsystem.getInstance().requestIntaking(),
+            () -> IntakeSubsystem.getInstance().requestIdle());
+    InstantCommand stopIntake = new InstantCommand(() -> intake.cancel());
+
+    StartEndCommand transfer =
+        new StartEndCommand(
+            () -> TransferSubsystem.getInstance().requestTransferring(),
+            () -> TransferSubsystem.getInstance().requestIdle());
+    InstantCommand stopTransfer = new InstantCommand(() -> transfer.cancel());
+
+    /*Shooter */
+    NamedCommands.registerCommand("shoot", shoot);
+    NamedCommands.registerCommand("stopShoot", stopShoot);
+    /*Intake */
+    NamedCommands.registerCommand("intake", intake);
+    NamedCommands.registerCommand("stopIntake", stopIntake);
+    /*Transfer */
+    NamedCommands.registerCommand("transfer", transfer);
+    NamedCommands.registerCommand("stopTransfer", stopTransfer);
+
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
-    ClimberSubsystem.getInstance().zeroClimber();
+    // ClimberSubsystem.getInstance().zeroClimber();
   }
 
   @Override
@@ -106,8 +161,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    //LimelightSubsystem.getInstance();
-    ClimberSubsystem.getInstance().zeroClimber();
+    // LimelightSubsystem.getInstance();
+    // ClimberSubsystem.getInstance().zeroClimber();
 
     var rot = Rotation2d.kZero;
     if (DriverStation.getAlliance().get() == Alliance.Red) {
