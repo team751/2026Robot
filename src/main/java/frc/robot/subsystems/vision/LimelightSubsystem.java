@@ -41,7 +41,8 @@ public class LimelightSubsystem extends SubsystemBase {
     limelightSide = new Limelight(LimelightConstants.LimelightSide.name);
 
     // Sets the settings for each limelight with their offset from the center of the robot
-    limelightFront.getSettings()
+    limelightFront
+        .getSettings()
         .withCameraOffset(
             new Pose3d(
                 LimelightConstants.LimelightFront.xOffset.in(Units.Meters),
@@ -49,7 +50,8 @@ public class LimelightSubsystem extends SubsystemBase {
                 LimelightConstants.LimelightFront.zOffset.in(Units.Meters),
                 LimelightConstants.LimelightFront.rotationOffset));
 
-    limelightSide.getSettings()
+    limelightSide
+        .getSettings()
         .withCameraOffset(
             new Pose3d(
                 LimelightConstants.LimelightSide.xOffset.in(Units.Meters),
@@ -63,7 +65,6 @@ public class LimelightSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Limelight Side Pose/X", getBotPoseSide().getX());
     SmartDashboard.putNumber("Limelight Side Pose/Y", getBotPoseSide().getY());
   }
-
 
   // TAG TARGETTING
   private boolean frontHasTarget() {
@@ -90,11 +91,22 @@ public class LimelightSubsystem extends SubsystemBase {
     // Sets the robot orientation before getting the robot position
     LimelightHelpers.SetRobotOrientation(
         LimelightConstants.LimelightFront.name,
-        drive.getRotation3d().getZ(),0.0,0.0,0.0,0.0,0.0);
+        drive.getRotation3d().getZ(),
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0);
 
     // If theres no april tag seen return null
-    if (LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name).pose.getX() == 0.0
-        && LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name).pose.getY() == 0.0) {
+    if (LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name)
+                .pose
+                .getX()
+            == 0.0
+        && LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name)
+                .pose
+                .getY()
+            == 0.0) {
       return null;
     }
 
@@ -105,14 +117,24 @@ public class LimelightSubsystem extends SubsystemBase {
     // Sets the robot orientation before getting the robot position
     LimelightHelpers.SetRobotOrientation(
         LimelightConstants.LimelightSide.name,
-        drive.getRotation3d().getZ(),0.0, 0.0,0.0,0.0,0.0);
+        drive.getRotation3d().getZ(),
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0);
 
     // If theres no april tag seen return null
-    if (LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightSide.name).pose.getX() == 0.0
-        && LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightSide.name).pose.getY() == 0.0) {
+    if (LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightSide.name)
+                .pose
+                .getX()
+            == 0.0
+        && LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightSide.name)
+                .pose
+                .getY()
+            == 0.0) {
       return null;
     }
     return LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightSide.name).pose;
-    }
   }
-
+}

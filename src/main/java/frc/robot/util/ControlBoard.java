@@ -140,26 +140,26 @@ public class ControlBoard {
             .withName("Precise Control Toggle")); // Fight me owen
 
     controller.leftTrigger.whileTrue(
-      new StartEndCommand(
+        new StartEndCommand(
             () -> ShooterSubsystem.getInstance().requestShoot(),
             () -> ShooterSubsystem.getInstance().requestIdle()));
 
     controller.leftTrigger.whileTrue(
-      new StartEndCommand(
+        new StartEndCommand(
             () -> TransferSubsystem.getInstance().requestTransferring(),
             () -> TransferSubsystem.getInstance().requestIdle()));
     controller.dDown.whileTrue(
-      new StartEndCommand(
+        new StartEndCommand(
             () -> TransferSubsystem.getInstance().requestReversing(),
             () -> TransferSubsystem.getInstance().requestIdle()));
     controller.dDown.whileTrue(
-      new StartEndCommand(
+        new StartEndCommand(
             () -> TransferSubsystem.getInstance().requestReversing(),
             () -> TransferSubsystem.getInstance().requestIdle()));
     controller.dDown.whileTrue(
-      new StartEndCommand(
-        () -> ShooterSubsystem.getInstance().requestSpit(),
-        () -> ShooterSubsystem.getInstance().requestSpit()));                      
+        new StartEndCommand(
+            () -> ShooterSubsystem.getInstance().requestSpit(),
+            () -> ShooterSubsystem.getInstance().requestSpit()));
 
     controller.squareButton.whileTrue(
         new StartEndCommand(

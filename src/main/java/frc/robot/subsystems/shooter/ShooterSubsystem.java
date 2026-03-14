@@ -72,7 +72,7 @@ public class ShooterSubsystem extends SubsystemBase {
         case IDLE -> setShooterSpeed(0, 0);
         case SLOWSPIN -> setShooterMotor(
             ShooterConstants.flywheelSpeed * ShooterConstants.slowPercent);
-        case REVERSING -> setTransferMotor(ShooterConstants.transferSpitVoltage);    
+        case REVERSING -> setTransferMotor(ShooterConstants.transferSpitVoltage);
         case SPINNING -> setShooterSpeed(calculateShooterSpeed(), ShooterConstants.transferVoltage);
       }
     }
@@ -136,7 +136,7 @@ public class ShooterSubsystem extends SubsystemBase {
     //   return ShooterConstants.flywheelSpeed;
     // }
 
-    double distanceCM = 300; //getRobotDistanceFromHub();
+    double distanceCM = 300; // getRobotDistanceFromHub();
     return (distanceCM - ShooterConstants.shooterDistanceCurveYIntercept)
         / ShooterConstants.shooterDistanceCurveSlope;
   }
@@ -150,6 +150,7 @@ public class ShooterSubsystem extends SubsystemBase {
     unsetAllRequests();
     requestedShoot = true;
   }
+
   public void requestSpit() {
     unsetAllRequests();
     requestedReversing = true;
