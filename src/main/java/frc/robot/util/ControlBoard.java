@@ -20,6 +20,7 @@ import frc.robot.subsystems.intake.ExtenderSubsystem;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.simulation.MapSimSwerveTelemetry;
+import frc.robot.subsystems.transfer.TransferSubsystem;
 
 // TODO: Clean up the controller bindings for this
 // TODO: Fix intake commands
@@ -131,10 +132,19 @@ public class ControlBoard {
     // TODO: old shooter bindings were for testing purposes. we gotta make entirely new ones
 
     /* Intake */
-    controller.rightTrigger.whileTrue(
+    controller.leftTrigger.whileTrue(
         new StartEndCommand(
             () -> IntakeSubsystem.getInstance().requestIntaking(),
             () -> IntakeSubsystem.getInstance().requestIdle()));
+    controller.rightTrigger.whileTrue(
+      new StartEndCommand(
+            () -> ShooterSubsystem.getInstance().requestShoot(),
+            () -> ShooterSubsystem.getInstance().requestIdle()));
+
+    controller.rightTrigger.whileTrue(
+      new StartEndCommand(
+            () -> TransferSubsystem.getInstance().requestTransferring(),
+            () -> TransferSubsystem.getInstance().requestIdle()));
 
     controller.squareButton.whileTrue(
         new StartEndCommand(

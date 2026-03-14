@@ -10,7 +10,7 @@ import frc.robot.util.Constants;
 
 public class ShooterConstants {
   // TODO: Set current limits and tune the motors. also name/find the canbus to put the motors on
-  public static double flywheelSpeed = 49; // Rotations per Second
+  public static double flywheelSpeed = 27; // Rotations per Second
   public static double transferVoltage = 2; // Volts
   public static double slowPercent = 0.5; // Percent 0.0-1.0
 
@@ -97,7 +97,7 @@ public class ShooterConstants {
     shooterTransferConfig.Slot0.kV = 0.0;
     shooterTransferConfig.Slot0.kG = 0.0;
 
-    shooterTransferConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    shooterTransferConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     shooterTransferConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
     // just copy from above
   }
