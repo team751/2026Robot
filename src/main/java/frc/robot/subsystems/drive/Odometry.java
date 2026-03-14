@@ -72,14 +72,15 @@ public class Odometry extends SubsystemBase {
 
     // Add's two vision measure ments to SwerveDrive so that they can be filtered by it
     if (limelights.getBotPoseFront() != null) {
+      Pose2d frontPose = limelights.getBotPoseFront();
       drive.addVisionMeasurement(
-          new Pose2d(limelights.getBotPoseFront().getTranslation(), drive.getPose().getRotation()),
-          time);
+          new Pose2d(frontPose.getX(), frontPose.getY(), drive.getPose().getRotation()), time);
     }
-    if (limelights.getBotPoseBack() != null) {
-      Pose2d backPose = limelights.getBotPoseBack();
+
+    if (limelights.getBotPoseSide() != null) {
+      Pose2d sidePose = limelights.getBotPoseSide();
       drive.addVisionMeasurement(
-          new Pose2d(backPose.getTranslation(), drive.getPose().getRotation()), time);
+          new Pose2d(sidePose.getX(), sidePose.getY(), drive.getPose().getRotation()), time);
     }
 
     // Sets the Odometry robotPose variable (for easy/more normal access to the robot position)

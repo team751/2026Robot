@@ -7,6 +7,7 @@ package frc.robot.subsystems.vision;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.drive.SwerveSubsystem;
 import frc.robot.util.LimelightHelpers;
@@ -40,8 +41,7 @@ public class LimelightSubsystem extends SubsystemBase {
     limelightSide = new Limelight(LimelightConstants.LimelightSide.name);
 
     // Sets the settings for each limelight with their offset from the center of the robot
-    limelightFront
-        .getSettings()
+    limelightFront.getSettings()
         .withCameraOffset(
             new Pose3d(
                 LimelightConstants.LimelightFront.xOffset.in(Units.Meters),
@@ -49,8 +49,7 @@ public class LimelightSubsystem extends SubsystemBase {
                 LimelightConstants.LimelightFront.zOffset.in(Units.Meters),
                 LimelightConstants.LimelightFront.rotationOffset));
 
-    limelightSide
-        .getSettings()
+    limelightSide.getSettings()
         .withCameraOffset(
             new Pose3d(
                 LimelightConstants.LimelightSide.xOffset.in(Units.Meters),
@@ -59,18 +58,25 @@ public class LimelightSubsystem extends SubsystemBase {
                 LimelightConstants.LimelightSide.rotationOffset));
   }
 
+  @Override
+  public void periodic() {
+    SmartDashboard.putNumber("Limelight Side Pose/X", getBotPoseSide().getX());
+    SmartDashboard.putNumber("Limelight Side Pose/Y", getBotPoseSide().getY());
+  }
+
+
   // TAG TARGETTING
   private boolean frontHasTarget() {
     // Using Limelight Helpers, get the TV (Valid Target) value.
     return LimelightHelpers.getTV(LimelightConstants.LimelightFront.name);
   }
 
-  private boolean backHasTarget() {
+  private boolean sideHasTarget() {
     return LimelightHelpers.getTV(LimelightConstants.LimelightSide.name);
   }
 
   public boolean hasTarget() {
-    return frontHasTarget() && backHasTarget();
+    return frontHasTarget() && sideHasTarget();
   }
 
   // APRIL TAG ID
@@ -83,81 +89,30 @@ public class LimelightSubsystem extends SubsystemBase {
   public Pose2d getBotPoseFront() {
     // Sets the robot orientation before getting the robot position
     LimelightHelpers.SetRobotOrientation(
-        LimelightConstants.LimelightSide.name,
-        drive.getRotation3d().getZ(),
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0);
+        LimelightConstants.LimelightFront.name,
+        drive.getRotation3d().getZ(),0.0,0.0,0.0,0.0,0.0);
 
     // If theres no april tag seen return null
-    if (LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name)
-                .pose
-                .getX()
-            == 0.0
-        && LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name)
-                .pose
-                .getY()
-            == 0.0) {
+    if (LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name).pose.getX() == 0.0
+        && LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name).pose.getY() == 0.0) {
       return null;
     }
 
     return LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name).pose;
   }
 
-  public Pose2d getBotPoseBack() {
+  public Pose2d getBotPoseSide() {
     // Sets the robot orientation before getting the robot position
     LimelightHelpers.SetRobotOrientation(
         LimelightConstants.LimelightSide.name,
-        drive.getRotation3d().getZ(),
-        0.0,
-        0.0,
-        0.0,
-        0.0,
-        0.0);
+        drive.getRotation3d().getZ(),0.0, 0.0,0.0,0.0,0.0);
 
     // If theres no april tag seen return null
-    if (LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightSide.name)
-                .pose
-                .getX()
-            == 0.0
-        && LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightSide.name)
-                .pose
-                .getY()
-            == 0.0) {
+    if (LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightSide.name).pose.getX() == 0.0
+        && LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightSide.name).pose.getY() == 0.0) {
       return null;
     }
-
     return LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightSide.name).pose;
-  }
-
-  // Interpolates (averages) the front and back camera positions
-  public Pose2d getBotPoseInterpolated() {
-    if (backHasTarget() && frontHasTarget()) {
-      // If both cameras have a target, interpolate using the front camera robot pose as the base
-      return this.getBotPoseFront().interpolate(getBotPoseBack(), 0.5);
-    } else if (backHasTarget()) {
-      // If the only the back camera has a target, return the back camera's robot position
-      return this.getBotPoseBack();
-    } else {
-      // If only the front camera has a target, return the front camera's robot position
-      return this.getBotPoseFront();
     }
   }
 
-  //   // INIT
-  //   public void robotInit() {
-  //     // Sets up a camera server to display the two limelights stream on SmartDashboard (or
-  // Elastic
-  // if {
-  //     // ur using that)
-  //     String limelightFrontUrl = LimelightConstants.LimelightFront.streamIp;
-  //     HttpCamera limelightFrontCam = new HttpCamera("Limelight", limelightFrontUrl);
-  //     CameraServer.startAutomaticCapture(limelightFrontCam);
-
-  //     String limelightSideUrl = LimelightConstants.LimelightSide.streamIp;
-  //     HttpCamera limelightSideCam = new HttpCamera("Limelight 2", limelightSideUrl);
-  //     CameraServer.startAutomaticCapture(limelightSideCam);
-  //   }
-}
