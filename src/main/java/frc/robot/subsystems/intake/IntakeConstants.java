@@ -56,7 +56,7 @@ public class IntakeConstants {
     intakeConfig.TorqueCurrent.PeakForwardTorqueCurrent = 40;
     intakeConfig.TorqueCurrent.PeakReverseTorqueCurrent = -40;
 
-    intakeConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive; // Positive intake
+    intakeConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive; // Positive intake
     intakeConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
   }
 

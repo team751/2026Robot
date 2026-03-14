@@ -3,10 +3,8 @@ package frc.robot.subsystems.intake;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.climber.ClimberConstants;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
@@ -23,22 +21,19 @@ public class ExtenderSubsystem extends SubsystemBase {
   /* Control Signals */
   private final VoltageOut extenderControl = new VoltageOut(0);
 
-  private final ProfiledPIDController extenderPID = new ProfiledPIDController(0.25, 0.0, 0.0, new Constraints(20.0, 10.0));
+  private final PIDController extenderPID = new PIDController(0.25, 0.0, 0.0);//, new Constraints(20.0, 10.0));
 
   DigitalInput frontLeftLimit = new DigitalInput(IntakeConstants.FrontLeftLimitID);
   DigitalInput backLeftLimit = new DigitalInput(IntakeConstants.BackLeftLimitID);
   DigitalInput frontRightLimit = new DigitalInput(IntakeConstants.FrontRightLimitID);
   DigitalInput backRightLimit = new DigitalInput(IntakeConstants.BackRightLimitID);
 
-  private double m_lastTimestamp = Timer.getFPGATimestamp();
-  private double deltaTime = 0.02;
-
   /* State Machine Logic */
   private enum ExtenderState {
     EXTENDED,
     RETRACTED,
     EXTENDING,
-    RETRACTING
+    RETRACTING,
   }
 
   private ExtenderState state = ExtenderState.RETRACTED;
@@ -55,9 +50,6 @@ public class ExtenderSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    double now = Timer.getFPGATimestamp();
-    deltaTime = now - m_lastTimestamp;
-    m_lastTimestamp = now;
     double motorOutput = 0;
     switch (state) {
       case EXTENDING -> motorOutput = calculateMotorControl(IntakeConstants.extenderLength + 5);
@@ -109,12 +101,8 @@ public class ExtenderSubsystem extends SubsystemBase {
     }else if (isFullyRetracted()) {
       estimatedExtension = 0.0;
     }else{
-      estimatedExtension += extenderMotor.getVelocity().getValueAsDouble() * IntakeConstants.extenderGearRatio * deltaTime;
+      estimatedExtension += extenderMotor.getVelocity().getValueAsDouble() * IntakeConstants.extenderGearRatio * 0.02; // 0.02 is the loop time in seconds
     }
-  }
-
-  private boolean atPosition(double target) {
-    return Math.abs(estimatedExtension - target) < 1.0; // 1 cm tolerance
   }
 
   private boolean isFullyExtended() {

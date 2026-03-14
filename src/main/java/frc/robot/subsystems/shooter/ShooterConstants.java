@@ -11,8 +11,8 @@ import frc.robot.util.Constants;
 
 public class ShooterConstants {
   // TODO: Set current limits and tune the motors. also name/find the canbus to put the motors on
-  public static double flywheelSpeed = 10; // 12
-  public static double transferVoltage = 2;
+  public static double flywheelSpeed = 35; // 12
+  public static double transferVoltage = 4;
   public static double slowPercent = 0.5;
 
   public static final CTREConfig<TalonFX, TalonFXConfiguration> flywheelMotorConfig =
@@ -41,7 +41,7 @@ public class ShooterConstants {
     flywheelConfig.Slot0.kV = 0.13; //
     flywheelConfig.Slot0.kG = 0; // Don't touch
 
-    flywheelConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    flywheelConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     flywheelConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
     // flywheelConfig.CurrentLimits.StatorCurrentLimit = 120;
@@ -93,7 +93,7 @@ public class ShooterConstants {
       shooterTransferConfig.Slot0.kV = 0.0;
       shooterTransferConfig.Slot0.kG = 0.0;
 
-      shooterTransferConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+      shooterTransferConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
       shooterTransferConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
       // just copy from above 
   }

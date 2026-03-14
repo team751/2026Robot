@@ -62,11 +62,13 @@ public class ShooterSubsystem extends SubsystemBase {
       unsetAllRequests();
 
       switch (state) {
-        case IDLE -> setShooterMotor(0);
+        case IDLE -> setShooterSpeed(0,0);
         case SLOWSPIN -> setShooterMotor(ShooterConstants.flywheelSpeed * ShooterConstants.slowPercent);
         case SPINNING -> setShooterSpeed(ShooterConstants.flywheelSpeed, ShooterConstants.transferVoltage);
       }
     }
+    SmartDashboard.putNumber("Shooter/ShooterSpeed", flywheelMotor.getVelocity().getValueAsDouble());
+    
   }
 
   /**Runs just the main flywheel motor */
