@@ -132,20 +132,20 @@ public class ControlBoard {
     // TODO: old shooter bindings were for testing purposes. we gotta make entirely new ones
 
     /* Intake */
-    controller.leftTrigger.whileTrue(
+    controller.rightTrigger.whileTrue(
         new StartEndCommand(
             () -> IntakeSubsystem.getInstance().requestIntaking(),
             () -> IntakeSubsystem.getInstance().requestIdle()));
-    controller.leftTrigger.whileTrue(
+    controller.rightTrigger.whileTrue(
         new StartEndCommand(() -> preciseControl = true, () -> preciseControl = false)
             .withName("Precise Control Toggle")); // Fight me owen
 
-    controller.rightTrigger.whileTrue(
+    controller.leftTrigger.whileTrue(
       new StartEndCommand(
             () -> ShooterSubsystem.getInstance().requestShoot(),
             () -> ShooterSubsystem.getInstance().requestIdle()));
 
-    controller.rightTrigger.whileTrue(
+    controller.leftTrigger.whileTrue(
       new StartEndCommand(
             () -> TransferSubsystem.getInstance().requestTransferring(),
             () -> TransferSubsystem.getInstance().requestIdle()));
