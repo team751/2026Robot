@@ -136,6 +136,10 @@ public class ControlBoard {
         new StartEndCommand(
             () -> IntakeSubsystem.getInstance().requestIntaking(),
             () -> IntakeSubsystem.getInstance().requestIdle()));
+    controller.leftTrigger.whileTrue(
+        new StartEndCommand(() -> preciseControl = true, () -> preciseControl = false)
+            .withName("Precise Control Toggle")); // Fight me owen
+
     controller.rightTrigger.whileTrue(
       new StartEndCommand(
             () -> ShooterSubsystem.getInstance().requestShoot(),
@@ -150,6 +154,12 @@ public class ControlBoard {
         new StartEndCommand(
             () -> IntakeSubsystem.getInstance().requestSpitting(),
             () -> IntakeSubsystem.getInstance().requestIdle()));
+    controller.rightJoystickButton.whileTrue(
+        new StartEndCommand(() -> axisAlign = true, () -> axisAlign = false)
+            .withName("Axis Align Toggle"));
+    controller.leftJoystickButton.whileTrue(
+        new StartEndCommand(() -> axisAlign = true, () -> axisAlign = false)
+            .withName("Axis Align Toggle"));
     controller.dLeft.whileTrue(
         new InstantCommand(() -> ExtenderSubsystem.getInstance().requestExtension()));
     controller.dRight.whileTrue(

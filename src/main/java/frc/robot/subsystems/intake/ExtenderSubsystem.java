@@ -6,6 +6,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.math.controller.PIDController;
 
 public class ExtenderSubsystem extends SubsystemBase {
   private static ExtenderSubsystem instance;
@@ -96,17 +97,14 @@ public class ExtenderSubsystem extends SubsystemBase {
       estimatedExtension = IntakeConstants.extenderLength;
     } else if (isFullyRetracted()) {
       estimatedExtension = 0.0;
-    } else {
-      estimatedExtension +=
-          extenderMotor.getVelocity().getValueAsDouble()
-              * IntakeConstants.extenderGearRatio
-              * 0.02; // 0.02 is the loop time in seconds
+    }else{
+      estimatedExtension += extenderMotor.getVelocity().getValueAsDouble() * IntakeConstants.extenderGearRatio * 0.02; // 0.02 is the loop time in seconds
     }
   }
 
   public boolean isFullyExtended() {
     return backLeftLimit.get() || backRightLimit.get();
-  }
+} 
 
   public boolean isFullyRetracted() {
     return frontLeftLimit.get() || frontRightLimit.get();
