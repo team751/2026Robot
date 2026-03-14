@@ -114,4 +114,14 @@ public class ExtenderSubsystem extends SubsystemBase {
     requestedExtending = false;
     requestedRetracting = false;
   }
+
+  /** Returns true when the extender is fully extended (back limit switches triggered). */
+  public boolean isAtExtendLimit() {
+    return backLeftLimit.get() || backRightLimit.get();
+  }
+
+  /** Returns true when the extender is fully retracted (front limit switches triggered). */
+  public boolean isAtRetractLimit() {
+    return frontLeftLimit.get() || frontRightLimit.get();
+  }
 }
