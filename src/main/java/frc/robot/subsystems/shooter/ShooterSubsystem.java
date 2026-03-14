@@ -5,7 +5,6 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -71,8 +70,7 @@ public class ShooterSubsystem extends SubsystemBase {
         case IDLE -> setShooterSpeed(0, 0);
         case SLOWSPIN -> setShooterMotor(
             ShooterConstants.flywheelSpeed * ShooterConstants.slowPercent);
-        case SPINNING -> setShooterSpeed(
-            calculateShooterSpeed(), ShooterConstants.transferVoltage);
+        case SPINNING -> setShooterSpeed(calculateShooterSpeed(), ShooterConstants.transferVoltage);
       }
     }
 
@@ -134,9 +132,10 @@ public class ShooterSubsystem extends SubsystemBase {
     if (!canShoot()) {
       return 0.0;
     }
-    
+
     double distanceCM = getRobotDistanceFromHub();
-    return (distanceCM - ShooterConstants.shooterDistanceCurveYIntercept) / ShooterConstants.shooterDistanceCurveSlope;
+    return (distanceCM - ShooterConstants.shooterDistanceCurveYIntercept)
+        / ShooterConstants.shooterDistanceCurveSlope;
   }
 
   public void requestIdle() {
