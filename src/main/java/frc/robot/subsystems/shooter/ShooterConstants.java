@@ -14,6 +14,11 @@ public class ShooterConstants {
   public static double transferVoltage = 2; // Volts
   public static double slowPercent = 0.5; // Percent 0.0-1.0
 
+  public static final double shooterDistanceCurveYIntercept = -384.0; // RPM at 0 distance
+  public static final double shooterDistanceCurveSlope = 16.8; // RPM per cm
+  public static final double minShootingDistance = 50.0; // cm, distance at which to use minimum shooter speed
+  public static final double maxShootingDistance = 600.0; // cm, distance at which to use maximum shooter speed
+
   public static final CTREConfig<TalonFX, TalonFXConfiguration> flywheelMotorConfig =
       new CTREConfig<>(TalonFXConfiguration::new);
 

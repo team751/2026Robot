@@ -195,13 +195,10 @@ public class ControlBoard {
 
     /* Extender */
     InstantCommand extenderExtend =
-        new InstantCommand(() -> ExtenderSubsystem.getInstance().requestExtending());
+        new InstantCommand(() -> ExtenderSubsystem.getInstance().requestExtension());
 
     InstantCommand extenderRetract =
-        new InstantCommand(() -> ExtenderSubsystem.getInstance().requestRetracting());
-
-    InstantCommand extenderIdle =
-        new InstantCommand(() -> ExtenderSubsystem.getInstance().requestIdle());
+        new InstantCommand(() -> ExtenderSubsystem.getInstance().requestRetraction());
 
     /* Transfer */
     StartEndCommand transfer =
@@ -240,20 +237,20 @@ public class ControlBoard {
     // /* Transfer */
     // controller.dLeft.whileTrue(transfer);
 
-    // controller.dRight.whileTrue(transferReverse);
-    // /* Extender */
-    // controller.dDown.whileTrue(extenderRetract);
+    //controller.dRight.whileTrue(transferReverse);
+    /* Extender */
+    controller.dDown.whileTrue(extenderRetract);
 
-    // controller.dUp.whileTrue(extenderExtend);
+    controller.dUp.whileTrue(extenderExtend);
     // /* Intake */
     // controller.squareButton.whileTrue(runSpitting);
 
     // controller.rightTrigger.whileTrue(runIntaking);
 
-    controller.dUp.onTrue(shootSpeedUp);
-    controller.dDown.onTrue(shootSpeedDown);
-    controller.dLeft.onTrue(setSpeed30);
-    controller.dRight.onTrue(resetSpeed);
+    // controller.dUp.onTrue(shootSpeedUp);
+    // controller.dDown.onTrue(shootSpeedDown);
+    // controller.dLeft.onTrue(setSpeed30);
+    // controller.dRight.onTrue(resetSpeed);
 
     controller.rightTrigger.whileTrue(transfer);
 

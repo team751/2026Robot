@@ -5,8 +5,12 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
+
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.drive.SwerveSubsystem;
+import frc.robot.util.FieldConstants;
 
 public class ShooterSubsystem extends SubsystemBase {
   private static ShooterSubsystem instance;
@@ -68,7 +72,7 @@ public class ShooterSubsystem extends SubsystemBase {
         case SLOWSPIN -> setShooterMotor(
             ShooterConstants.flywheelSpeed * ShooterConstants.slowPercent);
         case SPINNING -> setShooterSpeed(
-            ShooterConstants.flywheelSpeed, ShooterConstants.transferVoltage);
+            calculateShooterSpeed(), ShooterConstants.transferVoltage);
       }
     }
 
@@ -111,6 +115,28 @@ public class ShooterSubsystem extends SubsystemBase {
   private void unsetAllRequests() {
     requestedIdle = false;
     requestedShoot = false;
+  }
+
+  private double getRobotDistanceFromHub() {
+    SwerveSubsystem swerve = SwerveSubsystem.getInstance();
+    Pose2d hubPose = FieldConstants.getAllianceHub();
+    Pose2d robotPose = swerve.getPose();
+    return 100 * Math.hypot(hubPose.getX() - robotPose.getX(), hubPose.getY() - robotPose.getY());
+  }
+
+  private boolean canShoot() {
+    double distanceCM = getRobotDistanceFromHub();
+    return distanceCM >= ShooterConstants.minShootingDistance
+        && distanceCM <= ShooterConstants.maxShootingDistance;
+  }
+
+  private double calculateShooterSpeed() {
+    if (!canShoot()) {
+      return 0.0;
+    }
+    
+    double distanceCM = getRobotDistanceFromHub();
+    return (distanceCM - ShooterConstants.shooterDistanceCurveYIntercept) / ShooterConstants.shooterDistanceCurveSlope;
   }
 
   public void requestIdle() {
