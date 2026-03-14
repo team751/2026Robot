@@ -26,7 +26,6 @@ import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.lib.TunableParameter;
@@ -47,9 +46,9 @@ public class Robot extends TimedRobot {
   private final ControlBoard controlBoard;
   private final CommandScheduler scheduler;
   private SwerveSubsystem swerve;
+  private RobotContainer robotContainer;
 
   private Command autonomousCommand;
-  private SendableChooser<Command> autoChooser;
 
   public Robot() {
     // Odometry.getInstance();
@@ -72,6 +71,7 @@ public class Robot extends TimedRobot {
     for (int port = 5800; port <= 5809; port++) {
       PortForwarder.add(port, "limelight.local", port);
     }
+    robotContainer = new RobotContainer();
   }
 
   @Override
@@ -102,7 +102,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    autonomousCommand = autoChooser.getSelected();
+    autonomousCommand = robotContainer.getAutonomousCommand();
     if (autonomousCommand != null) {
       autonomousCommand.schedule();
     }
