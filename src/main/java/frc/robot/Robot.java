@@ -32,6 +32,7 @@ import frc.lib.TunableParameter;
 import frc.robot.subsystems.drive.SwerveSubsystem;
 // import frc.robot.subsystems.vision.LimelightSubsystem;
 import frc.robot.util.ControlBoard;
+import frc.robot.subsystems.drive.Odometry;
 
 public class Robot extends TimedRobot {
   /** CANBus only used for climber */
@@ -51,7 +52,7 @@ public class Robot extends TimedRobot {
   private Command autonomousCommand;
 
   public Robot() {
-    // Odometry.getInstance();
+    Odometry.getInstance();
     scheduler = CommandScheduler.getInstance();
     swerve = SwerveSubsystem.getInstance();
 
