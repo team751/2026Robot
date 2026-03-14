@@ -39,7 +39,7 @@ public class RobotContainer {
             new RunCommand(
                     () -> ExtenderSubsystem.getInstance().requestExtension(),
                     ExtenderSubsystem.getInstance())
-                .until(() -> ExtenderSubsystem.getInstance().isAtExtendLimit()),
+                .until(() -> ExtenderSubsystem.getInstance().isFullyExtended()),
             new RunCommand(
                 () -> IntakeSubsystem.getInstance().requestIntaking(),
                 IntakeSubsystem.getInstance()));
@@ -48,7 +48,6 @@ public class RobotContainer {
             () -> {
               intake.cancel();
               IntakeSubsystem.getInstance().requestIdle();
-              ExtenderSubsystem.getInstance().requestIdle();
             });
 
     Command transfer =
@@ -80,15 +79,9 @@ public class RobotContainer {
 
     Command retract =
         new RunCommand(
-                () -> ExtenderSubsystem.getInstance().requestRetracting(),
+                () -> ExtenderSubsystem.getInstance().requestRetraction(),
                 ExtenderSubsystem.getInstance())
-            .until(() -> ExtenderSubsystem.getInstance().isAtRetractLimit());
-    InstantCommand stopRetract =
-        new InstantCommand(
-            () -> {
-              retract.cancel();
-              ExtenderSubsystem.getInstance().requestIdle();
-            });
+            .until(() -> ExtenderSubsystem.getInstance().isFullyRetracted());
 
     /*Shooter */
     NamedCommands.registerCommand("Shoot", shoot);
@@ -100,7 +93,6 @@ public class RobotContainer {
     NamedCommands.registerCommand("StopSpit", stopSpit);
     /*Extender */
     NamedCommands.registerCommand("Retract", retract);
-    NamedCommands.registerCommand("StopRetract", stopRetract);
     /*Transfer */
     NamedCommands.registerCommand("Transfer", transfer);
     NamedCommands.registerCommand("StopTransfer", stopTransfer);
