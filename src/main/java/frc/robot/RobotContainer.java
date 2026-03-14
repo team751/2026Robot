@@ -11,7 +11,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.StartEndCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.subsystems.intake.ExtenderSubsystem;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.transfer.TransferSubsystem;
@@ -21,34 +24,86 @@ public class RobotContainer {
 
   public RobotContainer() {
     // COMMANDS FOR NAMED COMMANDS
-    // TODO: Make the commands end auton
-    StartEndCommand shoot =
-        new StartEndCommand(
-            () -> ShooterSubsystem.getInstance().requestShoot(),
-            () -> ShooterSubsystem.getInstance().requestIdle());
-    InstantCommand stopShoot = new InstantCommand(() -> shoot.cancel());
+    Command spit =
+        new RunCommand(
+            () -> IntakeSubsystem.getInstance().requestSpitting(), IntakeSubsystem.getInstance());
+    InstantCommand stopSpit =
+        new InstantCommand(
+            () -> {
+              spit.cancel();
+              IntakeSubsystem.getInstance().requestIdle();
+            });
 
-    StartEndCommand intake =
-        new StartEndCommand(
-            () -> IntakeSubsystem.getInstance().requestIntaking(),
-            () -> IntakeSubsystem.getInstance().requestIdle());
-    InstantCommand stopIntake = new InstantCommand(() -> intake.cancel());
+    Command intake =
+        new SequentialCommandGroup(
+            new RunCommand(
+                    () -> ExtenderSubsystem.getInstance().requestExtension(),
+                    ExtenderSubsystem.getInstance())
+                .until(() -> ExtenderSubsystem.getInstance().isAtExtendLimit()),
+            new RunCommand(
+                () -> IntakeSubsystem.getInstance().requestIntaking(),
+                IntakeSubsystem.getInstance()));
+    InstantCommand stopIntake =
+        new InstantCommand(
+            () -> {
+              intake.cancel();
+              IntakeSubsystem.getInstance().requestIdle();
+              ExtenderSubsystem.getInstance().requestIdle();
+            });
 
-    StartEndCommand transfer =
-        new StartEndCommand(
+    Command transfer =
+        new RunCommand(
             () -> TransferSubsystem.getInstance().requestTransferring(),
-            () -> TransferSubsystem.getInstance().requestIdle());
-    InstantCommand stopTransfer = new InstantCommand(() -> transfer.cancel());
+            TransferSubsystem.getInstance());
+    InstantCommand stopTransfer =
+        new InstantCommand(
+            () -> {
+              transfer.cancel();
+              TransferSubsystem.getInstance().requestIdle();
+            });
+
+    Command shoot =
+        new ParallelCommandGroup(
+            new RunCommand(
+                () -> ShooterSubsystem.getInstance().requestShoot(),
+                ShooterSubsystem.getInstance()),
+            new RunCommand(
+                () -> TransferSubsystem.getInstance().requestTransferring(),
+                TransferSubsystem.getInstance()));
+    InstantCommand stopShoot =
+        new InstantCommand(
+            () -> {
+              shoot.cancel();
+              ShooterSubsystem.getInstance().requestIdle();
+              TransferSubsystem.getInstance().requestIdle();
+            });
+
+    Command retract =
+        new RunCommand(
+                () -> ExtenderSubsystem.getInstance().requestRetracting(),
+                ExtenderSubsystem.getInstance())
+            .until(() -> ExtenderSubsystem.getInstance().isAtRetractLimit());
+    InstantCommand stopRetract =
+        new InstantCommand(
+            () -> {
+              retract.cancel();
+              ExtenderSubsystem.getInstance().requestIdle();
+            });
 
     /*Shooter */
-    NamedCommands.registerCommand("shoot", shoot);
-    NamedCommands.registerCommand("stopShoot", stopShoot);
+    NamedCommands.registerCommand("Shoot", shoot);
+    NamedCommands.registerCommand("StopShoot", stopShoot);
     /*Intake */
-    NamedCommands.registerCommand("intake", intake);
-    NamedCommands.registerCommand("stopIntake", stopIntake);
+    NamedCommands.registerCommand("Intake", intake);
+    NamedCommands.registerCommand("StopIntake", stopIntake);
+    NamedCommands.registerCommand("Spit", spit);
+    NamedCommands.registerCommand("StopSpit", stopSpit);
+    /*Extender */
+    NamedCommands.registerCommand("Retract", retract);
+    NamedCommands.registerCommand("StopRetract", stopRetract);
     /*Transfer */
-    NamedCommands.registerCommand("transfer", transfer);
-    NamedCommands.registerCommand("stopTransfer", stopTransfer);
+    NamedCommands.registerCommand("Transfer", transfer);
+    NamedCommands.registerCommand("StopTransfer", stopTransfer);
 
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
