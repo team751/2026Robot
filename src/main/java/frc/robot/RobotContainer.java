@@ -37,7 +37,7 @@ public class RobotContainer {
     Command intake =
         new SequentialCommandGroup(
             new RunCommand(
-                    () -> ExtenderSubsystem.getInstance().requestExtending(),
+                    () -> ExtenderSubsystem.getInstance().requestExtension(),
                     ExtenderSubsystem.getInstance())
                 .until(() -> ExtenderSubsystem.getInstance().isAtExtendLimit()),
             new RunCommand(
