@@ -149,6 +149,18 @@ public class ControlBoard {
       new StartEndCommand(
             () -> TransferSubsystem.getInstance().requestTransferring(),
             () -> TransferSubsystem.getInstance().requestIdle()));
+    controller.dDown.whileTrue(
+      new StartEndCommand(
+            () -> TransferSubsystem.getInstance().requestReversing(),
+            () -> TransferSubsystem.getInstance().requestIdle()));
+    controller.dDown.whileTrue(
+      new StartEndCommand(
+            () -> TransferSubsystem.getInstance().requestReversing(),
+            () -> TransferSubsystem.getInstance().requestIdle()));
+    controller.dDown.whileTrue(
+      new StartEndCommand(
+        () -> ShooterSubsystem.getInstance().requestSpit(),
+        () -> ShooterSubsystem.getInstance().requestSpit()));                      
 
     controller.squareButton.whileTrue(
         new StartEndCommand(

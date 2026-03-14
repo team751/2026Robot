@@ -13,6 +13,7 @@ public class ShooterConstants {
   public static double flywheelSpeed = 27; // Rotations per Second
   public static double transferVoltage = 2; // Volts
   public static double slowPercent = 0.5; // Percent 0.0-1.0
+  public static double transferSpitVoltage = -2;
 
   public static final double shooterDistanceCurveYIntercept = -384.0; // RPM at 0 distance
   public static final double shooterDistanceCurveSlope = 16.8; // RPM per cm

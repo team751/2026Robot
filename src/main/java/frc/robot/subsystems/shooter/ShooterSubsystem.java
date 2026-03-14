@@ -32,6 +32,7 @@ public class ShooterSubsystem extends SubsystemBase {
   private enum ShooterState {
     IDLE,
     SLOWSPIN,
+    REVERSING,
     SPINNING
   }
 
@@ -40,6 +41,7 @@ public class ShooterSubsystem extends SubsystemBase {
   private boolean requestedIdle = false;
   private boolean requestedSlow = false;
   private boolean requestedShoot = false;
+  private boolean requestedReversing = false;
 
   public static ShooterSubsystem getInstance() {
     if (instance == null) instance = new ShooterSubsystem();
@@ -59,6 +61,7 @@ public class ShooterSubsystem extends SubsystemBase {
     ShooterState nextState = state;
     if (requestedIdle) nextState = ShooterState.IDLE;
     else if (requestedSlow) nextState = ShooterState.SLOWSPIN;
+    else if (requestedReversing) nextState = ShooterState.REVERSING;
     else if (requestedShoot) nextState = ShooterState.SPINNING;
 
     if (nextState != state) {
@@ -69,6 +72,7 @@ public class ShooterSubsystem extends SubsystemBase {
         case IDLE -> setShooterSpeed(0, 0);
         case SLOWSPIN -> setShooterMotor(
             ShooterConstants.flywheelSpeed * ShooterConstants.slowPercent);
+        case REVERSING -> setTransferMotor(ShooterConstants.transferSpitVoltage);    
         case SPINNING -> setShooterSpeed(calculateShooterSpeed(), ShooterConstants.transferVoltage);
       }
     }
@@ -104,7 +108,7 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public void resetSpeed() {
-    ShooterConstants.flywheelSpeed = 49;
+    ShooterConstants.flywheelSpeed = 27;
   }
 
   private void unsetAllRequests() {
@@ -143,5 +147,9 @@ public class ShooterSubsystem extends SubsystemBase {
   public void requestShoot() {
     unsetAllRequests();
     requestedShoot = true;
+  }
+  public void requestSpit() {
+    unsetAllRequests();
+    requestedReversing = true;
   }
 }
