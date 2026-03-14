@@ -7,10 +7,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-<<<<<<< HEAD
-=======
 import edu.wpi.first.math.controller.PIDController;
->>>>>>> dbb5fc37dce5161aed8c9221aea8fbaccc95efaa
 
 public class ExtenderSubsystem extends SubsystemBase {
   private static ExtenderSubsystem instance;
