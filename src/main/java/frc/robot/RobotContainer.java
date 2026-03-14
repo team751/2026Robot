@@ -78,9 +78,6 @@ public class RobotContainer {
               TransferSubsystem.getInstance().requestIdle();
             });
 
-    /*Shooter */
-    NamedCommands.registerCommand("Shoot", shoot);
-    NamedCommands.registerCommand("StopShoot", stopShoot);
     Command retract =
         new RunCommand(
                 () -> ExtenderSubsystem.getInstance().requestRetracting(),
@@ -93,6 +90,9 @@ public class RobotContainer {
               ExtenderSubsystem.getInstance().requestIdle();
             });
 
+    /*Shooter */
+    NamedCommands.registerCommand("Shoot", shoot);
+    NamedCommands.registerCommand("StopShoot", stopShoot);
     /*Intake */
     NamedCommands.registerCommand("Intake", intake);
     NamedCommands.registerCommand("StopIntake", stopIntake);
