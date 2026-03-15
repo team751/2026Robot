@@ -125,56 +125,55 @@ public class ControlBoard {
 
   /* Driver bindings */
   private void configureDriverBindings(PS5Controller controller) {
-    /* Shooter */
-    // We have way to many shooter buttons. We can probably cut some and also make more efficient
-    // bindings.
-    // TODO: old shooter bindings were for testing purposes. we gotta make entirely new ones
-
     /* Intake */
-    controller.rightTrigger.whileTrue(
+    controller.leftTrigger.whileTrue(
         new StartEndCommand(
             () -> IntakeSubsystem.getInstance().requestIntaking(),
             () -> IntakeSubsystem.getInstance().requestIdle()));
-    controller.rightTrigger.whileTrue(
+    controller.leftTrigger.whileTrue(
         new StartEndCommand(() -> preciseControl = true, () -> preciseControl = false)
             .withName("Precise Control Toggle")); // Fight me owen
-
-    controller.leftTrigger.whileTrue(
-        new StartEndCommand(
-            () -> ShooterSubsystem.getInstance().requestShoot(),
-            () -> ShooterSubsystem.getInstance().requestIdle()));
-
-    controller.leftTrigger.whileTrue(
-        new StartEndCommand(
-            () -> TransferSubsystem.getInstance().requestTransferring(),
-            () -> TransferSubsystem.getInstance().requestIdle()));
-    controller.dDown.whileTrue(
-        new StartEndCommand(
-            () -> TransferSubsystem.getInstance().requestReversing(),
-            () -> TransferSubsystem.getInstance().requestIdle()));
-    controller.dDown.whileTrue(
-        new StartEndCommand(
-            () -> TransferSubsystem.getInstance().requestReversing(),
-            () -> TransferSubsystem.getInstance().requestIdle()));
-    controller.dDown.whileTrue(
-        new StartEndCommand(
-            () -> ShooterSubsystem.getInstance().requestSpit(),
-            () -> ShooterSubsystem.getInstance().requestSpit()));
 
     controller.squareButton.whileTrue(
         new StartEndCommand(
             () -> IntakeSubsystem.getInstance().requestSpitting(),
             () -> IntakeSubsystem.getInstance().requestIdle()));
+
+    controller.dUp.whileTrue(
+        new InstantCommand(() -> ExtenderSubsystem.getInstance().requestExtension()));
+
+    controller.dDown.whileTrue(
+        new InstantCommand(() -> ExtenderSubsystem.getInstance().requestRetraction()));
+
+    /* Shooter */
+    controller.rightTrigger.whileTrue(
+        new StartEndCommand(
+            () -> ShooterSubsystem.getInstance().requestShoot(),
+            () -> ShooterSubsystem.getInstance().requestIdle()));
+    controller.rightTrigger.whileTrue(
+        new StartEndCommand(
+            () -> TransferSubsystem.getInstance().requestTransferring(),
+            () -> TransferSubsystem.getInstance().requestIdle()));
+
+    /* Transfer */
+    controller.dLeft.whileTrue(
+        new StartEndCommand(
+            () -> TransferSubsystem.getInstance().requestReversing(),
+            () -> TransferSubsystem.getInstance().requestIdle()));
+    controller.dLeft.whileTrue(
+        new StartEndCommand(
+            () -> ShooterSubsystem.getInstance().requestSpit(),
+            () -> ShooterSubsystem.getInstance().requestSpit()));
+
+            
     controller.rightJoystickButton.whileTrue(
         new StartEndCommand(() -> axisAlign = true, () -> axisAlign = false)
             .withName("Axis Align Toggle"));
+
     controller.leftJoystickButton.whileTrue(
         new StartEndCommand(() -> axisAlign = true, () -> axisAlign = false)
             .withName("Axis Align Toggle"));
-    controller.dLeft.whileTrue(
-        new InstantCommand(() -> ExtenderSubsystem.getInstance().requestExtension()));
-    controller.dRight.whileTrue(
-        new InstantCommand(() -> ExtenderSubsystem.getInstance().requestRetraction()));
+
     controller.circleButton.onTrue(new InstantCommand(() -> drive.setRobotRotationByAlliance()));
 
     /* Swerve */
