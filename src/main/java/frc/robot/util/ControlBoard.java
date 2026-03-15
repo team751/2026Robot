@@ -165,7 +165,6 @@ public class ControlBoard {
             () -> ShooterSubsystem.getInstance().requestSpit(),
             () -> ShooterSubsystem.getInstance().requestSpit()));
 
-            
     controller.rightJoystickButton.whileTrue(
         new StartEndCommand(() -> axisAlign = true, () -> axisAlign = false)
             .withName("Axis Align Toggle"));
