@@ -38,8 +38,7 @@ public class JiggleCommand extends Command {
       extender.requestRetract();
       transfer.requestTransfer();
       shooter.requestShoot();
-
-    } else {
+    } else if (extender.isRetracted()) {
       extender.requestExtend();
       transfer.requestReverse();
       shooter.requestSpit();
@@ -50,6 +49,8 @@ public class JiggleCommand extends Command {
   public void end(boolean interrupted) {
     intake.requestIdle();
     extender.requestExtend();
+    shooter.requestIdle();
+    transfer.requestIdle();
   }
 
   @Override
