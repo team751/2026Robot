@@ -142,6 +142,7 @@ Dual TalonFX motors (top/bottom). States: IDLE/TRANSFER/REVERSE. VoltageOut cont
 | Square (hold) | Spit intake |
 | D-pad up (hold) | Extend extender |
 | D-pad down (hold) | Retract extender |
+| Cross (hold) | JiggleCommand (unstick game pieces) |
 | Right trigger (hold) | Shoot + transfer |
 | D-pad left (hold) | Reverse transfer + shooter spit |
 | Right/Left stick press (hold) | Axis align to nearest trench |
@@ -153,9 +154,8 @@ Dual TalonFX motors (top/bottom). States: IDLE/TRANSFER/REVERSE. VoltageOut cont
 |-------|--------|
 | Left stick press | Reset rotation to alliance perspective |
 | Square (hold) | Auto aim toward alliance hub |
-| Right stick press (hold) | Axis align to nearest trench |
 
-*Note: Climber bindings are currently commented out in ControlBoard.java.*
+*Note: Climber bindings and operator axis align are currently commented out in ControlBoard.java.*
 
 ### Drive Request Config
 
@@ -177,6 +177,7 @@ PathPlanner-based. AutoBuilder configured in `SwerveSubsystem` constructor. `Rob
 ## Commands (`commands/`)
 
 - **IntakeCommand** — coordinates intake sequence
+- **ShootCommand** — runs ShooterSubsystem + TransferSubsystem together; both go idle on end
 - **JiggleCommand** — oscillates extender in/out while coordinating intake/transfer/shooter; used to unstick game pieces
 
 ## Simulation
