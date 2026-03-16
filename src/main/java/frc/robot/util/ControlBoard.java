@@ -16,7 +16,6 @@ import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.JiggleCommand;
 import frc.robot.commands.ShootCommand;
 import frc.robot.subsystems.Superstructure;
-// import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.drive.SwerveConstants;
 import frc.robot.subsystems.drive.SwerveSubsystem;
 import frc.robot.subsystems.intake.ExtenderSubsystem;
@@ -24,6 +23,7 @@ import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.simulation.MapSimSwerveTelemetry;
 import frc.robot.subsystems.transfer.TransferSubsystem;
+// import frc.robot.subsystems.climber.ClimberSubsystem;
 
 // TODO: Clean up the controller bindings for this
 // TODO: Fix intake commands
