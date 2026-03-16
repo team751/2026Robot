@@ -16,11 +16,11 @@
     },
     {
       "anchor": {
-        "x": 8.846935375971044,
+        "x": 8.846935375971045,
         "y": 4.00906457450565
       },
       "prevControl": {
-        "x": 9.095824026928939,
+        "x": 9.09582402692894,
         "y": 3.985518037088032
       },
       "nextControl": null,
@@ -59,7 +59,7 @@
     "rotation": 0.0
   },
   "reversed": false,
-  "folder": "Auto1RedBottomPaths",
+  "folder": null,
   "idealStartingState": {
     "velocity": 0.0,
     "rotation": 0.0

@@ -9,7 +9,7 @@
       "prevControl": null,
       "nextControl": {
         "x": 14.070881004176508,
-        "y": 4.4458590972005613
+        "y": 4.445859097200561
       },
       "isLocked": false,
       "linkedName": null
@@ -45,7 +45,7 @@
     "rotation": 0.0
   },
   "reversed": false,
-  "folder": "Auto1RedTopPaths",
+  "folder": null,
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0
