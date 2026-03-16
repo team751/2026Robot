@@ -2,7 +2,6 @@ package frc.robot.subsystems.vision;
 
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.units.Units;
-import edu.wpi.first.units.measure.Distance;
 
 /* LimelightConstants.java Info
  * This is where all the basic, and often/literally never
@@ -26,16 +25,16 @@ public class LimelightConstants {
     public static final double pipelineLatencySeconds = 0.0;
 
     // change the offset
-    public static final Distance zOffset = Units.Meters.of(0.235); // Up/Down (+ up, - down)
-    public static final Distance yOffset = Units.Meters.of(0.025); // Left/Right (+ left, -right)
-    public static final Distance xOffset =
-        Units.Meters.of(0.225); // Forward/Backward (- forward, + backward)
+    public static final double zOffset = Units.Meters.convertFrom(41.275,Units.Centimeters); // Up/Down (+ up, - down)
+    public static final double yOffset = Units.Meters.convertFrom(15.24, Units.Centimeters); // Left/Right (+ left, -right)
+    public static final double xOffset =
+        Units.Meters.convertFrom(-7.62,Units.Centimeters); // Forward/Backward (- forward, + backward)
 
     public static final Rotation3d rotationOffset =
         new Rotation3d(
             0,
-            0,
-            Units.Radians.convertFrom(0, Units.Degrees)); // Left is - and right is + (degrees)
+            Units.Radians.convertFrom(30, Units.Degrees), // Up is + and down is - (Degrees)
+            0); // Left is - and right is + (degrees)
     // TODO: also do the rotation offset. camera-relative.
   }
 
@@ -47,10 +46,9 @@ public class LimelightConstants {
     public static final String name = "limelight-side";
     public static final double pipelineLatencySeconds = 0.0;
 
-    public static final Distance zOffset = Units.Meters.of(0.2906); // Up/Down (+ up, - down)
-    public static final Distance yOffset = Units.Meters.of(0.1119); // Left/Right (+ left, -right)
-    public static final Distance xOffset =
-        Units.Meters.of(0.2539); // Forward/Backward (- forward, + backward)
+    public static final double zOffset = Units.Meters.convertFrom(29.06, Units.Centimeters); // Up/Down (+ up, - down)
+    public static final double yOffset = Units.Meters.convertFrom(11.19,Units.Centimeters); // Left/Right (+ left, -right)
+    public static final double xOffset = Units.Meters.convertFrom(25.39,Units.Centimeters); // Forward/Backward (- forward, + backward)
 
     public static final Rotation3d rotationOffset =
         new Rotation3d(

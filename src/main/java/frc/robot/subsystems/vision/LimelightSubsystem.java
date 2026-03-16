@@ -6,7 +6,6 @@ package frc.robot.subsystems.vision;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.drive.SwerveSubsystem;
@@ -45,18 +44,18 @@ public class LimelightSubsystem extends SubsystemBase {
         .getSettings()
         .withCameraOffset(
             new Pose3d(
-                LimelightConstants.LimelightFront.xOffset.in(Units.Meters),
-                LimelightConstants.LimelightFront.yOffset.in(Units.Meters),
-                LimelightConstants.LimelightFront.zOffset.in(Units.Meters),
+                LimelightConstants.LimelightFront.xOffset,
+                LimelightConstants.LimelightFront.yOffset,
+                LimelightConstants.LimelightFront.zOffset,
                 LimelightConstants.LimelightFront.rotationOffset));
 
     limelightSide
         .getSettings()
         .withCameraOffset(
             new Pose3d(
-                LimelightConstants.LimelightSide.xOffset.in(Units.Meters),
-                LimelightConstants.LimelightSide.yOffset.in(Units.Meters),
-                LimelightConstants.LimelightSide.zOffset.in(Units.Meters),
+                LimelightConstants.LimelightSide.xOffset,
+                LimelightConstants.LimelightSide.yOffset,
+                LimelightConstants.LimelightSide.zOffset,
                 LimelightConstants.LimelightSide.rotationOffset));
   }
 
