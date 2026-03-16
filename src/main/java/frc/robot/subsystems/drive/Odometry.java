@@ -58,6 +58,14 @@ public class Odometry extends SubsystemBase {
     drive.resetPose(newPose);
   }
 
+  private boolean botSideZero() {
+    return  limelights.getBotPoseSide().getX() != 0.0 && limelights.getBotPoseSide().getY() != 0.0;
+  }
+
+  private boolean botFrontZero() {
+    return limelights.getBotPoseFront().getX() != 0.0 && limelights.getBotPoseFront().getY() != 0.0;
+  }
+
   @Override
   public void periodic() {
     // Gets the current timestamp
@@ -70,13 +78,13 @@ public class Odometry extends SubsystemBase {
     SmartDashboard.putNumber("Odometry/Rotation", robotPose.getRotation().getDegrees());
 
     // Add's two vision measure ments to SwerveDrive so that they can be filtered by it
-    if (limelights.getBotPoseFront() != null) {
+    if (limelights.getBotPoseFront() != null && botFrontZero()) {
       Pose2d frontPose = limelights.getBotPoseFront();
       drive.addVisionMeasurement(
           new Pose2d(frontPose.getX(), frontPose.getY(), drive.getPose().getRotation()), time);
     }
 
-    if (limelights.getBotPoseSide() != null) {
+    if (limelights.getBotPoseSide() != null && botSideZero()) {
       Pose2d sidePose = limelights.getBotPoseSide();
       drive.addVisionMeasurement(
           new Pose2d(sidePose.getX(), sidePose.getY(), drive.getPose().getRotation()), time);
