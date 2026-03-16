@@ -36,6 +36,7 @@ public class ExtenderSubsystem extends SubsystemBase {
     RETRACTED,
     EXTENDING,
     RETRACTING,
+    JIGGLE_IN,
   }
 
   private ExtenderState state = ExtenderState.RETRACTED;
@@ -57,6 +58,7 @@ public class ExtenderSubsystem extends SubsystemBase {
           Math.max(-5.0, Math.min(5.0, calculateMotorControl(IntakeConstants.extenderLength + 8)));
       case RETRACTING -> motorOutput = Math.max(-4.0, Math.min(4.0, calculateMotorControl(-5)));
       case EXTENDED, RETRACTED -> motorOutput = 0;
+      case JIGGLE_IN -> motorOutput = -1.5;
     }
 
     setExtenderMotor(motorOutput);
@@ -65,7 +67,7 @@ public class ExtenderSubsystem extends SubsystemBase {
 
     if (state == ExtenderState.EXTENDING && isExtended()) {
       state = ExtenderState.EXTENDED;
-    } else if (state == ExtenderState.RETRACTING && isRetracted()) {
+    } else if ((state == ExtenderState.RETRACTING || state == ExtenderState.JIGGLE_IN) && isRetracted()) {
       state = ExtenderState.RETRACTED;
     }
 
@@ -118,6 +120,9 @@ public class ExtenderSubsystem extends SubsystemBase {
     state = ExtenderState.RETRACTING;
   }
 
+  public void requestJiggleIn() {
+    state = ExtenderState.JIGGLE_IN;
+  }
   public ExtenderState getState() {
     return state;
   }
