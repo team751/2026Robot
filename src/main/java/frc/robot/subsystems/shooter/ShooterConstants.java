@@ -15,7 +15,7 @@ public class ShooterConstants {
   public static double slowPercent = 0.5; // Percent 0.0-1.0
   public static double transferSpitVoltage = -2;
 
-  public static final double shooterDistanceCurveYIntercept = -405; // RPM at 0 distance
+  public static final double shooterDistanceCurveYIntercept = -420; // RPM at 0 distance
   public static final double shooterDistanceCurveSlope = 16.8; // RPM per cm
   public static final double minShootingDistance =
       50.0; // cm, distance at which to use minimum shooter speed
@@ -47,7 +47,7 @@ public class ShooterConstants {
     flywheelConfig.Slot0.kV = 0.13; //
     flywheelConfig.Slot0.kG = 0; // Don't touch
 
-    flywheelConfig.MotorOutput.ControlTimesyncFreqHz = 50;
+    flywheelConfig.MotorOutput.ControlTimesyncFreqHz = 75;
 
     flywheelConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     flywheelConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
