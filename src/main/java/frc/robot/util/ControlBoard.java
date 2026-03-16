@@ -129,13 +129,19 @@ public class ControlBoard {
   /* Driver bindings */
   private void configureDriverBindings(PS5Controller controller) {
     /* Intake */
-    controller.leftTrigger.whileTrue( new IntakeCommand(IntakeSubsystem.getInstance(), ExtenderSubsystem.getInstance()) );
+    controller.leftTrigger.whileTrue(
+        new IntakeCommand(IntakeSubsystem.getInstance(), ExtenderSubsystem.getInstance()));
 
     controller.leftTrigger.whileTrue(
         new StartEndCommand(() -> preciseControl = true, () -> preciseControl = false)
             .withName("Precise Control Toggle")); // Fight me owen
 
-    controller.crossButton.whileTrue(new JiggleCommand( IntakeSubsystem.getInstance(), ExtenderSubsystem.getInstance(), TransferSubsystem.getInstance(), ShooterSubsystem.getInstance()));
+    controller.crossButton.whileTrue(
+        new JiggleCommand(
+            IntakeSubsystem.getInstance(),
+            ExtenderSubsystem.getInstance(),
+            TransferSubsystem.getInstance(),
+            ShooterSubsystem.getInstance()));
     controller.squareButton.whileTrue(
         new StartEndCommand(
             () -> IntakeSubsystem.getInstance().requestSpit(),
@@ -146,9 +152,10 @@ public class ControlBoard {
 
     controller.dDown.whileTrue(
         new InstantCommand(() -> ExtenderSubsystem.getInstance().requestRetract()));
-    
+
     /* Shooter */
-    controller.rightTrigger.whileTrue( new ShootCommand(ShooterSubsystem.getInstance(), TransferSubsystem.getInstance()));
+    controller.rightTrigger.whileTrue(
+        new ShootCommand(ShooterSubsystem.getInstance(), TransferSubsystem.getInstance()));
 
     /* Transfer */
     controller.dLeft.whileTrue(

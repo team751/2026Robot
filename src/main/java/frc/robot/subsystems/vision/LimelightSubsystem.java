@@ -101,8 +101,10 @@ public class LimelightSubsystem extends SubsystemBase {
         0.0);
 
     // If theres no april tag seen return null
-    if (LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name).pose == null
-        && LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name).pose == null) {
+    if (LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name).pose
+            == null
+        && LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name).pose
+            == null) {
       return null;
     }
 
@@ -121,8 +123,10 @@ public class LimelightSubsystem extends SubsystemBase {
         0.0);
 
     // If theres no april tag seen return null
-    if (LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightSide.name).pose == null
-        && LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightSide.name).pose == null) {
+    if (LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightSide.name).pose
+            == null
+        && LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightSide.name).pose
+            == null) {
       return null;
     }
     return LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightSide.name).pose;

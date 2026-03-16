@@ -59,7 +59,7 @@ public class Odometry extends SubsystemBase {
   }
 
   private boolean botSideZero() {
-    return  limelights.getBotPoseSide().getX() != 0.0 && limelights.getBotPoseSide().getY() != 0.0;
+    return limelights.getBotPoseSide().getX() != 0.0 && limelights.getBotPoseSide().getY() != 0.0;
   }
 
   private boolean botFrontZero() {
