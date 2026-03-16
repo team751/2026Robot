@@ -100,7 +100,8 @@ public class FieldConstants {
     HUB_BLUE(new Pose2d(4.5974, 4.034536, Rotation2d.fromDegrees(0)), true, ElementType.HUB),
 
     /** Red hub — scoring target on the red alliance side. */
-    HUB_RED(new Pose2d(11.938, 4.034536-0.33, Rotation2d.fromDegrees(180)), false, ElementType.HUB),
+    HUB_RED(
+        new Pose2d(11.938, 4.034536 - 0.33, Rotation2d.fromDegrees(180)), false, ElementType.HUB),
 
     // ----- TOWERS -----
 
