@@ -33,7 +33,7 @@ Robot.java (TimedRobot, 50Hz)
   │    │    ├─ ClimberSubsystem
   │    │    ├─ IntakeSubsystem
   │    │    └─ ExtenderSubsystem
-  │    └─ TransferSubsystem (in progress)
+  │    └─ TransferSubsystem
   ├─ ControlBoard (PS5 controller bindings)
   └─ TunableParameter.updateAll()
 ```
@@ -78,7 +78,7 @@ subsystem.requestIntaking();  // sets a flag
 // In periodic(): switch(state) checks flags, transitions, clears flags
 ```
 
-Used by: IntakeSubsystem (IDLE/INTAKING/SPITTING), ExtenderSubsystem (IDLE/EXTENDING/RETRACTING), Superstructure (PRE_HOME/IDLE), ShooterSubsystem (IDLE/SPINNING).
+Used by: IntakeSubsystem (IDLE/INTAKING/SPITTING), ExtenderSubsystem (IDLE/EXTENDING/RETRACTING), Superstructure (PRE_HOME/IDLE), ShooterSubsystem (IDLE/SLOWSPIN/REVERSE/SHOOT), TransferSubsystem (IDLE/TRANSFER/REVERSE).
 
 ### Superstructure Coordinator
 
@@ -123,11 +123,11 @@ Dual TalonFX motors (left/right) + 1 servo + 2 limit switches (DIO 7, 8). On `cl
 
 ### Shooter (`subsystems/shooter/`)
 
-TalonFX-based shooter with IDLE/SPINNING state machine.
+Three TalonFX motors: flywheel (main), follow (opposed follower), and a built-in transfer motor. States: IDLE/SLOWSPIN/REVERSE/SHOOT. Distance-based speed calculation via `calculateShooterSpeed()` using robot-to-hub distance. `requestSpit()` reverses only the transfer motor.
 
 ### Transfer (`subsystems/transfer/`)
 
-Dual TalonFX motors (top/bottom). Constants defined in `TransferConstants.java`. **TransferSubsystem.java is currently empty** — needs implementation.
+Dual TalonFX motors (top/bottom). States: IDLE/TRANSFER/REVERSE. VoltageOut control. Note: ShooterSubsystem also has its own internal transfer motor — these are separate mechanisms.
 
 ## Operator Controls (ControlBoard.java)
 
@@ -138,10 +138,14 @@ Dual TalonFX motors (top/bottom). Constants defined in `TransferConstants.java`.
 | Left stick | Translation (60% max speed) |
 | Right stick X | Rotation (squared for sensitivity) |
 | Right bumper (hold) | Precise mode: 25% translation, 50% rotation |
-| Right trigger (hold) | Intake |
-| Square (hold) | Spit |
-| D-pad left (hold) | Retract extender |
-| D-pad right (hold) | Extend extender |
+| Left trigger (hold) | Intake + precise mode |
+| Square (hold) | Spit intake |
+| D-pad up (hold) | Extend extender |
+| D-pad down (hold) | Retract extender |
+| Right trigger (hold) | Shoot + transfer |
+| D-pad left (hold) | Reverse transfer + shooter spit |
+| Right/Left stick press (hold) | Axis align to nearest trench |
+| Circle | Reset rotation to alliance perspective |
 
 ### Operator (Port 1, PS5)
 
@@ -150,9 +154,8 @@ Dual TalonFX motors (top/bottom). Constants defined in `TransferConstants.java`.
 | Left stick press | Reset rotation to alliance perspective |
 | Square (hold) | Auto aim toward alliance hub |
 | Right stick press (hold) | Axis align to nearest trench |
-| Left trigger (hold) | Climber up (slow) |
-| Cross (hold) | Climber down (slow) |
-| Circle | Stop climber motors |
+
+*Note: Climber bindings are currently commented out in ControlBoard.java.*
 
 ### Drive Request Config
 
@@ -169,7 +172,12 @@ WPILib Blue-origin coordinates: origin at bottom-right of Blue wall, +X toward R
 
 ## Autonomous
 
-PathPlanner-based. AutoBuilder configured in `SwerveSubsystem` constructor. Auto chooser built in `Robot.robotInit()` and scans `src/main/deploy/pathplanner/autos/*.auto` — no code changes needed for new autos.
+PathPlanner-based. AutoBuilder configured in `SwerveSubsystem` constructor. `RobotContainer.java` registers named commands for use in PathPlanner autos: `Shoot`/`StopShoot`, `Intake`/`StopIntake`, `Spit`/`StopSpit`, `Retract`, `Transfer`/`StopTransfer`. Auto chooser built in `Robot.robotInit()` and scans `src/main/deploy/pathplanner/autos/*.auto` — no code changes needed for new autos.
+
+## Commands (`commands/`)
+
+- **IntakeCommand** — coordinates intake sequence
+- **JiggleCommand** — oscillates extender in/out while coordinating intake/transfer/shooter; used to unstick game pieces
 
 ## Simulation
 
@@ -201,4 +209,6 @@ See `docs/` for comprehensive reference:
 - `docs/autonomous.md` — PathPlanner, creating autos
 - `docs/simulation.md` — MapleSim, AdvantageScope
 - `docs/subsystems.md` — Subsystem reference, templates
+- `docs/field-constants.md` — FieldConstants and GameElement reference
+- `docs/utilities.md` — CTREConfig, CTREUtil, TunableParameter, PS5Controller reference
 - `docs/external-resources.md` — All vendor docs and links
