@@ -1,0 +1,79 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RedStartingpathTop"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "redgrabdepotp1Top"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "redgrabdepotbluepart2Top"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Retract"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RedScoredepotblueTop"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "redintakeTop"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "redintakepart2Top"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Red Score IntakeTop"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "Comp Autos",
+  "choreoAuto": false
+}
