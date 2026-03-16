@@ -54,7 +54,7 @@ public class ExtenderSubsystem extends SubsystemBase {
     double motorOutput = 0;
     switch (state) {
       case EXTENDING -> motorOutput =
-          Math.max(-5.0, Math.min(5.0, calculateMotorControl(IntakeConstants.extenderLength + 15)));
+          Math.max(-5.0, Math.min(5.0, calculateMotorControl(IntakeConstants.extenderLength + 8)));
       case RETRACTING -> motorOutput = Math.max(-4.0, Math.min(4.0, calculateMotorControl(-5)));
       case EXTENDED, RETRACTED -> motorOutput = 0;
     }

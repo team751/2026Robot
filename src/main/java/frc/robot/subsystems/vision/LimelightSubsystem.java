@@ -62,8 +62,10 @@ public class LimelightSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Limelight Side Pose/X", getBotPoseSide().getX());
-    SmartDashboard.putNumber("Limelight Side Pose/Y", getBotPoseSide().getY());
+    if (getBotPoseSide() != null) {
+      SmartDashboard.putNumber("Limelight Side Pose/X", getBotPoseSide().getX());
+      SmartDashboard.putNumber("Limelight Side Pose/Y", getBotPoseSide().getY());
+    }
   }
 
   // TAG TARGETTING
@@ -99,14 +101,8 @@ public class LimelightSubsystem extends SubsystemBase {
         0.0);
 
     // If theres no april tag seen return null
-    if (LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name)
-                .pose
-                .getX()
-            == 0.0
-        && LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name)
-                .pose
-                .getY()
-            == 0.0) {
+    if (LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name).pose == null
+        && LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name).pose == null) {
       return null;
     }
 
@@ -125,14 +121,8 @@ public class LimelightSubsystem extends SubsystemBase {
         0.0);
 
     // If theres no april tag seen return null
-    if (LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightSide.name)
-                .pose
-                .getX()
-            == 0.0
-        && LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightSide.name)
-                .pose
-                .getY()
-            == 0.0) {
+    if (LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightSide.name).pose == null
+        && LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightSide.name).pose == null) {
       return null;
     }
     return LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightSide.name).pose;
