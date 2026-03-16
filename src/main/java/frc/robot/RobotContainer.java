@@ -26,7 +26,7 @@ public class RobotContainer {
     // COMMANDS FOR NAMED COMMANDS
     Command spit =
         new RunCommand(
-            () -> IntakeSubsystem.getInstance().requestSpitting(), IntakeSubsystem.getInstance());
+            () -> IntakeSubsystem.getInstance().requestSpit(), IntakeSubsystem.getInstance());
     InstantCommand stopSpit =
         new InstantCommand(
             () -> {
@@ -37,11 +37,11 @@ public class RobotContainer {
     Command intake =
         new SequentialCommandGroup(
             new RunCommand(
-                    () -> ExtenderSubsystem.getInstance().requestExtension(),
+                    () -> ExtenderSubsystem.getInstance().requestExtend(),
                     ExtenderSubsystem.getInstance())
-                .until(() -> ExtenderSubsystem.getInstance().isFullyExtended()),
+                .until(() -> ExtenderSubsystem.getInstance().isExtended()),
             new RunCommand(
-                () -> IntakeSubsystem.getInstance().requestIntaking(),
+                () -> IntakeSubsystem.getInstance().requestIntake(),
                 IntakeSubsystem.getInstance()));
     InstantCommand stopIntake =
         new InstantCommand(
@@ -52,7 +52,7 @@ public class RobotContainer {
 
     Command transfer =
         new RunCommand(
-            () -> TransferSubsystem.getInstance().requestTransferring(),
+            () -> TransferSubsystem.getInstance().requestTransfer(),
             TransferSubsystem.getInstance());
     InstantCommand stopTransfer =
         new InstantCommand(
@@ -67,7 +67,7 @@ public class RobotContainer {
                 () -> ShooterSubsystem.getInstance().requestShoot(),
                 ShooterSubsystem.getInstance()),
             new RunCommand(
-                () -> TransferSubsystem.getInstance().requestTransferring(),
+                () -> TransferSubsystem.getInstance().requestTransfer(),
                 TransferSubsystem.getInstance()));
     InstantCommand stopShoot =
         new InstantCommand(
@@ -79,9 +79,9 @@ public class RobotContainer {
 
     Command retract =
         new RunCommand(
-                () -> ExtenderSubsystem.getInstance().requestRetraction(),
+                () -> ExtenderSubsystem.getInstance().requestRetract(),
                 ExtenderSubsystem.getInstance())
-            .until(() -> ExtenderSubsystem.getInstance().isFullyRetracted());
+            .until(() -> ExtenderSubsystem.getInstance().isRetracted());
 
     /*Shooter */
     NamedCommands.registerCommand("Shoot", shoot);

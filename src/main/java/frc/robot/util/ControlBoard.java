@@ -128,7 +128,7 @@ public class ControlBoard {
     /* Intake */
     controller.leftTrigger.whileTrue(
         new StartEndCommand(
-            () -> IntakeSubsystem.getInstance().requestIntaking(),
+            () -> IntakeSubsystem.getInstance().requestIntake(),
             () -> IntakeSubsystem.getInstance().requestIdle()));
     controller.leftTrigger.whileTrue(
         new StartEndCommand(() -> preciseControl = true, () -> preciseControl = false)
@@ -136,14 +136,14 @@ public class ControlBoard {
 
     controller.squareButton.whileTrue(
         new StartEndCommand(
-            () -> IntakeSubsystem.getInstance().requestSpitting(),
+            () -> IntakeSubsystem.getInstance().requestSpit(),
             () -> IntakeSubsystem.getInstance().requestIdle()));
 
     controller.dUp.whileTrue(
-        new InstantCommand(() -> ExtenderSubsystem.getInstance().requestExtension()));
+        new InstantCommand(() -> ExtenderSubsystem.getInstance().requestExtend()));
 
     controller.dDown.whileTrue(
-        new InstantCommand(() -> ExtenderSubsystem.getInstance().requestRetraction()));
+        new InstantCommand(() -> ExtenderSubsystem.getInstance().requestRetract()));
 
     /* Shooter */
     controller.rightTrigger.whileTrue(
@@ -152,13 +152,13 @@ public class ControlBoard {
             () -> ShooterSubsystem.getInstance().requestIdle()));
     controller.rightTrigger.whileTrue(
         new StartEndCommand(
-            () -> TransferSubsystem.getInstance().requestTransferring(),
+            () -> TransferSubsystem.getInstance().requestTransfer(),
             () -> TransferSubsystem.getInstance().requestIdle()));
 
     /* Transfer */
     controller.dLeft.whileTrue(
         new StartEndCommand(
-            () -> TransferSubsystem.getInstance().requestReversing(),
+            () -> TransferSubsystem.getInstance().requestReverse(),
             () -> TransferSubsystem.getInstance().requestIdle()));
     controller.dLeft.whileTrue(
         new StartEndCommand(

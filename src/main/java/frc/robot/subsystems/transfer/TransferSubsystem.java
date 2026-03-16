@@ -22,15 +22,11 @@ public class TransferSubsystem extends SubsystemBase {
   /* State Machine Logic */
   private enum TransferState {
     IDLE,
-    TRANSFERRING,
-    REVERSING,
+    TRANSFER,
+    REVERSE,
   }
 
   private TransferState state = TransferState.IDLE;
-
-  private boolean requestedIdle = false;
-  private boolean requestedTransferring = false;
-  private boolean requestedReversing = false;
 
   public static TransferSubsystem getInstance() {
     if (instance == null) instance = new TransferSubsystem();
@@ -43,22 +39,13 @@ public class TransferSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    TransferState nextState = state;
-    if (requestedIdle) nextState = TransferState.IDLE;
-    else if (requestedTransferring) nextState = TransferState.TRANSFERRING;
-    else if (requestedReversing) nextState = TransferState.REVERSING;
 
-    if (nextState != state) {
-      state = nextState;
-      unsetAllRequests();
-
-      switch (state) {
-        case IDLE -> setMotors(0, 0);
-        case TRANSFERRING -> setMotors(
-            TransferConstants.transfertopspeed, TransferConstants.transferbottomspeed);
-        case REVERSING -> setMotors(
-            -TransferConstants.transfertopspeed, -TransferConstants.transferbottomspeed);
-      }
+    switch (state) {
+      case IDLE -> setMotors(0, 0);
+      case TRANSFER -> setMotors(
+          TransferConstants.transfertopspeed, TransferConstants.transferbottomspeed);
+      case REVERSE -> setMotors(
+          -TransferConstants.transfertopspeed, -TransferConstants.transferbottomspeed);
     }
 
     SmartDashboard.putString("Transfer/State", state.toString());
@@ -71,27 +58,16 @@ public class TransferSubsystem extends SubsystemBase {
     bottomMotor.setControl(bottomControl.withOutput(bottomVoltage));
   }
 
-  public void requestTransferring() {
-    requestedIdle = false;
-    requestedReversing = false;
-    requestedIdle = false;
-    requestedTransferring = true;
+  public void requestTransfer() {
+    state = TransferState.TRANSFER;
   }
 
-  public void requestReversing() {
-    requestedIdle = false;
-    requestedTransferring = false;
-    requestedReversing = true;
+  public void requestReverse() {
+    state = TransferState.REVERSE;
   }
 
   public void requestIdle() {
-    unsetAllRequests();
-    requestedIdle = true;
+    state = TransferState.IDLE;
   }
 
-  private void unsetAllRequests() {
-    requestedIdle = false;
-    requestedTransferring = false;
-    requestedReversing = false;
-  }
 }

@@ -20,7 +20,7 @@ public class ExtenderSubsystem extends SubsystemBase {
   private final VoltageOut extenderControl = new VoltageOut(0);
 
   private final PIDController extenderPID =
-      new PIDController(0.5, 0.0, 0.0); // , new Constraints(20.0, 10.0));
+      new PIDController(0.3, 0.0, 0.0); // , new Constraints(20.0, 10.0));
   // private final ProfiledPIDController  bhextenderPID = new ProfiledPIDController(0.25, 0.0, 0.0,
   // new
   // Constraints(20.0, 10.0));
@@ -53,11 +53,8 @@ public class ExtenderSubsystem extends SubsystemBase {
   public void periodic() {
     double motorOutput = 0;
     switch (state) {
-      case EXTENDING -> motorOutput =
-          3; // Math.max(-3.0, Math.min(3.0, calculateMotorControl(IntakeConstants.extenderLength +
-        // 5)));
-      case RETRACTING -> motorOutput =
-          -3; // Math.max(-3.0, Math.min(3.0, calculateMotorControl(-5)));
+      case EXTENDING -> motorOutput = Math.max(-5.0, Math.min(5.0, calculateMotorControl(IntakeConstants.extenderLength + 15)));
+      case RETRACTING -> motorOutput = Math.max(-4.0, Math.min(4.0, calculateMotorControl(-5)));
       case EXTENDED, RETRACTED -> motorOutput = 0;
     }
 
@@ -65,9 +62,9 @@ public class ExtenderSubsystem extends SubsystemBase {
 
     calculateExtension();
 
-    if (state == ExtenderState.EXTENDING && isFullyExtended()) {
+    if (state == ExtenderState.EXTENDING && isExtended()) {
       state = ExtenderState.EXTENDED;
-    } else if (state == ExtenderState.RETRACTING && isFullyRetracted()) {
+    } else if (state == ExtenderState.RETRACTING && isRetracted()) {
       state = ExtenderState.RETRACTED;
     }
 
@@ -90,11 +87,11 @@ public class ExtenderSubsystem extends SubsystemBase {
   }
 
   private void calculateExtension() {
-    if (isFullyExtended()) {
+    if (isExtended()) {
       estimatedExtension = IntakeConstants.extenderLength;
     } else if (backRightLimit.get() && backLeftLimit.get()) {
       estimatedExtension = IntakeConstants.extenderLength;
-    } else if (isFullyRetracted()) {
+    } else if (isRetracted()) {
       estimatedExtension = 0.0;
     } else {
       estimatedExtension +=
@@ -104,19 +101,19 @@ public class ExtenderSubsystem extends SubsystemBase {
     }
   }
 
-  public boolean isFullyExtended() {
+  public boolean isExtended() {
     return backLeftLimit.get() || backRightLimit.get();
   }
 
-  public boolean isFullyRetracted() {
+  public boolean isRetracted() {
     return frontLeftLimit.get() || frontRightLimit.get();
   }
 
-  public void requestExtension() {
+  public void requestExtend() {
     state = ExtenderState.EXTENDING;
   }
 
-  public void requestRetraction() {
+  public void requestRetract() {
     state = ExtenderState.RETRACTING;
   }
 

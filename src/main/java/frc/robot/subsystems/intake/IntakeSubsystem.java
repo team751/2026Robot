@@ -66,7 +66,7 @@ public class IntakeSubsystem extends SubsystemBase {
     intakeMotor.setControl(intakeControl.withOutput(voltage));
   }
 
-  public void requestIntaking() {
+  public void requestIntake() {
     requestedIdle = false;
     requestedSpitting = false;
     requestedIntaking = true;
@@ -77,7 +77,7 @@ public class IntakeSubsystem extends SubsystemBase {
     requestedIdle = true;
   }
 
-  public void requestSpitting() {
+  public void requestSpit() {
     requestedIdle = false;
     requestedIntaking = false;
     requestedSpitting = true;

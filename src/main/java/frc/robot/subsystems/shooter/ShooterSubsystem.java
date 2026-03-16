@@ -32,16 +32,11 @@ public class ShooterSubsystem extends SubsystemBase {
   private enum ShooterState {
     IDLE,
     SLOWSPIN,
-    REVERSING,
-    SPINNING
+    REVERSE,
+    SHOOT
   }
 
   private ShooterState state = ShooterState.IDLE;
-
-  private boolean requestedIdle = false;
-  private boolean requestedSlow = false;
-  private boolean requestedShoot = false;
-  private boolean requestedReversing = false;
 
   public static ShooterSubsystem getInstance() {
     if (instance == null) instance = new ShooterSubsystem();
@@ -58,24 +53,12 @@ public class ShooterSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    ShooterState nextState = state;
-    if (requestedIdle) nextState = ShooterState.IDLE;
-    else if (requestedSlow) nextState = ShooterState.SLOWSPIN;
-    else if (requestedReversing) nextState = ShooterState.REVERSING;
-    else if (requestedShoot) nextState = ShooterState.SPINNING;
-
-    if (nextState != state) {
-      state = nextState;
-      unsetAllRequests();
-
-      switch (state) {
-        case IDLE -> setShooterSpeed(0, 0);
-        case SLOWSPIN -> setShooterMotor(
-            ShooterConstants.flywheelSpeed * ShooterConstants.slowPercent);
-        case REVERSING -> setTransferMotor(ShooterConstants.transferSpitVoltage);
-        case SPINNING -> setShooterSpeed(calculateShooterSpeed(), ShooterConstants.transferVoltage);
+    switch (state) {
+      case IDLE -> setShooterSpeed(0, 0);
+      case SLOWSPIN -> setShooterMotor(ShooterConstants.flywheelSpeed * ShooterConstants.slowPercent);
+      case REVERSE -> setTransferMotor(ShooterConstants.transferSpitVoltage);
+      case SHOOT -> setShooterSpeed(calculateShooterSpeed(), ShooterConstants.transferVoltage);
       }
-    }
   }
 
   /** Runs just the main flywheel motor */
@@ -95,28 +78,6 @@ public class ShooterSubsystem extends SubsystemBase {
     shooterTransferMotor.setControl(shooterTransferControl.withOutput(transferVoltage));
   }
 
-  public void increaseSpeed() {
-    ShooterConstants.flywheelSpeed++;
-  }
-
-  public void decreaseSpeed() {
-    ShooterConstants.flywheelSpeed--;
-  }
-
-  public void speed30() {
-    ShooterConstants.flywheelSpeed = 30;
-  }
-
-  public void resetSpeed() {
-    ShooterConstants.flywheelSpeed = 27;
-  }
-
-  private void unsetAllRequests() {
-    requestedReversing = false;
-    requestedSlow = false;
-    requestedIdle = false;
-    requestedShoot = false;
-  }
 
   private double getRobotDistanceFromHub() {
     SwerveSubsystem swerve = SwerveSubsystem.getInstance();
@@ -142,17 +103,14 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public void requestIdle() {
-    unsetAllRequests();
-    requestedIdle = true;
+    state = ShooterState.IDLE;
   }
 
   public void requestShoot() {
-    unsetAllRequests();
-    requestedShoot = true;
+    state = ShooterState.SHOOT;
   }
 
   public void requestSpit() {
-    unsetAllRequests();
-    requestedReversing = true;
+    state = ShooterState.REVERSE;
   }
 }
