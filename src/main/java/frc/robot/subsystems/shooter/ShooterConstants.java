@@ -47,6 +47,8 @@ public class ShooterConstants {
     flywheelConfig.Slot0.kV = 0.13; //
     flywheelConfig.Slot0.kG = 0; // Don't touch
 
+    flywheelConfig.MotorOutput.ControlTimesyncFreqHz = 50;
+
     flywheelConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     flywheelConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
