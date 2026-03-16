@@ -7,19 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "StartingpathBottom"
+            "pathName": "Startingpath"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "grabdepotp1Bottom"
+            "pathName": "grabdepotp1"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "grabdepotbluepart2Bottom"
+            "pathName": "grabdepotbluepart2"
           }
         },
         {
@@ -31,7 +31,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "ScoredepotblueBottom"
+            "pathName": "Scoredepotblue"
           }
         },
         {
@@ -43,7 +43,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "intakeBottom"
+            "pathName": "intake"
           }
         },
         {
@@ -55,13 +55,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "intakepart2Bottom"
+            "pathName": "intakepart2"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Score IntakeBottom"
+            "pathName": "Score Intake"
           }
         },
         {

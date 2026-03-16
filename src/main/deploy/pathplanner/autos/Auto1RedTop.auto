@@ -7,67 +7,43 @@
         {
           "type": "path",
           "data": {
-            "pathName": "RedStartingpathTop"
+            "pathName": "RedStartingpath"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "redgrabdepotp1Top"
+            "pathName": "redgrabdepotp1"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "redgrabdepotbluepart2Top"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Retract"
+            "pathName": "grabdepotredpart2"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "RedScoredepotblueTop"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Shoot"
+            "pathName": "Scoredepotred"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "redintakeTop"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Intake"
+            "pathName": "redintake"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "redintakepart2Top"
+            "pathName": "redintakepart2"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Red Score IntakeTop"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Shoot"
+            "pathName": "Red Score Intake"
           }
         }
       ]
