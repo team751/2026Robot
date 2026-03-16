@@ -12,6 +12,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.lib.PS5Controller;
+import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.JiggleCommand;
+import frc.robot.commands.ShootCommand;
 import frc.robot.subsystems.Superstructure;
 // import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.drive.SwerveConstants;
@@ -126,14 +129,13 @@ public class ControlBoard {
   /* Driver bindings */
   private void configureDriverBindings(PS5Controller controller) {
     /* Intake */
-    controller.leftTrigger.whileTrue(
-        new StartEndCommand(
-            () -> IntakeSubsystem.getInstance().requestIntake(),
-            () -> IntakeSubsystem.getInstance().requestIdle()));
+    controller.leftTrigger.whileTrue( new IntakeCommand(IntakeSubsystem.getInstance(), ExtenderSubsystem.getInstance()) );
+
     controller.leftTrigger.whileTrue(
         new StartEndCommand(() -> preciseControl = true, () -> preciseControl = false)
             .withName("Precise Control Toggle")); // Fight me owen
 
+    controller.crossButton.whileTrue(new JiggleCommand( IntakeSubsystem.getInstance(), ExtenderSubsystem.getInstance(), TransferSubsystem.getInstance(), ShooterSubsystem.getInstance()));
     controller.squareButton.whileTrue(
         new StartEndCommand(
             () -> IntakeSubsystem.getInstance().requestSpit(),
@@ -144,16 +146,9 @@ public class ControlBoard {
 
     controller.dDown.whileTrue(
         new InstantCommand(() -> ExtenderSubsystem.getInstance().requestRetract()));
-
+    
     /* Shooter */
-    controller.rightTrigger.whileTrue(
-        new StartEndCommand(
-            () -> ShooterSubsystem.getInstance().requestShoot(),
-            () -> ShooterSubsystem.getInstance().requestIdle()));
-    controller.rightTrigger.whileTrue(
-        new StartEndCommand(
-            () -> TransferSubsystem.getInstance().requestTransfer(),
-            () -> TransferSubsystem.getInstance().requestIdle()));
+    controller.rightTrigger.whileTrue( new ShootCommand(ShooterSubsystem.getInstance(), TransferSubsystem.getInstance()));
 
     /* Transfer */
     controller.dLeft.whileTrue(
