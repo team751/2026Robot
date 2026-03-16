@@ -93,11 +93,11 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   private double calculateShooterSpeed() {
-    // if (!canShoot()) {
-    //   return ShooterConstants.flywheelSpeed;
-    // }
+    if (!canShoot()) {
+      return ShooterConstants.flywheelSpeed;
+    }
 
-    double distanceCM = 300; // getRobotDistanceFromHub();
+    double distanceCM = getRobotDistanceFromHub();
     return (distanceCM - ShooterConstants.shooterDistanceCurveYIntercept)
         / ShooterConstants.shooterDistanceCurveSlope;
   }

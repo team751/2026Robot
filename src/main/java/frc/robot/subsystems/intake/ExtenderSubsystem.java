@@ -59,6 +59,10 @@ public class ExtenderSubsystem extends SubsystemBase {
       case EXTENDED, RETRACTED -> motorOutput = 0;
     }
 
+    if (state == ExtenderState.RETRACTING && !isExtended() && Math.abs(extenderMotor.getVelocity().getValueAsDouble())<0.05){
+      state = ExtenderState.EXTENDING;
+    }
+
     setExtenderMotor(motorOutput);
 
     calculateExtension();

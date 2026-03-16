@@ -157,6 +157,10 @@ public class ControlBoard {
     controller.rightTrigger.whileTrue(
         new ShootCommand(ShooterSubsystem.getInstance(), TransferSubsystem.getInstance()));
 
+    controller.rightTrigger.whileTrue(
+        new StartEndCommand(() -> autoAim = true, () -> autoAim = false)
+            .withName("Auto Aim Toggle"));
+
     /* Transfer */
     controller.dLeft.whileTrue(
         new StartEndCommand(
