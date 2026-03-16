@@ -69,5 +69,4 @@ public class TransferSubsystem extends SubsystemBase {
   public void requestIdle() {
     state = TransferState.IDLE;
   }
-
 }

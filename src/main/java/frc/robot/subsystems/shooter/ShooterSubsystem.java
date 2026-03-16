@@ -55,10 +55,11 @@ public class ShooterSubsystem extends SubsystemBase {
   public void periodic() {
     switch (state) {
       case IDLE -> setShooterSpeed(0, 0);
-      case SLOWSPIN -> setShooterMotor(ShooterConstants.flywheelSpeed * ShooterConstants.slowPercent);
+      case SLOWSPIN -> setShooterMotor(
+          ShooterConstants.flywheelSpeed * ShooterConstants.slowPercent);
       case REVERSE -> setTransferMotor(ShooterConstants.transferSpitVoltage);
       case SHOOT -> setShooterSpeed(calculateShooterSpeed(), ShooterConstants.transferVoltage);
-      }
+    }
   }
 
   /** Runs just the main flywheel motor */
@@ -77,7 +78,6 @@ public class ShooterSubsystem extends SubsystemBase {
     flywheelMotor.setControl(flywheelControl.withVelocity(flywheelVelocity));
     shooterTransferMotor.setControl(shooterTransferControl.withOutput(transferVoltage));
   }
-
 
   private double getRobotDistanceFromHub() {
     SwerveSubsystem swerve = SwerveSubsystem.getInstance();

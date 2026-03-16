@@ -53,7 +53,8 @@ public class ExtenderSubsystem extends SubsystemBase {
   public void periodic() {
     double motorOutput = 0;
     switch (state) {
-      case EXTENDING -> motorOutput = Math.max(-5.0, Math.min(5.0, calculateMotorControl(IntakeConstants.extenderLength + 15)));
+      case EXTENDING -> motorOutput =
+          Math.max(-5.0, Math.min(5.0, calculateMotorControl(IntakeConstants.extenderLength + 15)));
       case RETRACTING -> motorOutput = Math.max(-4.0, Math.min(4.0, calculateMotorControl(-5)));
       case EXTENDED, RETRACTED -> motorOutput = 0;
     }
