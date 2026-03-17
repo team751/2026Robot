@@ -28,8 +28,8 @@ public class JiggleCommand extends Command {
   public void initialize() {
     extender.requestExtend();
     // intake.requestIntake();
-    shooter.requestSpit();
-    // transfer.requestReverse();
+    // shooter.requestSpit();
+    transfer.requestReverse();
   }
 
   @Override
