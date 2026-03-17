@@ -214,7 +214,7 @@ public class ControlBoard {
   public SwerveRequest getDriverRequest() {
     if (driver == null) return null;
 
-    double scale = preciseControl ? 0.25 : 1.0;
+    double scale = preciseControl ? 0.4 : 1.0;
     double rotScale = preciseControl ? 0.50 : 1.0;
 
     double rawStickRot = driver.rightHorizontalJoystick.getAsDouble();
