@@ -157,9 +157,10 @@ public class ControlBoard {
     controller.rightTrigger.whileTrue(
         new ShootCommand(ShooterSubsystem.getInstance(), TransferSubsystem.getInstance()));
 
-    controller.rightTrigger.whileTrue(
-        new StartEndCommand(() -> autoAim = true, () -> autoAim = false)
-            .withName("Auto Aim Toggle"));
+    // TS doesn't work
+    // controller.rightTrigger.whileTrue(
+    //     new StartEndCommand(() -> autoAim = true, () -> autoAim = false)
+    //         .withName("Auto Aim Toggle"));
 
     /* Transfer */
     controller.dLeft.whileTrue(
@@ -195,10 +196,10 @@ public class ControlBoard {
     controller.squareButton.whileTrue(
         new StartEndCommand(() -> autoAim = true, () -> autoAim = false)
             .withName("Auto Aim Toggle"));
-
-    controller.rightJoystickButton.whileTrue(
-        new StartEndCommand(() -> axisAlign = true, () -> axisAlign = false)
-            .withName("Axis Align Toggle"));
+    // This is not working
+    // controller.rightJoystickButton.whileTrue(
+    //     new StartEndCommand(() -> axisAlign = true, () -> axisAlign = false)
+    //         .withName("Axis Align Toggle"));
 
     /* Climber */
     // TODO: Make left trigger shoot(peter requested)

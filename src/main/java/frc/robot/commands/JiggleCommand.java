@@ -37,7 +37,7 @@ public class JiggleCommand extends Command {
     if (extender.isExtended()) {
       extender.requestJiggleIn();
       transfer.requestTransfer();
-      //shooter.requestShoot();
+      // shooter.requestShoot();
     } else if (extender.isRetracted()) {
       extender.requestExtend();
       transfer.requestReverse();
