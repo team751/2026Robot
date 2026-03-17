@@ -27,9 +27,9 @@ public class JiggleCommand extends Command {
   @Override
   public void initialize() {
     extender.requestExtend();
-    intake.requestIntake();
+    // intake.requestIntake();
     shooter.requestSpit();
-    transfer.requestReverse();
+    // transfer.requestReverse();
   }
 
   @Override
@@ -41,15 +41,15 @@ public class JiggleCommand extends Command {
     } else if (extender.isRetracted()) {
       extender.requestExtend();
       transfer.requestReverse();
-      shooter.requestSpit();
+      // shooter.requestSpit();
     }
   }
 
   @Override
   public void end(boolean interrupted) {
-    intake.requestIdle();
+    // intake.requestIdle();
     extender.requestExtend();
-    shooter.requestIdle();
+    // shooter.requestIdle();
     transfer.requestIdle();
   }
 
