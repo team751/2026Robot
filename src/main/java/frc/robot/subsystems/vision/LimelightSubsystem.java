@@ -6,6 +6,7 @@ package frc.robot.subsystems.vision;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.drive.SwerveSubsystem;
@@ -92,7 +93,7 @@ public class LimelightSubsystem extends SubsystemBase {
     // Sets the robot orientation before getting the robot position
     LimelightHelpers.SetRobotOrientation(
         LimelightConstants.LimelightFront.name,
-        drive.getRotation3d().getZ(),
+        Units.radiansToDegrees(drive.getRotation3d().getZ()),
         0.0,
         0.0,
         0.0,
@@ -100,19 +101,25 @@ public class LimelightSubsystem extends SubsystemBase {
         0.0);
 
     // If theres no april tag seen return null
-    if (LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name).pose == null
-        && LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name).pose == null) {
+    if (LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(LimelightConstants.LimelightFront.name).pose == null
+        && LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(LimelightConstants.LimelightFront.name).pose == null) {
       return null;
     }
 
-    return LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name).pose;
+    return LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(LimelightConstants.LimelightFront.name).pose;
+    // if (LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name).pose == null
+    //     && LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name).pose == null) {
+    //   return null;
+    // }
+
+    // return LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name).pose;
   }
 
   public Pose2d getBotPoseSide() {
     // Sets the robot orientation before getting the robot position
     LimelightHelpers.SetRobotOrientation(
         LimelightConstants.LimelightSide.name,
-        drive.getRotation3d().getZ(),
+        Units.radiansToDegrees(drive.getRotation3d().getZ()),
         0.0,
         0.0,
         0.0,
@@ -120,10 +127,15 @@ public class LimelightSubsystem extends SubsystemBase {
         0.0);
 
     // If theres no april tag seen return null
-    if (LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightSide.name).pose == null
-        && LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightSide.name).pose == null) {
+    if (LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(LimelightConstants.LimelightSide.name).pose == null
+        && LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(LimelightConstants.LimelightSide.name).pose == null) {
       return null;
     }
-    return LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightSide.name).pose;
+    return LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(LimelightConstants.LimelightSide.name).pose;
+    // if (LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightSide.name).pose == null
+    //     && LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightSide.name).pose == null) {
+    //   return null;
+    // }
+    // return LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightSide.name).pose;
   }
 }
