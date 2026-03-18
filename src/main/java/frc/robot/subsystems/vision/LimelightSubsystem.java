@@ -101,18 +101,29 @@ public class LimelightSubsystem extends SubsystemBase {
         0.0);
 
     // If theres no april tag seen return null
-    if (LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(LimelightConstants.LimelightFront.name).pose == null
-        && LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(LimelightConstants.LimelightFront.name).pose == null) {
+    if (LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(LimelightConstants.LimelightFront.name)
+                .pose
+            == null
+        && LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(
+                    LimelightConstants.LimelightFront.name)
+                .pose
+            == null) {
       return null;
     }
 
-    return LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(LimelightConstants.LimelightFront.name).pose;
-    // if (LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name).pose == null
-    //     && LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name).pose == null) {
+    return LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(
+            LimelightConstants.LimelightFront.name)
+        .pose;
+    // if (LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name).pose
+    // == null
+    //     &&
+    // LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name).pose ==
+    // null) {
     //   return null;
     // }
 
-    // return LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name).pose;
+    // return
+    // LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name).pose;
   }
 
   public Pose2d getBotPoseSide() {
@@ -127,15 +138,26 @@ public class LimelightSubsystem extends SubsystemBase {
         0.0);
 
     // If theres no april tag seen return null
-    if (LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(LimelightConstants.LimelightSide.name).pose == null
-        && LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(LimelightConstants.LimelightSide.name).pose == null) {
+    if (LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(LimelightConstants.LimelightSide.name)
+                .pose
+            == null
+        && LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(
+                    LimelightConstants.LimelightSide.name)
+                .pose
+            == null) {
       return null;
     }
-    return LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(LimelightConstants.LimelightSide.name).pose;
-    // if (LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightSide.name).pose == null
-    //     && LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightSide.name).pose == null) {
+    return LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(
+            LimelightConstants.LimelightSide.name)
+        .pose;
+    // if (LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightSide.name).pose
+    // == null
+    //     &&
+    // LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightSide.name).pose ==
+    // null) {
     //   return null;
     // }
-    // return LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightSide.name).pose;
+    // return
+    // LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightSide.name).pose;
   }
 }

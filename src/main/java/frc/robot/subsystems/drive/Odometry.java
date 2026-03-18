@@ -2,7 +2,6 @@ package frc.robot.subsystems.drive;
 
 import com.ctre.phoenix6.Utils;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -80,17 +79,20 @@ public class Odometry extends SubsystemBase {
     if (limelights.getBotPoseFront() != null && isBotFrontZero()) {
       Pose2d frontPose = limelights.getBotPoseFront();
 
-      //if (Math.abs(robotPose.getX() - frontPose.getX()) < 1.0 && Math.abs(robotPose.getY() - frontPose.getY()) < 1.0) {
-        drive.addVisionMeasurement(
-            new Pose2d(frontPose.getX(), frontPose.getY(), drive.getPose().getRotation()), Utils.getCurrentTimeSeconds());
-      //}
+      // if (Math.abs(robotPose.getX() - frontPose.getX()) < 1.0 && Math.abs(robotPose.getY() -
+      // frontPose.getY()) < 1.0) {
+      drive.addVisionMeasurement(
+          new Pose2d(frontPose.getX(), frontPose.getY(), drive.getPose().getRotation()),
+          Utils.getCurrentTimeSeconds());
+      // }
     }
 
     if (limelights.getBotPoseSide() != null && isBotSideZero()) {
       Pose2d sidePose = limelights.getBotPoseSide();
 
       drive.addVisionMeasurement(
-          new Pose2d(sidePose.getX(), sidePose.getY(), drive.getPose().getRotation()), Utils.getCurrentTimeSeconds());
+          new Pose2d(sidePose.getX(), sidePose.getY(), drive.getPose().getRotation()),
+          Utils.getCurrentTimeSeconds());
     }
 
     // Sets the Odometry robotPose variable (for easy/more normal access to the robot position)
@@ -100,9 +102,12 @@ public class Odometry extends SubsystemBase {
     field.setRobotPose(robotPose.getX(), robotPose.getY(), robotPose.getRotation());
 
     SmartDashboard.putNumber("Odometry/Pigeon Yaw", drive.getPigeon2().getYaw().getValueAsDouble());
-    SmartDashboard.putNumber("Odometry/Pigeon Pitch", drive.getPigeon2().getPitch().getValueAsDouble());
-    SmartDashboard.putNumber("Odometry/Pigeon Roll", drive.getPigeon2().getRoll().getValueAsDouble());
-    SmartDashboard.putNumber("Odometry/Swerve Rotation", Math.toDegrees(drive.getRotation3d().getZ()));
+    SmartDashboard.putNumber(
+        "Odometry/Pigeon Pitch", drive.getPigeon2().getPitch().getValueAsDouble());
+    SmartDashboard.putNumber(
+        "Odometry/Pigeon Roll", drive.getPigeon2().getRoll().getValueAsDouble());
+    SmartDashboard.putNumber(
+        "Odometry/Swerve Rotation", Math.toDegrees(drive.getRotation3d().getZ()));
 
     SmartDashboard.putData(field);
   }

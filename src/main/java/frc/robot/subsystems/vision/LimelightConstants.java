@@ -54,7 +54,8 @@ public class LimelightConstants {
     public static final double yOffset =
         Units.Meters.convertFrom(11.19, Units.Centimeters); // Left/Right (+ left, -right)
     public static final double xOffset =
-        Units.Meters.convertFrom(-25.39, Units.Centimeters); // Forward/Backward (- forward, + backward)
+        Units.Meters.convertFrom(
+            -25.39, Units.Centimeters); // Forward/Backward (- forward, + backward)
 
     public static final Rotation3d rotationOffset =
         new Rotation3d(

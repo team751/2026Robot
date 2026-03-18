@@ -101,7 +101,13 @@ public class FieldConstants {
 
     /** Red hub — scoring target on the red alliance side. */
     HUB_RED(
-        new Pose2d(11.938, 4.034536 - 0.33/* the robot looked like it was aiming 33 centimeters off from the hub. we might want to remove this in the future */, Rotation2d.fromDegrees(180)), false, ElementType.HUB),
+        new Pose2d(
+            11.938,
+            4.034536
+                - 0.33 /* the robot looked like it was aiming 33 centimeters off from the hub. we might want to remove this in the future */,
+            Rotation2d.fromDegrees(180)),
+        false,
+        ElementType.HUB),
 
     // ----- TOWERS -----
 
