@@ -5,15 +5,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Build Commands
 
 ```bash
-./gradlew build              # Full build (compile + spotlessCheck + tests)
+./gradlew build              # Full build (compile + tests)
 ./gradlew deploy             # Deploy to RoboRIO (must be connected via USB/Wi-Fi/Ethernet)
 ./gradlew simulateJava       # Run simulation with MapleSim physics + Sim GUI
-./gradlew spotlessApply      # Auto-format all code (Google Java Format via Spotless)
-./gradlew spotlessCheck      # Check formatting (CI gating)
 ./gradlew test               # Run JUnit 5 tests
 ```
-
-**Always run `./gradlew spotlessApply` before committing.** The build will fail if formatting is wrong.
 
 ## Architecture Overview
 
