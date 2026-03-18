@@ -4,7 +4,8 @@
   "holonomicMode": true,
   "pathFolders": [
     "Auto1bluepaths",
-    "Auto1redpaths"
+    "Auto1redpaths",
+    "New Folder"
   ],
   "autoFolders": [
     "Comp Autos"

@@ -61,12 +61,6 @@
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "redintakepart2Top"
-          }
-        },
-        {
           "type": "named",
           "data": {
             "name": "StopIntake"
@@ -76,12 +70,6 @@
           "type": "named",
           "data": {
             "name": "Retract"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Red Score IntakeTop"
           }
         },
         {
