@@ -103,7 +103,7 @@ public class LimelightSubsystem extends SubsystemBase {
     // If theres no april tag seen return null
     if (LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(LimelightConstants.LimelightFront.name).pose == null
          && LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(LimelightConstants.LimelightFront.name).pose == null
-         && limelightSide.getNTTable().getEntry("ta").getDouble(0.0) < 50) {
+         && LimelightHelpers.getTA(LimelightConstants.LimelightFront.name) < 50) {
       return null;
     }
 
