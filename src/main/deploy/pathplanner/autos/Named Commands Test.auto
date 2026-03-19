@@ -26,12 +26,6 @@
         {
           "type": "named",
           "data": {
-            "name": "StopIntake"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
             "name": "Retract"
           }
         },
@@ -58,12 +52,6 @@
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "StopShoot"
           }
         }
       ]
