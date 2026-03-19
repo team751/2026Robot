@@ -5,21 +5,15 @@
     "data": {
       "commands": [
         {
+          "type": "wait",
+          "data": {
+            "waitTime": 2.5
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "Red Auto 1 Bottom"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "StopShoot"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "StopIntake"
+            "pathName": "Hub Auto Red"
           }
         }
       ]

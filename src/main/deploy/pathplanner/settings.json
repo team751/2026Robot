@@ -1,6 +1,6 @@
 {
-  "robotWidth": 0.9,
-  "robotLength": 0.9,
+  "robotWidth": 0.8509,
+  "robotLength": 0.8509,
   "holonomicMode": true,
   "pathFolders": [
     "Auto1bluepaths",
@@ -8,7 +8,8 @@
     "Full Paths"
   ],
   "autoFolders": [
-    "Comp Autos"
+    "Comp Autos",
+    "Best Comp Autos"
   ],
   "defaultMaxVel": 2.5,
   "defaultMaxAccel": 2.5,
@@ -32,7 +33,7 @@
   "blModuleY": 0.273,
   "brModuleX": -0.273,
   "brModuleY": -0.273,
-  "bumperOffsetX": 0.0,
+  "bumperOffsetX": 0.095,
   "bumperOffsetY": 0.0,
   "robotFeatures": []
 }

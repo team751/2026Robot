@@ -82,15 +82,14 @@ Used by: IntakeSubsystem (IDLE/INTAKING/SPITTING), ExtenderSubsystem (IDLE/EXTEN
 
 ## CAN Bus Architecture
 
-Three separate CAN buses:
+Two CAN buses (defined as static fields in `Robot.java`):
 
 | Bus | Constant | Devices |
 |-----|----------|---------|
 | `drivebus` | `Robot.drivebus` | All swerve modules (drive/steer/CANcoder), Pigeon 2 IMU |
-| `rio` | `Robot.riobus` | General devices |
-| `climbbus` | `Robot.climbbus` | Climber motors |
+| `rio` | `Robot.riobus` | All other devices (climber, shooter, intake, transfer) |
 
-**Note:** Many non-drive motor CAN IDs are placeholder `-1` in `Constants.java` — these need to be set to real values before deployment.
+CAN IDs are defined in `frc.robot.util.Constants` (not `frc.robot.Constants`, which is an empty WPILib stub). The ID scheme: swerve is 10–40 by corner (FL/FR/BL/BR); all other motors are numbered by proximity to the nearest swerve corner and height on the robot.
 
 ## Subsystems
 
@@ -115,7 +114,7 @@ Dual Limelights: `limelight-front` (3G, 10.7.51.71) and `limelight-back` (2, 10.
 
 ### Climber (`subsystems/climber/`)
 
-Dual TalonFX motors (left/right) + 1 servo + 2 limit switches (DIO 7, 8). On `climbbus`. Features `spinUntil()` for non-blocking position targeting with average error compensation. Motors zeroed on init and teleop start.
+Dual TalonFX motors (left/right) + 1 servo + 2 limit switches (DIO 7, 8). On `riobus`. Features `spinUntil()` for non-blocking position targeting with average error compensation. Motors zeroed on init and teleop start.
 
 ### Shooter (`subsystems/shooter/`)
 
@@ -175,6 +174,7 @@ PathPlanner-based. AutoBuilder configured in `SwerveSubsystem` constructor. `Rob
 - **IntakeCommand** — coordinates intake sequence
 - **ShootCommand** — runs ShooterSubsystem + TransferSubsystem together; both go idle on end
 - **JiggleCommand** — oscillates extender in/out while coordinating intake/transfer/shooter; used to unstick game pieces
+- **WiggleCommand** — empty stub, not yet implemented
 
 ## Simulation
 
@@ -195,7 +195,7 @@ MapleSim + Dyn4j physics at 200Hz. Run with `./gradlew simulateJava`. Connect Ad
 
 1. Create `subsystems/mysubsystem/MySubsystem.java` with singleton pattern
 2. Create `MySubsystemConstants.java` with `CTREConfig` motor configs
-3. Add CAN IDs to `Constants.java`
+3. Add CAN IDs to `frc.robot.util.Constants`
 4. Add reference in `Superstructure.java`
 5. Initialize in `Robot.java` if needed outside Superstructure
 6. Add controller bindings in `ControlBoard.java`

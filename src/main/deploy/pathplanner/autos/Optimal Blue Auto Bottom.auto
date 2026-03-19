@@ -25,7 +25,7 @@
       ]
     }
   },
-  "resetOdom": true,
-  "folder": "Comp Autos",
+  "resetOdom": false,
+  "folder": "Best Comp Autos",
   "choreoAuto": false
 }
