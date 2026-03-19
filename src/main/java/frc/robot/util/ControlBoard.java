@@ -16,7 +16,6 @@ import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.JiggleCommand;
 import frc.robot.commands.ShootCommand;
 import frc.robot.subsystems.Superstructure;
-// import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.drive.SwerveConstants;
 import frc.robot.subsystems.drive.SwerveSubsystem;
 import frc.robot.subsystems.intake.ExtenderSubsystem;
@@ -24,6 +23,8 @@ import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.simulation.MapSimSwerveTelemetry;
 import frc.robot.subsystems.transfer.TransferSubsystem;
+
+// import frc.robot.subsystems.climber.ClimberSubsystem;
 
 // TODO: Clean up the controller bindings for this
 // TODO: Fix intake commands
@@ -157,6 +158,11 @@ public class ControlBoard {
     controller.rightTrigger.whileTrue(
         new ShootCommand(ShooterSubsystem.getInstance(), TransferSubsystem.getInstance()));
 
+    // TS doesn't work
+    // controller.rightTrigger.whileTrue(
+    //     new StartEndCommand(() -> autoAim = true, () -> autoAim = false)
+    //         .withName("Auto Aim Toggle"));
+
     /* Transfer */
     controller.dLeft.whileTrue(
         new StartEndCommand(
@@ -191,10 +197,10 @@ public class ControlBoard {
     controller.squareButton.whileTrue(
         new StartEndCommand(() -> autoAim = true, () -> autoAim = false)
             .withName("Auto Aim Toggle"));
-
-    controller.rightJoystickButton.whileTrue(
-        new StartEndCommand(() -> axisAlign = true, () -> axisAlign = false)
-            .withName("Axis Align Toggle"));
+    // This is not working
+    // controller.rightJoystickButton.whileTrue(
+    //     new StartEndCommand(() -> axisAlign = true, () -> axisAlign = false)
+    //         .withName("Axis Align Toggle"));
 
     /* Climber */
     // TODO: Make left trigger shoot(peter requested)
@@ -209,7 +215,7 @@ public class ControlBoard {
   public SwerveRequest getDriverRequest() {
     if (driver == null) return null;
 
-    double scale = preciseControl ? 0.25 : 1.0;
+    double scale = preciseControl ? 0.4 : 1.0;
     double rotScale = preciseControl ? 0.50 : 1.0;
 
     double rawStickRot = driver.rightHorizontalJoystick.getAsDouble();

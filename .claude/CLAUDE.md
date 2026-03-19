@@ -5,15 +5,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Build Commands
 
 ```bash
-./gradlew build              # Full build (compile + spotlessCheck + tests)
+./gradlew build              # Full build (compile + tests)
 ./gradlew deploy             # Deploy to RoboRIO (must be connected via USB/Wi-Fi/Ethernet)
 ./gradlew simulateJava       # Run simulation with MapleSim physics + Sim GUI
-./gradlew spotlessApply      # Auto-format all code (Google Java Format via Spotless)
-./gradlew spotlessCheck      # Check formatting (CI gating)
 ./gradlew test               # Run JUnit 5 tests
 ```
-
-**Always run `./gradlew spotlessApply` before committing.** The build will fail if formatting is wrong.
 
 ## Architecture Overview
 
@@ -86,15 +82,14 @@ Used by: IntakeSubsystem (IDLE/INTAKING/SPITTING), ExtenderSubsystem (IDLE/EXTEN
 
 ## CAN Bus Architecture
 
-Three separate CAN buses:
+Two CAN buses (defined as static fields in `Robot.java`):
 
 | Bus | Constant | Devices |
 |-----|----------|---------|
 | `drivebus` | `Robot.drivebus` | All swerve modules (drive/steer/CANcoder), Pigeon 2 IMU |
-| `rio` | `Robot.riobus` | General devices |
-| `climbbus` | `Robot.climbbus` | Climber motors |
+| `rio` | `Robot.riobus` | All other devices (climber, shooter, intake, transfer) |
 
-**Note:** Many non-drive motor CAN IDs are placeholder `-1` in `Constants.java` — these need to be set to real values before deployment.
+CAN IDs are defined in `frc.robot.util.Constants` (not `frc.robot.Constants`, which is an empty WPILib stub). The ID scheme: swerve is 10–40 by corner (FL/FR/BL/BR); all other motors are numbered by proximity to the nearest swerve corner and height on the robot.
 
 ## Subsystems
 
@@ -119,7 +114,7 @@ Dual Limelights: `limelight-front` (3G, 10.7.51.71) and `limelight-back` (2, 10.
 
 ### Climber (`subsystems/climber/`)
 
-Dual TalonFX motors (left/right) + 1 servo + 2 limit switches (DIO 7, 8). On `climbbus`. Features `spinUntil()` for non-blocking position targeting with average error compensation. Motors zeroed on init and teleop start.
+Dual TalonFX motors (left/right) + 1 servo + 2 limit switches (DIO 7, 8). On `riobus`. Features `spinUntil()` for non-blocking position targeting with average error compensation. Motors zeroed on init and teleop start.
 
 ### Shooter (`subsystems/shooter/`)
 
@@ -142,6 +137,7 @@ Dual TalonFX motors (top/bottom). States: IDLE/TRANSFER/REVERSE. VoltageOut cont
 | Square (hold) | Spit intake |
 | D-pad up (hold) | Extend extender |
 | D-pad down (hold) | Retract extender |
+| Cross (hold) | JiggleCommand (unstick game pieces) |
 | Right trigger (hold) | Shoot + transfer |
 | D-pad left (hold) | Reverse transfer + shooter spit |
 | Right/Left stick press (hold) | Axis align to nearest trench |
@@ -153,9 +149,8 @@ Dual TalonFX motors (top/bottom). States: IDLE/TRANSFER/REVERSE. VoltageOut cont
 |-------|--------|
 | Left stick press | Reset rotation to alliance perspective |
 | Square (hold) | Auto aim toward alliance hub |
-| Right stick press (hold) | Axis align to nearest trench |
 
-*Note: Climber bindings are currently commented out in ControlBoard.java.*
+*Note: Climber bindings and operator axis align are currently commented out in ControlBoard.java.*
 
 ### Drive Request Config
 
@@ -177,11 +172,17 @@ PathPlanner-based. AutoBuilder configured in `SwerveSubsystem` constructor. `Rob
 ## Commands (`commands/`)
 
 - **IntakeCommand** — coordinates intake sequence
+- **ShootCommand** — runs ShooterSubsystem + TransferSubsystem together; both go idle on end
 - **JiggleCommand** — oscillates extender in/out while coordinating intake/transfer/shooter; used to unstick game pieces
+- **WiggleCommand** — empty stub, not yet implemented
 
 ## Simulation
 
 MapleSim + Dyn4j physics at 200Hz. Run with `./gradlew simulateJava`. Connect AdvantageScope to `localhost` for 3D viz. Vision returns null in sim.
+
+## Dependencies of Note
+
+- **Lombok** (`1.18.30`) — used for annotation-based code generation (`@Getter`, `@Builder`, etc.). Both `compileOnly` and `annotationProcessor` entries are in `build.gradle`.
 
 ## Utility Classes (`frc.lib`)
 
@@ -194,7 +195,7 @@ MapleSim + Dyn4j physics at 200Hz. Run with `./gradlew simulateJava`. Connect Ad
 
 1. Create `subsystems/mysubsystem/MySubsystem.java` with singleton pattern
 2. Create `MySubsystemConstants.java` with `CTREConfig` motor configs
-3. Add CAN IDs to `Constants.java`
+3. Add CAN IDs to `frc.robot.util.Constants`
 4. Add reference in `Superstructure.java`
 5. Initialize in `Robot.java` if needed outside Superstructure
 6. Add controller bindings in `ControlBoard.java`

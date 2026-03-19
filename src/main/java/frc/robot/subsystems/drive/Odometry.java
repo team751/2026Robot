@@ -58,18 +58,16 @@ public class Odometry extends SubsystemBase {
     drive.resetPose(newPose);
   }
 
-  private boolean botSideZero() {
+  private boolean isBotSideZero() {
     return limelights.getBotPoseSide().getX() != 0.0 && limelights.getBotPoseSide().getY() != 0.0;
   }
 
-  private boolean botFrontZero() {
+  private boolean isBotFrontZero() {
     return limelights.getBotPoseFront().getX() != 0.0 && limelights.getBotPoseFront().getY() != 0.0;
   }
 
   @Override
   public void periodic() {
-    // Gets the current timestamp
-    double time = Utils.getCurrentTimeSeconds();
 
     // Adds values to SmartDashboard (or Elastic if u use that)
     // Shows where Odometry/Limelight thinks the robot is on the field
@@ -78,16 +76,23 @@ public class Odometry extends SubsystemBase {
     SmartDashboard.putNumber("Odometry/Rotation", robotPose.getRotation().getDegrees());
 
     // Add's two vision measure ments to SwerveDrive so that they can be filtered by it
-    if (limelights.getBotPoseFront() != null && botFrontZero()) {
+    if (limelights.getBotPoseFront() != null && isBotFrontZero()) {
       Pose2d frontPose = limelights.getBotPoseFront();
+
+      // if (Math.abs(robotPose.getX() - frontPose.getX()) < 1.0 && Math.abs(robotPose.getY() -
+      // frontPose.getY()) < 1.0) {
       drive.addVisionMeasurement(
-          new Pose2d(frontPose.getX(), frontPose.getY(), drive.getPose().getRotation()), time);
+          new Pose2d(frontPose.getX(), frontPose.getY(), drive.getPose().getRotation()),
+          Utils.getCurrentTimeSeconds());
+      // }
     }
 
-    if (limelights.getBotPoseSide() != null && botSideZero()) {
+    if (limelights.getBotPoseSide() != null && isBotSideZero()) {
       Pose2d sidePose = limelights.getBotPoseSide();
+
       drive.addVisionMeasurement(
-          new Pose2d(sidePose.getX(), sidePose.getY(), drive.getPose().getRotation()), time);
+          new Pose2d(sidePose.getX(), sidePose.getY(), drive.getPose().getRotation()),
+          Utils.getCurrentTimeSeconds());
     }
 
     // Sets the Odometry robotPose variable (for easy/more normal access to the robot position)
@@ -96,10 +101,13 @@ public class Odometry extends SubsystemBase {
     // Puts a new field value into Elastic
     field.setRobotPose(robotPose.getX(), robotPose.getY(), robotPose.getRotation());
 
-    SmartDashboard.putNumber("Pigeon Yaw", drive.getPigeon2().getYaw().getValueAsDouble());
-    SmartDashboard.putNumber("Pigeon Pitch", drive.getPigeon2().getPitch().getValueAsDouble());
-    SmartDashboard.putNumber("Pigeon Roll", drive.getPigeon2().getRoll().getValueAsDouble());
-    SmartDashboard.putNumber("Swerve Rotation", Math.toDegrees(drive.getRotation3d().getZ()));
+    SmartDashboard.putNumber("Odometry/Pigeon Yaw", drive.getPigeon2().getYaw().getValueAsDouble());
+    SmartDashboard.putNumber(
+        "Odometry/Pigeon Pitch", drive.getPigeon2().getPitch().getValueAsDouble());
+    SmartDashboard.putNumber(
+        "Odometry/Pigeon Roll", drive.getPigeon2().getRoll().getValueAsDouble());
+    SmartDashboard.putNumber(
+        "Odometry/Swerve Rotation", Math.toDegrees(drive.getRotation3d().getZ()));
 
     SmartDashboard.putData(field);
   }

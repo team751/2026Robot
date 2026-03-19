@@ -11,7 +11,7 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "race",
           "data": {
             "commands": [
               {
@@ -42,7 +42,7 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "race",
           "data": {
             "commands": [
               {
@@ -61,12 +61,6 @@
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "redintakepart2Top"
-          }
-        },
-        {
           "type": "named",
           "data": {
             "name": "StopIntake"
@@ -79,13 +73,7 @@
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "Red Score IntakeTop"
-          }
-        },
-        {
-          "type": "parallel",
+          "type": "race",
           "data": {
             "commands": [
               {
@@ -112,7 +100,7 @@
       ]
     }
   },
-  "resetOdom": true,
+  "resetOdom": false,
   "folder": "Comp Autos",
   "choreoAuto": false
 }

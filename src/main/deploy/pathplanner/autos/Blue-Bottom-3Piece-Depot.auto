@@ -7,11 +7,11 @@
         {
           "type": "path",
           "data": {
-            "pathName": "StartingpathBottom"
+            "pathName": "Startingpath"
           }
         },
         {
-          "type": "parallel",
+          "type": "race",
           "data": {
             "commands": [
               {
@@ -38,11 +38,11 @@
         {
           "type": "path",
           "data": {
-            "pathName": "intakeBottom"
+            "pathName": "grabdepotp1"
           }
         },
         {
-          "type": "parallel",
+          "type": "race",
           "data": {
             "commands": [
               {
@@ -63,7 +63,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "intakepart2Bottom"
+            "pathName": "grabdepotbluepart2"
           }
         },
         {
@@ -81,11 +81,85 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Score IntakeBottom"
+            "pathName": "Scoredepotblue"
           }
         },
         {
-          "type": "parallel",
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Shoot"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 1.5
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "StopShoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "intake"
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.5
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "intakepart2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "StopIntake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Retract"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Score Intake"
+          }
+        },
+        {
+          "type": "race",
           "data": {
             "commands": [
               {
@@ -112,7 +186,7 @@
       ]
     }
   },
-  "resetOdom": true,
+  "resetOdom": false,
   "folder": "Comp Autos",
   "choreoAuto": false
 }

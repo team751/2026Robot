@@ -7,11 +7,11 @@
         {
           "type": "path",
           "data": {
-            "pathName": "RedStartingpathTop"
+            "pathName": "RedStartingpath"
           }
         },
         {
-          "type": "parallel",
+          "type": "race",
           "data": {
             "commands": [
               {
@@ -38,11 +38,11 @@
         {
           "type": "path",
           "data": {
-            "pathName": "redgrabdepotp1Top"
+            "pathName": "redintake"
           }
         },
         {
-          "type": "parallel",
+          "type": "race",
           "data": {
             "commands": [
               {
@@ -63,7 +63,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "redgrabdepotbluepart2Top"
+            "pathName": "redintakepart2"
           }
         },
         {
@@ -81,85 +81,11 @@
         {
           "type": "path",
           "data": {
-            "pathName": "RedScoredepotblueTop"
+            "pathName": "Red Score Intake"
           }
         },
         {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "Shoot"
-                }
-              },
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 1.5
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "StopShoot"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "redintakeTop"
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "Intake"
-                }
-              },
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 0.5
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "redintakepart2Top"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "StopIntake"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Retract"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Red Score IntakeTop"
-          }
-        },
-        {
-          "type": "parallel",
+          "type": "race",
           "data": {
             "commands": [
               {
@@ -186,7 +112,7 @@
       ]
     }
   },
-  "resetOdom": true,
+  "resetOdom": false,
   "folder": "Comp Autos",
   "choreoAuto": false
 }
