@@ -24,6 +24,7 @@ import com.ctre.phoenix6.SignalLogger;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -77,9 +78,11 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
-    TunableParameter.updateAll();
+    // TunableParameter.updateAll();
     try {
+      Threads.setCurrentThreadPriority(true, 6);
       scheduler.run();
+      Threads.setCurrentThreadPriority(false, 0);
     } catch (Throwable t) {
       DriverStation.reportError(
           "Unhandled exception in CommandScheduler: " + t.toString(), t.getStackTrace());
