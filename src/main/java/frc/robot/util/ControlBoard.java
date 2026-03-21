@@ -96,13 +96,13 @@ public class ControlBoard {
       drive.setDefaultCommand(drive.applyRequest(this::getDriverRequest));
       if (Utils.isSimulation())
         drive.registerTelemetry(new MapSimSwerveTelemetry(SwerveConstants.maxSpeed)::telemeterize);
-      // System.out.println("Driver Initialized");
+      System.out.println("Driver Initialized");
     }
 
     if (operator == null) {
       operator = new PS5Controller(ControllerPreset.OPERATOR.port());
       configureBindings(ControllerPreset.OPERATOR, operator);
-      // System.out.println("Operator Initialized");
+      System.out.println("Operator Initialized");
     }
   }
 
@@ -270,8 +270,8 @@ public class ControlBoard {
   public SwerveRequest getDriverRequest() {
     if (driver == null) return null;
 
-    double scale = preciseControl ? 0.4 : 1.0;
-    double rotScale = preciseControl ? 0.50 : 1.0;
+    double scale = preciseControl ? 0.3 : 1.0;
+    double rotScale = preciseControl ? 0.40 : 1.0;
 
     double rawStickRot = driver.rightHorizontalJoystick.getAsDouble();
     double rot =
@@ -285,9 +285,9 @@ public class ControlBoard {
       double angleDiff =
           Math.toDegrees(
               Math.atan2(hubPose.getY() - robotPose.getY(), hubPose.getX() - robotPose.getX()));
-      SmartDashboard.putNumber("target offness", angleDiff - robotPose.getRotation().getDegrees());
+      //SmartDashboard.putNumber("target offness", angleDiff - robotPose.getRotation().getDegrees());
       rot = autoAimController.calculate(robotPose.getRotation().getDegrees(), angleDiff);
-      SmartDashboard.putNumber("pid value", rot);
+      //SmartDashboard.putNumber("pid value", rot);
     }
 
     double x = driver.leftVerticalJoystick.getAsDouble();
@@ -306,8 +306,8 @@ public class ControlBoard {
     }
 
     return driveRequest
-        .withVelocityX(0.8 * SwerveConstants.maxSpeed * x * scale)
-        .withVelocityY(0.8 * SwerveConstants.maxSpeed * y * scale)
+        .withVelocityX(SwerveConstants.maxSpeed * x * scale)
+        .withVelocityY(SwerveConstants.maxSpeed * y * scale)
         .withRotationalRate(rot);
   }
 }
