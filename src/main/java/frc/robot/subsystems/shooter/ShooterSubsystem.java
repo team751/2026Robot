@@ -31,7 +31,7 @@ public class ShooterSubsystem extends SubsystemBase {
   /* State Machine Logic */
   private enum ShooterState {
     IDLE,
-    SLOWSPIN,
+    AASHOOT,
     REVERSE,
     SHOOT
   }
@@ -55,8 +55,7 @@ public class ShooterSubsystem extends SubsystemBase {
   public void periodic() {
     switch (state) {
       case IDLE -> setShooterSpeed(0, 0);
-      case SLOWSPIN -> setShooterMotor(
-          ShooterConstants.flywheelSpeed * ShooterConstants.slowPercent);
+      case AASHOOT -> setShooterSpeed(20, ShooterConstants.transferVoltage);
       case REVERSE -> setTransferMotor(ShooterConstants.transferSpitVoltage);
       case SHOOT -> setShooterSpeed(calculateShooterSpeed(), ShooterConstants.transferVoltage);
     }
@@ -109,6 +108,10 @@ public class ShooterSubsystem extends SubsystemBase {
 
   public void requestShoot() {
     state = ShooterState.SHOOT;
+  }
+
+  public void requestAutoAimlessShoot() {
+    state = ShooterState.AASHOOT;
   }
 
   public void requestSpit() {
