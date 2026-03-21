@@ -84,7 +84,7 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
     // Configure AutoBuilder HERE (remove from Robot.java)
     PathFollowingController controller =
         new PPHolonomicDriveController(
-            new PIDConstants(1.5, 0.0, 0.05), // Translation PID
+            new PIDConstants(0.7, 0.0, 0.05), // Translation PID
             new PIDConstants(5, 0.0, 0.0) // Rotation PID
             );
 
