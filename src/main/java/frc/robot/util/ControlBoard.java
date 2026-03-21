@@ -143,10 +143,19 @@ public class ControlBoard {
             ExtenderSubsystem.getInstance(),
             TransferSubsystem.getInstance(),
             ShooterSubsystem.getInstance()));
+
     controller.squareButton.whileTrue(
         new StartEndCommand(
             () -> IntakeSubsystem.getInstance().requestSpit(),
             () -> IntakeSubsystem.getInstance().requestIdle()));
+    controller.squareButton.whileTrue(
+      new StartEndCommand(
+            () -> TransferSubsystem.getInstance().requestReverse(),
+            () -> TransferSubsystem.getInstance().requestIdle()));   
+    controller.squareButton.whileTrue(
+      new StartEndCommand(
+            () -> ShooterSubsystem.getInstance().requestSpit(),
+            () -> ShooterSubsystem.getInstance().requestIdle()));             
 
     controller.dUp.whileTrue(
         new InstantCommand(() -> ExtenderSubsystem.getInstance().requestExtend()));
@@ -158,10 +167,9 @@ public class ControlBoard {
     controller.rightTrigger.whileTrue(
         new ShootCommand(ShooterSubsystem.getInstance(), TransferSubsystem.getInstance()));
 
-    // TS doesn't work
-    // controller.rightTrigger.whileTrue(
-    //     new StartEndCommand(() -> autoAim = true, () -> autoAim = false)
-    //         .withName("Auto Aim Toggle"));
+    controller.rightTrigger.whileTrue(
+        new StartEndCommand(() -> autoAim = true, () -> autoAim = false)
+            .withName("Auto Aim Toggle"));
 
     /* Transfer */
     controller.dLeft.whileTrue(
@@ -198,9 +206,28 @@ public class ControlBoard {
         new StartEndCommand(() -> autoAim = true, () -> autoAim = false)
             .withName("Auto Aim Toggle"));
     // This is not working
-    // controller.rightJoystickButton.whileTrue(
-    //     new StartEndCommand(() -> axisAlign = true, () -> axisAlign = false)
-    //         .withName("Axis Align Toggle"));
+    controller.rightJoystickButton.whileTrue(
+        new StartEndCommand(() -> axisAlign = true, () -> axisAlign = false)
+            .withName("Axis Align Toggle"));
+            
+    controller.dUp.whileTrue(
+        new InstantCommand(() -> ExtenderSubsystem.getInstance().requestExtend()));
+
+    controller.dDown.whileTrue(
+        new InstantCommand(() -> ExtenderSubsystem.getInstance().requestRetract()));
+        
+    controller.dLeft.whileTrue(
+        new StartEndCommand(
+            () -> TransferSubsystem.getInstance().requestReverse(),
+            () -> TransferSubsystem.getInstance().requestIdle()));
+    controller.dLeft.whileTrue(
+        new StartEndCommand(
+            () -> ShooterSubsystem.getInstance().requestSpit(),
+            () -> ShooterSubsystem.getInstance().requestSpit()));
+    controller.dLeft.whileTrue(
+      new StartEndCommand(
+        () -> IntakeSubsystem.getInstance().requestSpit(),
+        () -> IntakeSubsystem.getInstance().requestIdle()));   
 
     /* Climber */
     // TODO: Make left trigger shoot(peter requested)
@@ -251,8 +278,8 @@ public class ControlBoard {
     }
 
     return driveRequest
-        .withVelocityX(0.6 * SwerveConstants.maxSpeed * x * scale)
-        .withVelocityY(0.6 * SwerveConstants.maxSpeed * y * scale)
+        .withVelocityX(0.8 * SwerveConstants.maxSpeed * x * scale)
+        .withVelocityY(0.8 * SwerveConstants.maxSpeed * y * scale)
         .withRotationalRate(rot);
   }
 }
