@@ -3,64 +3,69 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.694,
-        "y": 4.043
+        "x": 8.727371739406779,
+        "y": 3.267586290607345
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.843163014212571,
-        "y": 4.115370376500706
+        "x": 8.719497755123929,
+        "y": 3.017710320631212
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 6.376965538930085,
-        "y": 0.5900092138947741
+        "x": 9.149013798905366,
+        "y": 0.6484120100635595
       },
       "prevControl": {
-        "x": 6.627476500040832,
-        "y": 0.6121663205634138
+        "x": 8.115231081302965,
+        "y": 0.6491861979166662
       },
       "nextControl": {
-        "x": 6.127937712085016,
-        "y": 0.5679832869716548
+        "x": 9.399013728801172,
+        "y": 0.648224788023853
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.9201596155543785,
-        "y": 0.756604762535311
+        "x": 13.653722595692091,
+        "y": 0.6484120100635595
       },
       "prevControl": {
-        "x": 2.169644891403818,
-        "y": 0.7726390113274719
+        "x": 13.90320277072027,
+        "y": 0.6322985911864631
       },
       "nextControl": {
-        "x": 1.6706743397049386,
-        "y": 0.74057051374315
+        "x": 13.404242420663911,
+        "y": 0.6645254289406559
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.1919479387358756,
-        "y": 4.043
+        "x": 14.395491332450565,
+        "y": 2.6025105380473166
       },
       "prevControl": {
-        "x": 1.9419777977147552,
-        "y": 4.0391362456235775
+        "x": 16.197461947298728,
+        "y": 0.43125231726694846
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.3486171875000006,
+      "rotationDegrees": 180.0
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
@@ -74,13 +79,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 148.26739738069862
   },
   "reversed": false,
-  "folder": "Auto1bluepaths",
+  "folder": null,
   "idealStartingState": {
-    "velocity": 0,
-    "rotation": 0.0
+    "velocity": 0.0,
+    "rotation": 90.0
   },
   "useDefaultConstraints": true
 }

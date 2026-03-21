@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "StartingpathBottom"
+            "pathName": "StartingpathBottom mirrored"
           }
         },
         {
@@ -38,7 +38,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "intakeBottom"
+            "pathName": "intakeBottom mirrored"
           }
         },
         {
@@ -46,15 +46,15 @@
           "data": {
             "commands": [
               {
-                "type": "path",
-                "data": {
-                  "pathName": "Intakep2"
-                }
-              },
-              {
                 "type": "named",
                 "data": {
                   "name": "Intake"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Intakep2 mirrored"
                 }
               }
             ]
@@ -75,7 +75,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "scoreintake"
+            "pathName": "scoreintake mirrored"
           }
         }
       ]
