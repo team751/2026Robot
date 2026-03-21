@@ -30,21 +30,21 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "StopShoot"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "intakeBottom"
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "Intake"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "intakebottomp2"
+            "pathName": "Intakep2"
           }
         },
         {
@@ -54,9 +54,15 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "StopIntake"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "Score Intake"
+            "pathName": "scoreintake"
           }
         },
         {
@@ -72,22 +78,16 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 1.0
+                  "waitTime": 1.5
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "StopShoot"
           }
         }
       ]
     }
   },
-  "resetOdom": false,
+  "resetOdom": true,
   "folder": "Comp Autos",
   "choreoAuto": false
 }
