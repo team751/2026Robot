@@ -55,7 +55,7 @@ public class ShooterSubsystem extends SubsystemBase {
   public void periodic() {
     switch (state) {
       case IDLE -> setShooterSpeed(0, 0);
-      case AASHOOT -> setShooterSpeed(20, ShooterConstants.transferVoltage);
+      case AASHOOT -> setShooterSpeed(35, ShooterConstants.transferVoltage);
       case REVERSE -> setTransferMotor(ShooterConstants.transferSpitVoltage);
       case SHOOT -> setShooterSpeed(calculateShooterSpeed(), ShooterConstants.transferVoltage);
     }
