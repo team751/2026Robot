@@ -13,7 +13,7 @@ public class NoAimShootCommand extends Command {
     this.transfer = transfer;
     addRequirements(shooter, transfer);
   }
-// comment
+
   @Override
   public void initialize() {
     shooter.requestAutoAimlessShoot();
