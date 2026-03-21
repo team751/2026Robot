@@ -42,15 +42,22 @@
           }
         },
         {
-          "type": "named",
+          "type": "race",
           "data": {
-            "name": "Intake"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "intakepart2Bottom"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "intakepart2Bottom"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake"
+                }
+              }
+            ]
           }
         },
         {

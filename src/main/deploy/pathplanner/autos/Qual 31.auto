@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "RedStartingpathTop"
+            "pathName": "RedStartingpathBottom mirrored"
           }
         },
         {
@@ -23,7 +23,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 1.5
+                  "waitTime": 5.0
                 }
               }
             ]
@@ -38,7 +38,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "redintakeTop"
+            "pathName": "redintakeBottom mirrored"
           }
         },
         {
@@ -52,9 +52,9 @@
                 }
               },
               {
-                "type": "wait",
+                "type": "path",
                 "data": {
-                  "waitTime": 0.5
+                  "pathName": "redintakepart2Bottom mirrored"
                 }
               }
             ]
@@ -73,28 +73,9 @@
           }
         },
         {
-          "type": "race",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "Shoot"
-                }
-              },
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 1.0
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "StopShoot"
+            "pathName": "Red Score IntakeBottom mirrored"
           }
         }
       ]
