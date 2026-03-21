@@ -163,6 +163,11 @@ public class ControlBoard {
     controller.dDown.whileTrue(
         new InstantCommand(() -> ExtenderSubsystem.getInstance().requestRetract()));
 
+    controller.dDown.whileTrue(
+      new StartEndCommand(
+        () -> IntakeSubsystem.getInstance().requestIntake(),
+        () -> IntakeSubsystem.getInstance().requestIdle()));
+
     /* Shooter */
     controller.rightTrigger.whileTrue(
         new ShootCommand(ShooterSubsystem.getInstance(), TransferSubsystem.getInstance()));
