@@ -184,12 +184,16 @@ public class ControlBoard {
     /* Transfer */
     controller.dLeft.whileTrue(
         new StartEndCommand(
-            () -> TransferSubsystem.getInstance().requestReverse(),
-            () -> TransferSubsystem.getInstance().requestIdle()));
+          () -> TransferSubsystem.getInstance().requestReverse(),
+          () -> TransferSubsystem.getInstance().requestIdle()));
     controller.dLeft.whileTrue(
         new StartEndCommand(
-            () -> ShooterSubsystem.getInstance().requestSpit(),
-            () -> ShooterSubsystem.getInstance().requestSpit()));
+          () -> ShooterSubsystem.getInstance().requestSpit(),
+          () -> ShooterSubsystem.getInstance().requestIdle()));
+    controller.dLeft.whileTrue(
+      new StartEndCommand(
+        () -> IntakeSubsystem.getInstance().requestSpit(),
+        () -> IntakeSubsystem.getInstance().requestIdle()));        
 
     controller.rightJoystickButton.whileTrue(
         new StartEndCommand(() -> axisAlign = true, () -> axisAlign = false)
@@ -228,12 +232,12 @@ public class ControlBoard {
         
     controller.dLeft.whileTrue(
         new StartEndCommand(
-            () -> TransferSubsystem.getInstance().requestReverse(),
-            () -> TransferSubsystem.getInstance().requestIdle()));
+          () -> TransferSubsystem.getInstance().requestReverse(),
+          () -> TransferSubsystem.getInstance().requestIdle()));
     controller.dLeft.whileTrue(
         new StartEndCommand(
-            () -> ShooterSubsystem.getInstance().requestSpit(),
-            () -> ShooterSubsystem.getInstance().requestSpit()));
+          () -> ShooterSubsystem.getInstance().requestSpit(),
+          () -> ShooterSubsystem.getInstance().requestIdle()));
     controller.dLeft.whileTrue(
       new StartEndCommand(
         () -> IntakeSubsystem.getInstance().requestSpit(),

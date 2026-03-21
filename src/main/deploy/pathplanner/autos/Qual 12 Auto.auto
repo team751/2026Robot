@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Bump Starting Lower"
+            "pathName": "Qual 12 Auto"
           }
         },
         {
@@ -23,22 +23,16 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 5.0
+                  "waitTime": 8.0
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Bump End Lower"
           }
         }
       ]
     }
   },
-  "resetOdom": false,
-  "folder": null,
+  "resetOdom": true,
+  "folder": "Comp Autos",
   "choreoAuto": false
 }
