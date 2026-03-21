@@ -37,7 +37,7 @@ public class Odometry extends SubsystemBase {
   private final SwerveSubsystem drive;
   private final LimelightSubsystem limelights;
   private Field2d field = new Field2d();
-  private Pose2d robotPose;
+  public Pose2d robotPose;
 
   public Odometry() {
     this.drive = SwerveSubsystem.getInstance();

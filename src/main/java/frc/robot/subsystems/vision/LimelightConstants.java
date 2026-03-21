@@ -35,7 +35,7 @@ public class LimelightConstants {
     public static final Rotation3d rotationOffset =
         new Rotation3d(
             0,
-            Units.Radians.convertFrom(30, Units.Degrees), // Up is + and down is - (Degrees)
+            Units.Radians.convertFrom(30,Units.Degrees), // Up is + and down is - (Degrees)
             0); // Left is - and right is + (degrees)
     // TODO: also do the rotation offset. camera-relative.
   }
@@ -60,6 +60,6 @@ public class LimelightConstants {
         new Rotation3d(
             0,
             0,
-            Units.Radians.convertFrom(-90, Units.Degrees)); // Left is - and right is + (degrees)
+            Units.Radians.convertFrom(0, Units.Degrees)); // Left is - and right is + (degrees)
   }
 }
