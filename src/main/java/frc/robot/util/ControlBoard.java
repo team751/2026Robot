@@ -157,6 +157,11 @@ public class ControlBoard {
             () -> ShooterSubsystem.getInstance().requestSpit(),
             () -> ShooterSubsystem.getInstance().requestIdle()));             
 
+    controller.squareButton.onTrue(
+      new StartEndCommand(
+            () -> ExtenderSubsystem.getInstance().requestExtend(),
+            () -> ExtenderSubsystem.getInstance().requestRetract()));   
+
     controller.dUp.whileTrue(
         new InstantCommand(() -> ExtenderSubsystem.getInstance().requestExtend()));
 
