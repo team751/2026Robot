@@ -227,7 +227,15 @@ public class ControlBoard {
     controller.dLeft.whileTrue(
       new StartEndCommand(
         () -> IntakeSubsystem.getInstance().requestSpit(),
-        () -> IntakeSubsystem.getInstance().requestIdle()));   
+        () -> IntakeSubsystem.getInstance().requestIdle()));
+     
+    controller.crossButton.whileTrue(
+      new JiggleCommand(
+        IntakeSubsystem.getInstance(),
+        ExtenderSubsystem.getInstance(),
+        TransferSubsystem.getInstance(),
+        ShooterSubsystem.getInstance())
+      );    
 
     /* Climber */
     // TODO: Make left trigger shoot(peter requested)
