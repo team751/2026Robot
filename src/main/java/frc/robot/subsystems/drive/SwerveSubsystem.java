@@ -105,7 +105,7 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
         },
         this);
 
-    System.out.println("Swerve Starting!");
+    // System.out.println("Swerve Starting!");
 
     // Try to apply operator perspective as early as possible so a deploy (process restart)
     // gets the same perspective as a full power-cycle. We also publish telemetry so we can

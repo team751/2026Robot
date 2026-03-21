@@ -96,13 +96,13 @@ public class ControlBoard {
       drive.setDefaultCommand(drive.applyRequest(this::getDriverRequest));
       if (Utils.isSimulation())
         drive.registerTelemetry(new MapSimSwerveTelemetry(SwerveConstants.maxSpeed)::telemeterize);
-      System.out.println("Driver Initialized");
+      // System.out.println("Driver Initialized");
     }
 
     if (operator == null) {
       operator = new PS5Controller(ControllerPreset.OPERATOR.port());
       configureBindings(ControllerPreset.OPERATOR, operator);
-      System.out.println("Operator Initialized");
+      // System.out.println("Operator Initialized");
     }
   }
 

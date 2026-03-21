@@ -61,14 +61,14 @@ public class Robot extends TimedRobot {
       tmpControlBoard = ControlBoard.getInstance();
     } catch (Throwable t) {
       DriverStation.reportError("ControlBoard init failed: " + t.toString(), t.getStackTrace());
-      t.printStackTrace();
+      // t.printStackTrace();
     }
     this.controlBoard = tmpControlBoard;
   }
 
   @Override
   public void robotInit() {
-    System.out.println("Robot.robotInit() start");
+    // System.out.println("Robot.robotInit() start");
     // for (int port = 5800; port <= 5809; port++) {
     //   PortForwarder.add(port, "limelight.local", port);
     // }
@@ -83,7 +83,7 @@ public class Robot extends TimedRobot {
     } catch (Throwable t) {
       DriverStation.reportError(
           "Unhandled exception in CommandScheduler: " + t.toString(), t.getStackTrace());
-      t.printStackTrace();
+      // t.printStackTrace();
     }
     if (controlBoard != null) controlBoard.displayUI();
   }

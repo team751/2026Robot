@@ -45,7 +45,7 @@ public class CTREConfig<Device extends ParentDevice, Config extends ParentConfig
     Device device = deviceSupplier.get(canID, canbus);
 
     if (device == null || !device.isConnected()) {
-      System.err.println("Device " + name + " not connected (" + canID + " @ " + canbus + ")");
+      // System.err.println("Device " + name + " not connected (" + canID + " @ " + canbus + ")");
     }
 
     CTREUtil.applyConfiguration(device, config);
