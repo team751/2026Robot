@@ -80,7 +80,7 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     // TunableParameter.updateAll();
     try {
-      Threads.setCurrentThreadPriority(true, 6);
+      Threads.setCurrentThreadPriority(true, 99);
       scheduler.run();
       Threads.setCurrentThreadPriority(false, 0);
     } catch (Throwable t) {

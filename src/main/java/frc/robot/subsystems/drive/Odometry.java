@@ -101,11 +101,8 @@ public class Odometry extends SubsystemBase {
     // Puts a new field value into Elastic
     field.setRobotPose(robotPose.getX(), robotPose.getY(), robotPose.getRotation());
 
-    SmartDashboard.putNumber("Odometry/Pigeon Yaw", drive.getPigeon2().getYaw().getValueAsDouble());
     SmartDashboard.putNumber(
         "Odometry/Pigeon Pitch", drive.getPigeon2().getPitch().getValueAsDouble());
-    SmartDashboard.putNumber(
-        "Odometry/Pigeon Roll", drive.getPigeon2().getRoll().getValueAsDouble());
     SmartDashboard.putNumber(
         "Odometry/Swerve Rotation", Math.toDegrees(drive.getRotation3d().getZ()));
 

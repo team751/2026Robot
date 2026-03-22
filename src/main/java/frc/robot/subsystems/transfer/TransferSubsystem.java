@@ -48,25 +48,28 @@ public class TransferSubsystem extends SubsystemBase {
           -TransferConstants.transfertopspeed, -TransferConstants.transferbottomspeed);
     }
 
-    SmartDashboard.putString("Transfer/State", state.toString());
-    SmartDashboard.putNumber("Transfer/Top Speed", topMotor.getVelocity().getValueAsDouble());
-    SmartDashboard.putNumber("Transfer/Bottom Speed", bottomMotor.getVelocity().getValueAsDouble());
+
   }
 
   private void setMotors(double topVoltage, double bottomVoltage) {
     topMotor.setControl(topControl.withOutput(topVoltage));
     bottomMotor.setControl(bottomControl.withOutput(bottomVoltage));
+    SmartDashboard.putNumber("Transfer/Top Speed", topMotor.getVelocity().getValueAsDouble());
+    SmartDashboard.putNumber("Transfer/Bottom Speed", bottomMotor.getVelocity().getValueAsDouble());
   }
 
   public void requestTransfer() {
     state = TransferState.TRANSFER;
+    SmartDashboard.putString("Transfer/State", state.toString());
   }
 
   public void requestReverse() {
     state = TransferState.REVERSE;
+    SmartDashboard.putString("Transfer/State", state.toString());
   }
 
   public void requestIdle() {
     state = TransferState.IDLE;
+    SmartDashboard.putString("Transfer/State", state.toString());
   }
 }

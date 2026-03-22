@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.lib.PS5Controller;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.JiggleCommand;
-import frc.robot.commands.NoAimShootCommand;
 import frc.robot.commands.ShootCommand;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.drive.SwerveConstants;
@@ -210,11 +209,6 @@ public class ControlBoard {
 
   /* Operator bindings */
   private void configureOperatorBindings(PS5Controller controller) {
-
-    controller.rightTrigger.whileTrue(
-      new NoAimShootCommand(ShooterSubsystem.getInstance(), TransferSubsystem.getInstance())
-    );
-
     controller.leftJoystickButton.onTrue(
         new InstantCommand(() -> drive.setRobotRotationByAlliance()));
 

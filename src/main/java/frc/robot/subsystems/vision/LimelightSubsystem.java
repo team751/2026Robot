@@ -100,15 +100,16 @@ public class LimelightSubsystem extends SubsystemBase {
         0.0,
         0.0,
         0.0);
-//errrre
+
+        Pose2d frontPoseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name).pose;
+
     // If theres no april tag seen return null
-    if (LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name).pose == null
-         && LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name).pose == null
-         && LimelightHelpers.getTA(LimelightConstants.LimelightFront.name) < 70) {
+    if (frontPoseEstimate == null) {
+        //  && LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name).pose == null
       return null;
     }
 
-    return LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name).pose;
+    return frontPoseEstimate;
     // if (LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name).pose
     // == null
     //     &&
@@ -132,13 +133,14 @@ public class LimelightSubsystem extends SubsystemBase {
         0.0,
         0.0);
 
+        Pose2d sidePoseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightSide.name).pose;
+
     // If theres no april tag seen return null
-    if (LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightSide.name).pose == null
-        && LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightSide.name).pose == null
-        && LimelightHelpers.getTA(LimelightConstants.LimelightFront.name) < 70) {
+    if (sidePoseEstimate == null) {
+        // && LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightSide.name).pose == null
       return null;
     }
-    return LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightSide.name).pose;
+    return sidePoseEstimate;
     // if (LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightSide.name).pose
     // == null
     //     &&
