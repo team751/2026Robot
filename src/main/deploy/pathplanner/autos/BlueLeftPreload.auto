@@ -23,7 +23,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 5.0
+                  "waitTime": 7.0
                 }
               }
             ]
@@ -33,6 +33,12 @@
           "type": "named",
           "data": {
             "name": "StopShoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Copy of StartingpathTop mirrored"
           }
         }
       ]
