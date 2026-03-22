@@ -190,11 +190,7 @@ public class ControlBoard {
     controller.dLeft.whileTrue(
         new StartEndCommand(
           () -> ShooterSubsystem.getInstance().requestSpit(),
-          () -> ShooterSubsystem.getInstance().requestIdle()));
-    controller.dLeft.whileTrue(
-      new StartEndCommand(
-        () -> IntakeSubsystem.getInstance().requestSpit(),
-        () -> IntakeSubsystem.getInstance().requestIdle()));        
+          () -> ShooterSubsystem.getInstance().requestIdle()));     
 
     controller.rightJoystickButton.whileTrue(
         new StartEndCommand(() -> axisAlign = true, () -> axisAlign = false)
@@ -222,9 +218,9 @@ public class ControlBoard {
     controller.leftJoystickButton.onTrue(
         new InstantCommand(() -> drive.setRobotRotationByAlliance()));
 
-    controller.squareButton.whileTrue(
-        new StartEndCommand(() -> autoAim = true, () -> autoAim = false)
-            .withName("Auto Aim Toggle"));
+    // controller.squareButton.whileTrue(
+    //     new StartEndCommand(() -> autoAim = true, () -> autoAim = false)
+    //         .withName("Auto Aim Toggle"));
     // This is not working
     controller.rightJoystickButton.whileTrue(
         new StartEndCommand(() -> axisAlign = true, () -> axisAlign = false)
@@ -244,10 +240,6 @@ public class ControlBoard {
         new StartEndCommand(
           () -> ShooterSubsystem.getInstance().requestSpit(),
           () -> ShooterSubsystem.getInstance().requestIdle()));
-    controller.dLeft.whileTrue(
-      new StartEndCommand(
-        () -> IntakeSubsystem.getInstance().requestSpit(),
-        () -> IntakeSubsystem.getInstance().requestIdle()));
      
     controller.crossButton.whileTrue(
       new JiggleCommand(
