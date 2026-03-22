@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.51126081391243,
-        "y": 2.4742372881355936
+        "x": 3.502115719897599,
+        "y": 3.1804901571327684
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.2855161512844298,
-        "y": 2.5816586421345558
+        "x": 3.195440498537195,
+        "y": 3.2168511693173083
       },
       "isLocked": false,
       "linkedName": null
@@ -20,8 +20,8 @@
         "y": 3.025894520215395
       },
       "prevControl": {
-        "x": 2.3493983933615823,
-        "y": 2.9474596133474575
+        "x": 2.3399041312065187,
+        "y": 2.9708224927962585
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 25.0
+    "rotation": 19.11233900599406
   },
   "reversed": false,
   "folder": "Auto1bluepaths",
