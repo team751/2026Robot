@@ -31,6 +31,7 @@ public class ShooterSubsystem extends SubsystemBase {
   /* State Machine Logic */
   private enum ShooterState {
     IDLE,
+    AASHOOT,
     REVERSE,
     SHOOT
   }
@@ -54,6 +55,7 @@ public class ShooterSubsystem extends SubsystemBase {
   public void periodic() {
     switch (state) {
       case IDLE -> setShooterSpeed(0, 0);
+      case AASHOOT -> setShooterSpeed(35, ShooterConstants.transferVoltage);
       case REVERSE -> setTransferMotor(ShooterConstants.transferSpitVoltage);
       case SHOOT -> setShooterSpeed(calculateShooterSpeed(), ShooterConstants.transferVoltage);
     }
@@ -69,6 +71,7 @@ public class ShooterSubsystem extends SubsystemBase {
   public void setTransferMotor(double transferVoltage) {
     shooterTransferMotor.setControl(shooterTransferControl.withOutput(transferVoltage));
   }
+
 
   /** Runs both the main shooter motor and transfer motor */
   private void setShooterSpeed(double flywheelVelocity, double transferVoltage) {
@@ -97,11 +100,15 @@ public class ShooterSubsystem extends SubsystemBase {
     double distanceCM = getRobotDistanceFromHub();
     return ((distanceCM - ShooterConstants.shooterDistanceCurveYIntercept)
             / ShooterConstants.shooterDistanceCurveSlope)
-        - 2;
+        - 2.2;
   }
 
   public void requestIdle() {
     state = ShooterState.IDLE;
+  }
+
+  public void requestAutoAimlessShoot() {
+    state = ShooterState.AASHOOT;
   }
 
   public void requestShoot() {

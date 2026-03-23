@@ -71,9 +71,9 @@ public class Odometry extends SubsystemBase {
 
     // Adds values to SmartDashboard (or Elastic if u use that)
     // Shows where Odometry/Limelight thinks the robot is on the field
-    SmartDashboard.putNumber("Odometry/X", robotPose.getX());
-    SmartDashboard.putNumber("Odometry/Y", robotPose.getY());
-    SmartDashboard.putNumber("Odometry/Rotation", robotPose.getRotation().getDegrees());
+    // SmartDashboard.putNumber("Odometry/X", robotPose.getX());
+    // SmartDashboard.putNumber("Odometry/Y", robotPose.getY());
+    // SmartDashboard.putNumber("Odometry/Rotation", robotPose.getRotation().getDegrees());
 
     // Add's two vision measure ments to SwerveDrive so that they can be filtered by it
     if (limelights.getBotPoseFront() != null && isBotFrontZero()) {
@@ -101,10 +101,13 @@ public class Odometry extends SubsystemBase {
     // Puts a new field value into Elastic
     field.setRobotPose(robotPose.getX(), robotPose.getY(), robotPose.getRotation());
 
-    SmartDashboard.putNumber(
-        "Odometry/Pigeon Pitch", drive.getPigeon2().getPitch().getValueAsDouble());
-    SmartDashboard.putNumber(
-        "Odometry/Swerve Rotation", Math.toDegrees(drive.getRotation3d().getZ()));
+    // SmartDashboard.putNumber("Odometry/Pigeon Yaw", drive.getPigeon2().getYaw().getValueAsDouble());
+    // SmartDashboard.putNumber(
+    //     "Odometry/Pigeon Pitch", drive.getPigeon2().getPitch().getValueAsDouble());
+    // SmartDashboard.putNumber(
+    //     "Odometry/Pigeon Roll", drive.getPigeon2().getRoll().getValueAsDouble());
+    // SmartDashboard.putNumber(
+    //     "Odometry/Swerve Rotation", Math.toDegrees(drive.getRotation3d().getZ()));
 
     SmartDashboard.putData(field);
   }

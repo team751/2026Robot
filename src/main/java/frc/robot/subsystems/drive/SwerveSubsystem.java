@@ -149,30 +149,30 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
 
   @Override
   public void periodic() {
-    if (!m_hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
-      if (DriverStation.getAlliance().isPresent()) {
-        var rot = kBlueAlliancePerspectiveRotation;
-        if (DriverStation.getAlliance().get() == Alliance.Red) {
-          rot = kRedAlliancePerspectiveRotation;
-        }
+    // if (!m_hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
+    //   if (DriverStation.getAlliance().isPresent()) {
+    //     var rot = kBlueAlliancePerspectiveRotation;
+    //     if (DriverStation.getAlliance().get() == Alliance.Red) {
+    //       rot = kRedAlliancePerspectiveRotation;
+    //     }
 
-        setOperatorPerspectiveAndAdjustPose(rot);
-      }
+    //     setOperatorPerspectiveAndAdjustPose(rot);
+    //   }
 
-      // DriverStation.getAlliance()
-      //     .ifPresent(
-      //         allianceColor -> {
-      //             var rot =
-      //                 allianceColor == Alliance.Red
-      //                 ? kRedAlliancePerspectiveRotation
-      //                 : kBlueAlliancePerspectiveRotation;
-      //             setOperatorPerspectiveForward(rot);
-      //             m_hasAppliedOperatorPerspective = true;
-      //             SmartDashboard.putNumber("OperatorPerspectiveDeg", rot.getDegrees());
-      //             SmartDashboard.putString("OperatorPerspectiveAlliance", allianceColor.name());
-      //         }
-      //     );
-    }
+    //   // DriverStation.getAlliance()
+    //   //     .ifPresent(
+    //   //         allianceColor -> {
+    //   //             var rot =
+    //   //                 allianceColor == Alliance.Red
+    //   //                 ? kRedAlliancePerspectiveRotation
+    //   //                 : kBlueAlliancePerspectiveRotation;
+    //   //             setOperatorPerspectiveForward(rot);
+    //   //             m_hasAppliedOperatorPerspective = true;
+    //   //             SmartDashboard.putNumber("OperatorPerspectiveDeg", rot.getDegrees());
+    //   //             SmartDashboard.putString("OperatorPerspectiveAlliance", allianceColor.name());
+    //   //         }
+    //   //     );
+    // }
 
     // Shows where SwerveDrive thinks the robot is positioned on the field.
     Pose2d pose = getPose();

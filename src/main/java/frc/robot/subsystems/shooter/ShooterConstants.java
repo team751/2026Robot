@@ -11,7 +11,7 @@ import frc.robot.util.Constants;
 public class ShooterConstants {
   // TODO: Set current limits and tune the motors. also name/find the canbus to put the motors on
   public static double flywheelSpeed = 27; // Rotations per Second
-  public static double transferVoltage = 2; // Volts
+  public static double transferVoltage = 4; // Volts
   public static double slowPercent = 0.5; // Percent 0.0-1.0
   public static double transferSpitVoltage = -2;
 

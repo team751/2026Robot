@@ -10,8 +10,8 @@ import frc.robot.util.Constants;
 
 public class TransferConstants {
   // TODO: Set current limits and tune the motors. also name/find the canbus to put the motors on
-  public static double transfertopspeed = 3;
-  public static double transferbottomspeed = 5.5;
+  public static double transfertopspeed = 4;
+  public static double transferbottomspeed = 7;
 
   public static final CTREConfig<TalonFX, TalonFXConfiguration> transfertopconfig =
       new CTREConfig<>(TalonFXConfiguration::new);

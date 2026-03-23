@@ -3,6 +3,8 @@ package frc.robot.util;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveModule;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.revrobotics.spark.SparkBase.ControlType;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -157,13 +159,17 @@ public class ControlBoard {
             () -> ShooterSubsystem.getInstance().requestSpit(),
             () -> ShooterSubsystem.getInstance().requestIdle()));             
 
-    controller.squareButton.onTrue(
+    controller.squareButton.whileTrue(
       new StartEndCommand(
             () -> ExtenderSubsystem.getInstance().requestExtend(),
             () -> ExtenderSubsystem.getInstance().requestRetract()));   
 
     controller.dUp.whileTrue(
         new InstantCommand(() -> ExtenderSubsystem.getInstance().requestExtend()));
+    controller.dUp.whileTrue(
+      new StartEndCommand(
+        () -> IntakeSubsystem.getInstance().requestIntake(),
+        () -> IntakeSubsystem.getInstance().requestIdle()));
 
     controller.dDown.whileTrue(
         new InstantCommand(() -> ExtenderSubsystem.getInstance().requestRetract()));
@@ -189,15 +195,37 @@ public class ControlBoard {
     controller.dLeft.whileTrue(
         new StartEndCommand(
           () -> ShooterSubsystem.getInstance().requestSpit(),
-          () -> ShooterSubsystem.getInstance().requestIdle()));     
+          () -> ShooterSubsystem.getInstance().requestIdle()));
+    // controller.dLeft.whileTrue(
+    //   new StartEndCommand(
+    //     () -> IntakeSubsystem.getInstance().requestIntake(),
+    //     () -> IntakeSubsystem.getInstance().requestIdle()));        
 
-    controller.rightJoystickButton.whileTrue(
-        new StartEndCommand(() -> axisAlign = true, () -> axisAlign = false)
-            .withName("Axis Align Toggle"));
+    // controller.rightJoystickButton.whileTrue(
+    //     new StartEndCommand(() -> axisAlign = true, () -> axisAlign = false)
+    //         .withName("Axis Align Toggle"));
 
-    controller.leftJoystickButton.whileTrue(
-        new StartEndCommand(() -> axisAlign = true, () -> axisAlign = false)
-            .withName("Axis Align Toggle"));
+    controller.leftBumper.whileTrue(
+        new StartEndCommand(
+            () -> IntakeSubsystem.getInstance().requestSpit(),
+            () -> IntakeSubsystem.getInstance().requestIdle()));
+    controller.leftBumper.whileTrue(
+      new StartEndCommand(
+            () -> TransferSubsystem.getInstance().requestReverse(),
+            () -> TransferSubsystem.getInstance().requestIdle()));   
+    controller.leftBumper.whileTrue(
+      new StartEndCommand(
+            () -> ShooterSubsystem.getInstance().requestSpit(),
+            () -> ShooterSubsystem.getInstance().requestIdle()));             
+
+    controller.leftBumper.whileTrue(
+      new StartEndCommand(
+            () -> ExtenderSubsystem.getInstance().requestExtend(),
+            () -> ExtenderSubsystem.getInstance().requestRetract())); 
+
+    // controller.leftJoystickButton.whileTrue(
+    //     new StartEndCommand(() -> axisAlign = true, () -> axisAlign = false)
+    //         .withName("Axis Align Toggle"));
 
     controller.circleButton.onTrue(new InstantCommand(() -> drive.setRobotRotationByAlliance()));
 
@@ -209,19 +237,16 @@ public class ControlBoard {
 
   /* Operator bindings */
   private void configureOperatorBindings(PS5Controller controller) {
-    controller.leftJoystickButton.onTrue(
-        new InstantCommand(() -> drive.setRobotRotationByAlliance()));
-
-    // controller.squareButton.whileTrue(
-    //     new StartEndCommand(() -> autoAim = true, () -> autoAim = false)
-    //         .withName("Auto Aim Toggle"));
-    // This is not working
-    controller.rightJoystickButton.whileTrue(
-        new StartEndCommand(() -> axisAlign = true, () -> axisAlign = false)
-            .withName("Axis Align Toggle"));
+    controller.rightTrigger.whileTrue(
+        new ShootCommand(ShooterSubsystem.getInstance(), TransferSubsystem.getInstance(), true));
             
     controller.dUp.whileTrue(
         new InstantCommand(() -> ExtenderSubsystem.getInstance().requestExtend()));
+
+    controller.dUp.whileTrue(
+      new StartEndCommand(
+        () -> IntakeSubsystem.getInstance().requestIntake(),
+        () -> IntakeSubsystem.getInstance().requestIdle()));
 
     controller.dDown.whileTrue(
         new InstantCommand(() -> ExtenderSubsystem.getInstance().requestRetract()));
@@ -243,6 +268,24 @@ public class ControlBoard {
         ShooterSubsystem.getInstance())
       );    
 
+    controller.squareButton.whileTrue(
+        new StartEndCommand(
+            () -> IntakeSubsystem.getInstance().requestSpit(),
+            () -> IntakeSubsystem.getInstance().requestIdle()));
+    controller.squareButton.whileTrue(
+      new StartEndCommand(
+            () -> TransferSubsystem.getInstance().requestReverse(),
+            () -> TransferSubsystem.getInstance().requestIdle()));   
+    controller.squareButton.whileTrue(
+      new StartEndCommand(
+            () -> ShooterSubsystem.getInstance().requestSpit(),
+            () -> ShooterSubsystem.getInstance().requestIdle()));             
+
+    controller.squareButton.onTrue(
+      new StartEndCommand(
+            () -> ExtenderSubsystem.getInstance().requestExtend(),
+            () -> ExtenderSubsystem.getInstance().requestRetract()));   
+
     /* Climber */
     // TODO: Make left trigger shoot(peter requested)
     // controller.leftTrigger.whileTrue(
@@ -256,8 +299,8 @@ public class ControlBoard {
   public SwerveRequest getDriverRequest() {
     if (driver == null) return null;
 
-    double scale = preciseControl ? 0.3 : 1.0;
-    double rotScale = preciseControl ? 0.40 : 1.0;
+    double scale = preciseControl ? 0.5 : 1.0;
+    double rotScale = preciseControl ? 0.50 : 1.0;
 
     double rawStickRot = driver.rightHorizontalJoystick.getAsDouble();
     double rot =
