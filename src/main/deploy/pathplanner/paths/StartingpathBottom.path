@@ -41,8 +41,8 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
-    "rotation": 19.112339005994063
+    "velocity": 4.0,
+    "rotation": 25.0
   },
   "reversed": false,
   "folder": "Auto1bluepaths",

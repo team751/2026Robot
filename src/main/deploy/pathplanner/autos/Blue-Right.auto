@@ -11,31 +11,6 @@
           }
         },
         {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "Shoot"
-                }
-              },
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 5.0
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "StopShoot"
-          }
-        },
-        {
           "type": "path",
           "data": {
             "pathName": "intakeBottom"
@@ -61,9 +36,72 @@
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "Retract"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "StopIntake"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Retract"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "scoreintake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Shoot"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 7.0
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "intakeBottom"
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "intakebottomp2"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake"
+                }
+              }
+            ]
           }
         },
         {
@@ -73,9 +111,22 @@
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "scoreintake"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Retract"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "scoreintakebottomp2"
+                }
+              }
+            ]
           }
         }
       ]
