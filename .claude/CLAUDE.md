@@ -169,6 +169,46 @@ WPILib Blue-origin coordinates: origin at bottom-right of Blue wall, +X toward R
 
 PathPlanner-based. AutoBuilder configured in `SwerveSubsystem` constructor. `RobotContainer.java` registers named commands for use in PathPlanner autos: `Shoot`/`StopShoot`, `Intake`/`StopIntake`, `Spit`/`StopSpit`, `Retract`, `Transfer`/`StopTransfer`. Auto chooser built in `Robot.robotInit()` and scans `src/main/deploy/pathplanner/autos/*.auto` — no code changes needed for new autos.
 
+### Mirroring Autos
+
+To mirror an auto for the opposite side of the field, create **new** path files (never edit the originals) and a new `.auto` file referencing them.
+
+**Field dimensions:**
+- Field length (X): `16.540988` m (from `FieldConstants.FIELD_LENGTH`)
+- Field width (Y): `8.052` m
+
+**Flip formulas:**
+
+| Mirror type | X | Y | Rotation |
+|---|---|---|---|
+| Blue ↔ Red (X-flip) | `16.540988 - oldX` | unchanged | `180 - oldRotation` |
+| Top ↔ Bottom (Y-flip) | unchanged | `8.052 - oldY` | `-oldRotation` |
+| Both (X+Y flip) | `16.540988 - oldX` | `8.052 - oldY` | `oldRotation - 180` |
+
+**What to flip in each `.path` file:**
+- All `anchor`, `prevControl`, and `nextControl` x/y coordinates
+- All `rotationDegrees` in `rotationTargets`
+- `goalEndState.rotation`
+- `idealStartingState.rotation`
+
+**Steps:**
+1. Read each source `.path` file
+2. Apply the appropriate flip formula to all coordinates and rotations
+3. Write new `.path` files with a descriptive suffix (e.g., `red`, `bottom`, `red bottom`)
+4. Create a new `.auto` file with the same command structure, referencing the new path names
+
+**Naming conventions used:**
+- X-flip (blue→red): add `red` suffix (e.g., `depot red`, `intakedepot red`)
+- Y-flip (top→bottom): add `bottom` suffix (e.g., `depot bottom`, `intakedepot bottom`)
+- X+Y flip: add `red bottom` suffix (e.g., `depot red bottom`, `intakedepot red bottom`)
+- Auto files: `Blueleftdepot-top.auto` → `Redleftdepot-bottom.auto`, etc.
+
+**Notes:**
+- Bezier control points can go outside field bounds (negative values are valid)
+- Constraint zones, event markers, and global constraints are copied unchanged
+- Velocities are copied unchanged — only positions and rotations are flipped
+- Normalize rotation values by adding/subtracting 360° if they fall outside a readable range
+
 ## Commands (`commands/`)
 
 - **IntakeCommand** — coordinates intake sequence
