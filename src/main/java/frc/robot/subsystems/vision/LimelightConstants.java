@@ -37,7 +37,6 @@ public class LimelightConstants {
             0,
             Units.Radians.convertFrom(30,Units.Degrees), // Up is + and down is - (Degrees)
             0); // Left is - and right is + (degrees)
-    // TODO: also do the rotation offset. camera-relative.
   }
 
   public static class LimelightSide {

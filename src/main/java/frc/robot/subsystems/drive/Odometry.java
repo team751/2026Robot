@@ -12,7 +12,7 @@ import frc.robot.subsystems.vision.LimelightSubsystem;
  * It's also VERY VERY useful for auton since during that period
  * the robot must know where it is to properly drive to each place
  *
- * The robot can tell where it is using 2 ways: Limelights/Vision and Dead-Reckoning or using Motor Encoders
+ * The robot can tell where it is using 2 ways: Limelights/Vision and Dead-Reckoning (using Motor Encoders)
  *
  * Vision involves using Limelights to read AprilTags (glorified QR codes) to determine
  * where the robot is. It does a whole bunch of math internally (that we dont care about)

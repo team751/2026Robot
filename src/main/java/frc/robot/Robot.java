@@ -1,26 +1,7 @@
 package frc.robot;
 
-// TODO: stuff to test on the robot
-// Transfer first:
-// Nothing jams, etc
-//
-// Shooter:
-// more calibration?
-//
-// Drive:
-// moving w transfer and see if it still transfers
-// intaking many balls at once
-// shooting while moving(?)
-// maybe possibly ram intake into something while extended??
-//
-// Limelight:
-// calibrate and get it ready
-// orientation and offset - side camera done
-
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.SignalLogger;
-// import frc.robot.subsystems.climber.ClimberSubsystem;
-// import frc.robot.subsystems.drive.Odometry;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -29,7 +10,6 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.lib.TunableParameter;
 import frc.robot.subsystems.drive.Odometry;
 import frc.robot.subsystems.drive.SwerveSubsystem;
 // import frc.robot.subsystems.vision.LimelightSubsystem;
@@ -53,7 +33,7 @@ public class Robot extends TimedRobot {
   private Command autonomousCommand;
 
   public Robot() {
-    Odometry.getInstance();
+    //Odometry.getInstance();
     scheduler = CommandScheduler.getInstance();
     swerve = SwerveSubsystem.getInstance();
 
@@ -73,6 +53,13 @@ public class Robot extends TimedRobot {
     // for (int port = 5800; port <= 5809; port++) {
     //   PortForwarder.add(port, "limelight.local", port);
     // }
+    // Stream
+    PortForwarder.add(5800, "10.7.51.71",5800);
+    PortForwarder.add(5800, "10.7.51.75",5800);
+
+    // Dashboard
+    PortForwarder.add(5801, "10.7.51.71",5801);
+    PortForwarder.add(5801, "10.7.51.75",5801);
     robotContainer = new RobotContainer();
   }
 
@@ -80,9 +67,9 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     // TunableParameter.updateAll();
     try {
-      Threads.setCurrentThreadPriority(true, 99);
+      //Threads.setCurrentThreadPriority(true, 6);
       scheduler.run();
-      Threads.setCurrentThreadPriority(false, 0);
+      //Threads.setCurrentThreadPriority(false, 0);
     } catch (Throwable t) {
       DriverStation.reportError(
           "Unhandled exception in CommandScheduler: " + t.toString(), t.getStackTrace());
@@ -93,6 +80,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void driverStationConnected() {
+    Odometry.getInstance();
     ControlBoard.getInstance().tryInit();
   }
 

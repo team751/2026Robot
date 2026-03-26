@@ -6,10 +6,8 @@ package frc.robot.subsystems.vision;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.drive.SwerveSubsystem;
 import frc.robot.util.LimelightHelpers;
 import frc.robot.subsystems.drive.Odometry;
 import limelight.Limelight;
@@ -24,8 +22,6 @@ import limelight.Limelight;
  */
 
 public class LimelightSubsystem extends SubsystemBase {
-  private final SwerveSubsystem drive = SwerveSubsystem.getInstance();
-
   private static LimelightSubsystem instance;
   private final Limelight limelightFront;
   private final Limelight limelightSide;
@@ -36,10 +32,46 @@ public class LimelightSubsystem extends SubsystemBase {
   }
 
   private LimelightSubsystem() {
-    // Inits both limelights using their pre-set names
-    limelightFront = new Limelight(LimelightConstants.LimelightFront.name);
+    Limelight tmpFront;
+    Limelight tmpSide;
+    try {
+      tmpFront = new Limelight(LimelightConstants.LimelightFront.name);
+      tmpFront
+        .getSettings()
+          .withCameraOffset(
+              new Pose3d(
+                  LimelightConstants.LimelightFront.xOffset,
+                  LimelightConstants.LimelightFront.yOffset,
+                  LimelightConstants.LimelightFront.zOffset,
+                  LimelightConstants.LimelightFront.rotationOffset));
 
-    limelightSide = new Limelight(LimelightConstants.LimelightSide.name);
+    } catch (Throwable t) {
+      System.err.println("Limelight Front init failed: " + t.toString());
+      t.printStackTrace();
+      tmpFront = null;
+    }
+
+    try {
+      tmpSide = new Limelight(LimelightConstants.LimelightSide.name);
+      tmpSide
+        .getSettings()
+          .withCameraOffset(
+              new Pose3d(
+                  LimelightConstants.LimelightSide.xOffset,
+                  LimelightConstants.LimelightSide.yOffset,
+                  LimelightConstants.LimelightSide.zOffset,
+                  LimelightConstants.LimelightSide.rotationOffset));
+
+    } catch (Throwable t) {
+      System.err.println("Limelight Side init failed: " + t.toString());
+      t.printStackTrace();
+      tmpSide = null;
+    }
+
+    // Inits both limelights using their pre-set names
+    limelightFront = tmpFront;
+
+    limelightSide = tmpSide;
 
     // Sets the settings for each limelight with their offset from the center of the robot
     limelightFront
@@ -105,21 +137,20 @@ public class LimelightSubsystem extends SubsystemBase {
 
     // If theres no april tag seen return null
     if (frontPoseEstimate == null) {
-        //  && LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name).pose == null
       return null;
     }
 
-    return frontPoseEstimate;
-    // if (LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name).pose
-    // == null
-    //     &&
-    // LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name).pose ==
-    // null) {
-    //   return null;
-    // }
+    //return frontPoseEstimate;
+    if (LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name).pose
+    == null
+        &&
+    LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name).pose ==
+    null) {
+      return null;
+    }
 
-    // return
-    // LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name).pose;
+    return
+    LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name).pose;
   }
 
   public Pose2d getBotPoseSide() {
@@ -137,18 +168,17 @@ public class LimelightSubsystem extends SubsystemBase {
 
     // If theres no april tag seen return null
     if (sidePoseEstimate == null) {
-        // && LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightSide.name).pose == null
       return null;
     }
-    return sidePoseEstimate;
-    // if (LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightSide.name).pose
-    // == null
-    //     &&
-    // LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightSide.name).pose ==
-    // null) {
-    //   return null;
-    // }
-    // return
-    // LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightSide.name).pose;
+    //return sidePoseEstimate;
+    if (LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightSide.name).pose
+    == null
+        &&
+    LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightSide.name).pose ==
+    null) {
+      return null;
+    }
+    return
+    LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightSide.name).pose;
   }
 }
