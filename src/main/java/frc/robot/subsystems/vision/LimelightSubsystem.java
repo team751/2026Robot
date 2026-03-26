@@ -34,6 +34,7 @@ public class LimelightSubsystem extends SubsystemBase {
   private LimelightSubsystem() {
     Limelight tmpFront;
     Limelight tmpSide;
+
     try {
       tmpFront = new Limelight(LimelightConstants.LimelightFront.name);
       tmpFront
@@ -74,6 +75,10 @@ public class LimelightSubsystem extends SubsystemBase {
     limelightSide = tmpSide;
 
     // Sets the settings for each limelight with their offset from the center of the robot
+
+    if (limelightFront == null) {
+      System.err.println("Limelight Front failed to initialize.");
+    } else {
     limelightFront
         .getSettings()
         .withCameraOffset(
@@ -82,17 +87,20 @@ public class LimelightSubsystem extends SubsystemBase {
                 LimelightConstants.LimelightFront.yOffset,
                 LimelightConstants.LimelightFront.zOffset,
                 LimelightConstants.LimelightFront.rotationOffset));
-
-    limelightSide
-        .getSettings()
-        .withCameraOffset(
-            new Pose3d(
-                LimelightConstants.LimelightSide.xOffset,
-                LimelightConstants.LimelightSide.yOffset,
-                LimelightConstants.LimelightSide.zOffset,
-                LimelightConstants.LimelightSide.rotationOffset));
+    }
+    if (limelightSide == null) {
+      System.err.println("Limelight Side failed to initialize.");
+    } else {
+      limelightSide
+          .getSettings()
+          .withCameraOffset(
+              new Pose3d(
+                  LimelightConstants.LimelightSide.xOffset,
+                  LimelightConstants.LimelightSide.yOffset,
+                  LimelightConstants.LimelightSide.zOffset,
+                  LimelightConstants.LimelightSide.rotationOffset));
+    }
   }
-
   @Override
   public void periodic() {
     if (getBotPoseSide() != null) {
