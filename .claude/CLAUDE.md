@@ -8,7 +8,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ./gradlew build              # Full build (compile + tests)
 ./gradlew deploy             # Deploy to RoboRIO (must be connected via USB/Wi-Fi/Ethernet)
 ./gradlew simulateJava       # Run simulation with MapleSim physics + Sim GUI
-./gradlew test               # Run JUnit 5 tests
+./gradlew test               # Run JUnit 5 tests (no tests written yet)
+./gradlew spotlessApply      # Auto-format code
 ```
 
 ## Architecture Overview
@@ -22,33 +23,34 @@ Robot.java (TimedRobot, 50Hz)
   ├─ CommandScheduler
   │    ├─ SwerveSubsystem (swerve drive, PathPlanner AutoBuilder)
   │    │    └─ [sim] MapleSimSwerveDrivetrain (200Hz physics)
-  │    ├─ Odometry (vision + wheel fusion)
+  │    ├─ Odometry (vision + wheel fusion, init deferred to driverStationConnected)
   │    │    └─ LimelightSubsystem (dual AprilTag cameras)
   │    ├─ Superstructure (state machine coordinator)
   │    │    ├─ ShooterSubsystem
-  │    │    ├─ ClimberSubsystem
   │    │    ├─ IntakeSubsystem
-  │    │    └─ ExtenderSubsystem
-  │    └─ TransferSubsystem
-  ├─ ControlBoard (PS5 controller bindings)
-  └─ TunableParameter.updateAll()
+  │    │    ├─ ExtenderSubsystem
+  │    │    └─ TransferSubsystem
+  │    └─ [disabled] ClimberSubsystem
+  ├─ RobotContainer (named commands + auto chooser)
+  └─ ControlBoard (PS5 controller bindings)
 ```
 
 ### Initialization Order (Matters!)
 
-1. `Odometry.getInstance()` — creates Odometry, which creates SwerveSubsystem and LimelightSubsystem
-2. `SwerveSubsystem.getInstance()` — already created by Odometry
-3. `ControlBoard.getInstance()` — depends on SwerveSubsystem being initialized
-4. `robotInit()`: port forwarding, AutoChooser, `ClimberSubsystem.getInstance().zeroClimber()`
+1. `Robot()` constructor — creates `SwerveSubsystem` and `ControlBoard` (wrapped in try/catch)
+2. `robotInit()` — port forwarding for Limelights, creates `RobotContainer` (which registers named commands + auto chooser)
+3. `driverStationConnected()` — creates `Odometry` (which creates `LimelightSubsystem`), calls `ControlBoard.tryInit()`
+4. `teleopInit()` — sets operator perspective based on alliance color
 
 ### Periodic Loop (50Hz)
 
 ```
 robotPeriodic():
-  1. TunableParameter.updateAll()
-  2. CommandScheduler.run()  ← all subsystem periodic() + commands
-  3. ControlBoard.displayUI()
+  1. CommandScheduler.run()  ← all subsystem periodic() + commands
+  2. ControlBoard.displayUI()
 ```
+
+*Note: `TunableParameter.updateAll()` exists but is currently commented out.*
 
 ## Key Design Patterns
 
@@ -78,16 +80,17 @@ Used by: IntakeSubsystem (IDLE/INTAKING/SPITTING), ExtenderSubsystem (IDLE/EXTEN
 
 ### Superstructure Coordinator
 
-`Superstructure.java` coordinates all mechanism subsystems through a central state machine. Currently holds references to SwerveSubsystem, ShooterSubsystem, ClimberSubsystem, IntakeSubsystem, and ExtenderSubsystem.
+`Superstructure.java` coordinates all mechanism subsystems through a central state machine. Holds references to SwerveSubsystem, ShooterSubsystem, IntakeSubsystem, ExtenderSubsystem, and TransferSubsystem. ClimberSubsystem reference is commented out.
 
 ## CAN Bus Architecture
 
-Two CAN buses (defined as static fields in `Robot.java`):
+Three CAN buses (defined as static fields in `Robot.java`):
 
 | Bus | Constant | Devices |
 |-----|----------|---------|
 | `drivebus` | `Robot.drivebus` | All swerve modules (drive/steer/CANcoder), Pigeon 2 IMU |
-| `rio` | `Robot.riobus` | All other devices (climber, shooter, intake, transfer) |
+| `gamepiecebus` | `Robot.gamepiecebus` | Shooter, intake, extender, transfer motors |
+| `rio` | `Robot.riobus` | Climber only (currently disabled) |
 
 CAN IDs are defined in `frc.robot.util.Constants` (not `frc.robot.Constants`, which is an empty WPILib stub). The ID scheme: swerve is 10–40 by corner (FL/FR/BL/BR); all other motors are numbered by proximity to the nearest swerve corner and height on the robot.
 
@@ -112,9 +115,9 @@ Dual Limelights: `limelight-front` (3G, 10.7.51.71) and `limelight-back` (2, 10.
 - **ExtenderSubsystem**: Single TalonFX + 2 limit switches (DIO 2, 3). States: IDLE/EXTENDING/RETRACTING. Stops on limit switch activation.
 - Constants in `IntakeConstants.java` (speeds, motor configs for both).
 
-### Climber (`subsystems/climber/`)
+### Climber (`subsystems/climber/`) — CURRENTLY DISABLED
 
-Dual TalonFX motors (left/right) + 1 servo + 2 limit switches (DIO 7, 8). On `riobus`. Features `spinUntil()` for non-blocking position targeting with average error compensation. Motors zeroed on init and teleop start.
+Entirely commented out. `ClimberConstants.java` exists but all code is commented. CAN IDs for climber motors are also commented out in `Constants.java`. When re-enabled: dual TalonFX motors (left/right) + servo + limit switches on `riobus`.
 
 ### Shooter (`subsystems/shooter/`)
 
