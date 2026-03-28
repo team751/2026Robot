@@ -76,7 +76,7 @@ subsystem.requestIntaking();  // sets a flag
 // In periodic(): switch(state) checks flags, transitions, clears flags
 ```
 
-Used by: IntakeSubsystem (IDLE/INTAKING/SPITTING), ExtenderSubsystem (IDLE/EXTENDING/RETRACTING), Superstructure (PRE_HOME/IDLE), ShooterSubsystem (IDLE/SLOWSPIN/REVERSE/SHOOT), TransferSubsystem (IDLE/TRANSFER/REVERSE).
+Not all subsystems implement this identically: IntakeSubsystem uses request flags; ExtenderSubsystem, ShooterSubsystem, and TransferSubsystem assign state directly in `request*()` methods (no deferred flag). Both patterns are present in the codebase.
 
 ### Superstructure Coordinator
 
@@ -107,12 +107,12 @@ CTRE generated swerve (`TunerSwerveDrivetrain`) with Kraken X60 FOC motors. Max 
 
 ### Vision (`subsystems/vision/`)
 
-Dual Limelights: `limelight-front` (3G, 10.7.51.71) and `limelight-back` (2, 10.7.51.75). Only translation from vision is used — heading always comes from Pigeon 2 gyro.
+Dual Limelights: `limelight-front` (3G, 10.7.51.71) and `limelight-side` (2, 10.7.51.75). Only translation from vision is used — heading always comes from Pigeon 2 gyro. `hasTarget()` requires both cameras to have targets.
 
 ### Intake (`subsystems/intake/`)
 
 - **IntakeSubsystem**: Single TalonFX, states: IDLE/INTAKING/SPITTING. VoltageOut control.
-- **ExtenderSubsystem**: Single TalonFX + 2 limit switches (DIO 2, 3). States: IDLE/EXTENDING/RETRACTING. Stops on limit switch activation.
+- **ExtenderSubsystem**: Single TalonFX + 4 limit switches (DIO 2–5: frontLeft, backLeft, frontRight, backRight). States: IDLE/EXTENDING/EXTENDED/RETRACTING/RETRACTED/JIGGLE_IN. Extended when either back sensor triggers; retracted when either front sensor triggers.
 - Constants in `IntakeConstants.java` (speeds, motor configs for both).
 
 ### Climber (`subsystems/climber/`) — CURRENTLY DISABLED
@@ -121,7 +121,7 @@ Entirely commented out. `ClimberConstants.java` exists but all code is commented
 
 ### Shooter (`subsystems/shooter/`)
 
-Three TalonFX motors: flywheel (main), follow (opposed follower), and a built-in transfer motor. States: IDLE/SLOWSPIN/REVERSE/SHOOT. Distance-based speed calculation via `calculateShooterSpeed()` using robot-to-hub distance. `requestSpit()` reverses only the transfer motor.
+Three TalonFX motors: flywheel (main), follow (opposed follower), and a built-in transfer motor. States: IDLE/SLOWSPIN/REVERSE/SHOOT/AASHOOT. Distance-based speed via `calculateShooterSpeed()` (linear curve, 50–600 cm range). `AASHOOT` fires at fixed 35 RPS without distance calculation — used by operator's `ShootCommand(noDistance=true)`. `requestSpit()` reverses only the transfer motor.
 
 ### Transfer (`subsystems/transfer/`)
 
@@ -215,13 +215,13 @@ To mirror an auto for the opposite side of the field, create **new** path files 
 ## Commands (`commands/`)
 
 - **IntakeCommand** — coordinates intake sequence
-- **ShootCommand** — runs ShooterSubsystem + TransferSubsystem together; both go idle on end
+- **ShootCommand** — runs ShooterSubsystem + TransferSubsystem together; accepts `noDistance` boolean (true = AASHOOT fixed-speed mode); both go idle on end
 - **JiggleCommand** — oscillates extender in/out while coordinating intake/transfer/shooter; used to unstick game pieces
 - **WiggleCommand** — empty stub, not yet implemented
 
 ## Simulation
 
-MapleSim + Dyn4j physics at 200Hz. Run with `./gradlew simulateJava`. Connect AdvantageScope to `localhost` for 3D viz. Vision returns null in sim.
+IronMaple library (`org.ironmaple.simulation`) + Dyn4j physics at 200Hz (5ms loop via `Notifier`). Includes full arena simulation with game pieces (`RebuiltFuelOnField`), `SwerveDriveSimulation`, and `IntakeSimulation`. Run with `./gradlew simulateJava`. Connect AdvantageScope to `localhost` for 3D viz. Vision returns null in sim.
 
 ## Dependencies of Note
 
