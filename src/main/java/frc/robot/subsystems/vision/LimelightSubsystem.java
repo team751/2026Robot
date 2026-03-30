@@ -28,8 +28,8 @@ public class LimelightSubsystem extends SubsystemBase {
   private final SwerveSubsystem drive = SwerveSubsystem.getInstance();
  
   private static LimelightSubsystem instance;
-  private final Limelight limelightFront;
-  private final Limelight limelightBack;
+  private  Limelight limelightFront;
+  private  Limelight limelightBack;
   
   public static LimelightSubsystem getInstance() {
     if (instance == null) instance = new LimelightSubsystem();
@@ -38,26 +38,26 @@ public class LimelightSubsystem extends SubsystemBase {
 
   private LimelightSubsystem() {
     // Inits both limelights using their pre-set names
-    limelightFront = new Limelight(LimelightConstants.LimelightFront.name);
+    // limelightFront = new Limelight(LimelightConstants.LimelightFront.name);
 
-    limelightBack = new Limelight(LimelightConstants.LimelightBack.name);
+    // limelightBack = new Limelight(LimelightConstants.LimelightBack.name);
 
-    // Sets the settings for each limelight with their offset from the center of the robot
-    limelightFront.getSettings()
-      .withCameraOffset(new Pose3d(
-        LimelightConstants.LimelightFront.xOffset.in(Units.Meters),
-        LimelightConstants.LimelightFront.yOffset.in(Units.Meters),
-        LimelightConstants.LimelightFront.zOffset.in(Units.Meters),
-        LimelightConstants.LimelightFront.rotationOffset)
-    );
+    // // Sets the settings for each limelight with their offset from the center of the robot
+    // limelightFront.getSettings()
+    //   .withCameraOffset(new Pose3d(
+    //     LimelightConstants.LimelightFront.xOffset.in(Units.Meters),
+    //     LimelightConstants.LimelightFront.yOffset.in(Units.Meters),
+    //     LimelightConstants.LimelightFront.zOffset.in(Units.Meters),
+    //     LimelightConstants.LimelightFront.rotationOffset)
+    // );
 
-    limelightBack.getSettings()
-      .withCameraOffset(new Pose3d(
-        LimelightConstants.LimelightBack.xOffset.in(Units.Meters),
-        LimelightConstants.LimelightBack.yOffset.in(Units.Meters),
-        LimelightConstants.LimelightBack.zOffset.in(Units.Meters),
-        LimelightConstants.LimelightBack.rotationOffset)
-        );
+    // limelightBack.getSettings()
+    //   .withCameraOffset(new Pose3d(
+    //     LimelightConstants.LimelightBack.xOffset.in(Units.Meters),
+    //     LimelightConstants.LimelightBack.yOffset.in(Units.Meters),
+    //     LimelightConstants.LimelightBack.zOffset.in(Units.Meters),
+    //     LimelightConstants.LimelightBack.rotationOffset)
+    //     );
   }
 
   // TAG TARGETTING
