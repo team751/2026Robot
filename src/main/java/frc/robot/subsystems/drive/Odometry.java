@@ -1,12 +1,12 @@
 package frc.robot.subsystems.drive;
 
-import com.ctre.phoenix6.Utils;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.vision.LimelightSubsystem;
 import frc.robot.util.Constants;
+import frc.robot.util.LimelightHelpers;
 
 /* Rough overview of what Odometry.java does and how it works.
  * Odometry tells the driver where the robot is at all times.
@@ -59,47 +59,31 @@ public class Odometry extends SubsystemBase {
     drive.resetPose(newPose);
   }
 
-  private boolean isBotSideZero() {
-    return limelights.getBotPoseSide(Constants.MEGATAG_2_USAGE).getX() != 0.0 && limelights.getBotPoseSide(Constants.MEGATAG_2_USAGE).getY() != 0.0;
-  }
-
-  private boolean isBotFrontZero() {
-    return limelights.getBotPoseFront(Constants.MEGATAG_2_USAGE).getX() != 0.0 && limelights.getBotPoseFront(Constants.MEGATAG_2_USAGE).getY() != 0.0;
+  private boolean isValidEstimate(LimelightHelpers.PoseEstimate estimate) {
+    if (estimate == null) return false;
+    if (estimate.tagCount == 0) return false;
+    if (estimate.pose.getX() == 0.0 && estimate.pose.getY() == 0.0) return false;
+    return true;
   }
 
   @Override
   public void periodic() {
-    // Add's two vision measure ments to SwerveDrive so that they can be filtered by it
-    if (isBotFrontZero()) {
-      Pose2d frontPose = limelights.getBotPoseFront(Constants.MEGATAG_2_USAGE);
-
+    LimelightHelpers.PoseEstimate frontEstimate = limelights.getBotPoseFront(Constants.MEGATAG_2_USAGE);
+    if (isValidEstimate(frontEstimate)) {
       drive.addVisionMeasurement(
-          new Pose2d(frontPose.getX(), frontPose.getY(), drive.getPose().getRotation()),
-          Utils.getCurrentTimeSeconds());
+          new Pose2d(frontEstimate.pose.getX(), frontEstimate.pose.getY(), drive.getPose().getRotation()),
+          frontEstimate.timestampSeconds);
     }
 
-    if (isBotSideZero()) {
-      Pose2d sidePose = limelights.getBotPoseSide(Constants.MEGATAG_2_USAGE);
-
+    LimelightHelpers.PoseEstimate sideEstimate = limelights.getBotPoseSide(Constants.MEGATAG_2_USAGE);
+    if (isValidEstimate(sideEstimate)) {
       drive.addVisionMeasurement(
-          new Pose2d(sidePose.getX(), sidePose.getY(), drive.getPose().getRotation()),
-          Utils.getCurrentTimeSeconds());
+          new Pose2d(sideEstimate.pose.getX(), sideEstimate.pose.getY(), drive.getPose().getRotation()),
+          sideEstimate.timestampSeconds);
     }
 
-    // Sets the Odometry robotPose variable (for easy/more normal access to the robot position)
     robotPose = drive.getPose();
-
-    // Puts a new field value into Elastic
     field.setRobotPose(robotPose.getX(), robotPose.getY(), robotPose.getRotation());
-
-    // SmartDashboard.putNumber("Odometry/Pigeon Yaw", drive.getPigeon2().getYaw().getValueAsDouble());
-    // SmartDashboard.putNumber(
-    //     "Odometry/Pigeon Pitch", drive.getPigeon2().getPitch().getValueAsDouble());
-    // SmartDashboard.putNumber(
-    //     "Odometry/Pigeon Roll", drive.getPigeon2().getRoll().getValueAsDouble());
-    // SmartDashboard.putNumber(
-    //     "Odometry/Swerve Rotation", Math.toDegrees(drive.getRotation3d().getZ()));
-
     SmartDashboard.putData(field);
   }
 }

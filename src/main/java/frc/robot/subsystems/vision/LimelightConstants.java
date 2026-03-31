@@ -59,6 +59,6 @@ public class LimelightConstants {
         new Rotation3d(
             0,
             0,
-            Units.Radians.convertFrom(0, Units.Degrees)); // Left is - and right is + (degrees)
+            Units.Radians.convertFrom(-90, Units.Degrees)); // Left is - and right is + (degrees)
   }
 }
