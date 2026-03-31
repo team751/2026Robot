@@ -1,6 +1,10 @@
 package frc.robot.subsystems.vision;
 
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.units.Units;
 
 /* LimelightConstants.java Info
@@ -16,6 +20,33 @@ import edu.wpi.first.units.Units;
  */
 
 public class LimelightConstants {
+  // --- Vision Fusion ---
+
+  // Per-camera base std devs (x, y, theta). Theta=99999 means heading comes only from gyro.
+  // Lower values = more trust. The 3G has a better sensor/wider FOV, so it gets lower base values.
+  public static final Matrix<N3, N1> FRONT_STD_DEVS = VecBuilder.fill(0.25, 0.25, 99999.0); // 3G
+  public static final Matrix<N3, N1> SIDE_STD_DEVS = VecBuilder.fill(0.4, 0.4, 99999.0);    // 3
+
+  // When multiple tags are visible, the solution is more constrained. Multiply std devs by this factor.
+  // Lower = more trust in multi-tag. 1.0 = no bonus.
+  public static final double MULTI_TAG_STD_DEV_FACTOR = 0.5;
+
+  // Reject vision entirely when the robot is spinning faster than this (deg/s).
+  // Fast rotation causes gyro-to-vision latency mismatch that corrupts MegaTag2.
+  public static final double MAX_ANGULAR_VELOCITY_DPS = 720.0;
+
+  // MegaTag switching: use MT1 when closest tag is nearer than this (meters), MT2 when farther.
+  // MT1 is more accurate at close range (full 6DOF solve). MT2 uses gyro-constrained solve,
+  // which is better at distance where single-tag ambiguity makes MT1 unreliable.
+  public static final double MT_SWITCH_DISTANCE_METERS = 1.5;
+
+  // --- Pose Stability ---
+
+  // Vision must agree with odometry within this distance (meters) to count as stable
+  public static final double POSE_STABLE_EPSILON_METERS = 0.10;
+  // Number of consecutive agreeing updates before pose is considered stable
+  public static final int POSE_STABLE_THRESHOLD = 100;
+
   public static class LimelightFront {
     public static final String version = "3G";
     public static final String streamIp = "http://10.7.51.71:5800";

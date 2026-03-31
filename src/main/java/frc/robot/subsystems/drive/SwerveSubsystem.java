@@ -195,6 +195,30 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
     return getState().Speeds;
   }
 
+  // IMU stability thresholds
+  private static final double PITCH_STABLE_DEG = 5.0;
+  private static final double ROLL_STABLE_DEG = 5.0;
+  private static final double TILT_RATE_STABLE_DPS = 10.0;
+  private static final double SPEED_STABLE_MPS = 0.5;
+
+  public boolean getPitchStable() {
+    double pitch = Math.abs(getPigeon2().getPitch().getValueAsDouble());
+    double pitchRate = Math.abs(getPigeon2().getAngularVelocityYWorld().getValueAsDouble());
+    return pitch < PITCH_STABLE_DEG && pitchRate < TILT_RATE_STABLE_DPS;
+  }
+
+  public boolean getRollStable() {
+    double roll = Math.abs(getPigeon2().getRoll().getValueAsDouble());
+    double rollRate = Math.abs(getPigeon2().getAngularVelocityXWorld().getValueAsDouble());
+    return roll < ROLL_STABLE_DEG && rollRate < TILT_RATE_STABLE_DPS;
+  }
+
+  public boolean getStable() {
+    ChassisSpeeds speeds = getChassisSpeeds();
+    double linearSpeed = Math.hypot(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond);
+    return getPitchStable() && getRollStable() && linearSpeed < SPEED_STABLE_MPS;
+  }
+
   @Override
   public void resetPose(Pose2d pose) {
     if (simDrivetrain != null) {
