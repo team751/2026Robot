@@ -70,7 +70,7 @@ public class Odometry extends SubsystemBase {
   @Override
   public void periodic() {
     // Add's two vision measure ments to SwerveDrive so that they can be filtered by it
-    if (isBotFrontZero()) {
+    if (limelights.getBotPoseFront(Constants.MEGATAG_2_USAGE) != null && isBotFrontZero()) {
       Pose2d frontPose = limelights.getBotPoseFront(Constants.MEGATAG_2_USAGE);
 
       drive.addVisionMeasurement(
@@ -78,7 +78,7 @@ public class Odometry extends SubsystemBase {
           Utils.getCurrentTimeSeconds());
     }
 
-    if (isBotSideZero()) {
+    if (limelights.getBotPoseSide(Constants.MEGATAG_2_USAGE) != null && isBotSideZero()) {
       Pose2d sidePose = limelights.getBotPoseSide(Constants.MEGATAG_2_USAGE);
 
       drive.addVisionMeasurement(
