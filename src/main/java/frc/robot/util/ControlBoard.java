@@ -222,6 +222,7 @@ public class ControlBoard {
             () -> ExtenderSubsystem.getInstance().requestExtend(),
             () -> ExtenderSubsystem.getInstance().requestRetract())); 
 
+//TODO: Turn auto aim back on
     // controller.leftJoystickButton.whileTrue(
     //     new StartEndCommand(() -> axisAlign = true, () -> axisAlign = false)
     //         .withName("Axis Align Toggle"));
