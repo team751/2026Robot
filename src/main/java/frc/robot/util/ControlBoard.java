@@ -134,9 +134,9 @@ public class ControlBoard {
     controller.leftTrigger.whileTrue(
         new IntakeCommand(IntakeSubsystem.getInstance(), ExtenderSubsystem.getInstance()));
 
-    controller.leftTrigger.whileTrue(
-        new StartEndCommand(() -> preciseControl = true, () -> preciseControl = false)
-            .withName("Precise Control Toggle")); // Fight me owen
+    // controller.leftTrigger.whileTrue(
+    //     new StartEndCommand(() -> preciseControl = true, () -> preciseControl = false)
+    //         .withName("Precise Control Toggle")); // Fight me owen
 
     controller.crossButton.whileTrue(
         new JiggleCommand(
@@ -182,9 +182,9 @@ public class ControlBoard {
     controller.rightTrigger.whileTrue(
         new ShootCommand(ShooterSubsystem.getInstance(), TransferSubsystem.getInstance()));
 
-    controller.rightTrigger.whileTrue(
-        new StartEndCommand(() -> autoAim = true, () -> autoAim = false)
-            .withName("Auto Aim Toggle"));
+    // controller.rightTrigger.whileTrue(
+    //     new StartEndCommand(() -> autoAim = true, () -> autoAim = false)
+    //         .withName("Auto Aim Toggle"));
 
     /* Transfer */
     controller.dLeft.whileTrue(
@@ -298,8 +298,8 @@ public class ControlBoard {
   public SwerveRequest getDriverRequest() {
     if (driver == null) return null;
 
-    double scale = preciseControl ? 0.5 : 1.0;
-    double rotScale = preciseControl ? 0.50 : 1.0;
+    double scale = preciseControl ? 0.3 : 1.0;
+    double rotScale = preciseControl ? 0.30 : 1.0;
 
     double rawStickRot = driver.rightHorizontalJoystick.getAsDouble();
     double rot =

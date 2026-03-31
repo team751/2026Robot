@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.drive.Odometry;
 import frc.robot.subsystems.drive.SwerveSubsystem;
+import frc.robot.subsystems.vision.LimelightSubsystem;
 // import frc.robot.subsystems.vision.LimelightSubsystem;
 import frc.robot.util.ControlBoard;
 
@@ -61,6 +62,7 @@ public class Robot extends TimedRobot {
     PortForwarder.add(5801, "10.7.51.71",5801);
     PortForwarder.add(5801, "10.7.51.75",5801);
     robotContainer = new RobotContainer();
+    LimelightSubsystem.getInstance().initLimsplz();
   }
 
   @Override
@@ -80,7 +82,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void driverStationConnected() {
-    Odometry.getInstance();
+
     ControlBoard.getInstance().tryInit();
   }
 
@@ -112,6 +114,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    Odometry.getInstance();
     // LimelightSubsystem.getInstance();
     // ClimberSubsystem.getInstance().zeroClimber();
 

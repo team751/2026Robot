@@ -23,15 +23,15 @@ import limelight.Limelight;
 
 public class LimelightSubsystem extends SubsystemBase {
   private static LimelightSubsystem instance;
-  private final Limelight limelightFront;
-  private final Limelight limelightSide;
+  private Limelight limelightFront;
+  private Limelight limelightSide;
 
   public static LimelightSubsystem getInstance() {
     if (instance == null) instance = new LimelightSubsystem();
     return instance;
   }
 
-  private LimelightSubsystem() {
+  public void initLimsplz(){
     Limelight tmpFront;
     Limelight tmpSide;
 

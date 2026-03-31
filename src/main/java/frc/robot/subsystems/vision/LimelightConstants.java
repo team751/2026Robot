@@ -17,7 +17,7 @@ import edu.wpi.first.units.Units;
 
 public class LimelightConstants {
   public static class LimelightFront {
-    public static final String version = "3";
+    public static final String version = "3G";
     public static final String streamIp = "http://10.7.51.71:5800";
     public static final String shuffleStreamIp = "mjpeg:http://10.7.51.71:5800";
     public static final String dashboardIp = "http://10.7.51.71:5801";
@@ -44,7 +44,7 @@ public class LimelightConstants {
     public static final String streamIp = "http://10.7.51.75:5800";
     public static final String shuffleStreamIp = "mjpeg:http://10.7.51.75:5800";
     public static final String dashboardIp = "http://10.7.51.75:5801";
-    public static final String name = "limelight-side";
+    public static final String name = "limelight-back";
     public static final double pipelineLatencySeconds = 0.0;
 
     public static final double zOffset =
