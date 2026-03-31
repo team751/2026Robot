@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.vision.LimelightSubsystem;
+import frc.robot.util.Constants;
 
 /* Rough overview of what Odometry.java does and how it works.
  * Odometry tells the driver where the robot is at all times.
@@ -59,36 +60,26 @@ public class Odometry extends SubsystemBase {
   }
 
   private boolean isBotSideZero() {
-    return limelights.getBotPoseSide().getX() != 0.0 && limelights.getBotPoseSide().getY() != 0.0;
+    return limelights.getBotPoseSide(Constants.MEGATAG_2_USAGE).getX() != 0.0 && limelights.getBotPoseSide(Constants.MEGATAG_2_USAGE).getY() != 0.0;
   }
 
   private boolean isBotFrontZero() {
-    return limelights.getBotPoseFront().getX() != 0.0 && limelights.getBotPoseFront().getY() != 0.0;
+    return limelights.getBotPoseFront(Constants.MEGATAG_2_USAGE).getX() != 0.0 && limelights.getBotPoseFront(Constants.MEGATAG_2_USAGE).getY() != 0.0;
   }
 
   @Override
   public void periodic() {
-
-    // Adds values to SmartDashboard (or Elastic if u use that)
-    // Shows where Odometry/Limelight thinks the robot is on the field
-    // SmartDashboard.putNumber("Odometry/X", robotPose.getX());
-    // SmartDashboard.putNumber("Odometry/Y", robotPose.getY());
-    // SmartDashboard.putNumber("Odometry/Rotation", robotPose.getRotation().getDegrees());
-
     // Add's two vision measure ments to SwerveDrive so that they can be filtered by it
-    if (limelights.getBotPoseFront() != null && isBotFrontZero()) {
-      Pose2d frontPose = limelights.getBotPoseFront();
+    if (isBotFrontZero()) {
+      Pose2d frontPose = limelights.getBotPoseFront(Constants.MEGATAG_2_USAGE);
 
-      // if (Math.abs(robotPose.getX() - frontPose.getX()) < 1.0 && Math.abs(robotPose.getY() -
-      // frontPose.getY()) < 1.0) {
       drive.addVisionMeasurement(
           new Pose2d(frontPose.getX(), frontPose.getY(), drive.getPose().getRotation()),
           Utils.getCurrentTimeSeconds());
-      // }
     }
 
-    if (limelights.getBotPoseSide() != null && isBotSideZero()) {
-      Pose2d sidePose = limelights.getBotPoseSide();
+    if (isBotSideZero()) {
+      Pose2d sidePose = limelights.getBotPoseSide(Constants.MEGATAG_2_USAGE);
 
       drive.addVisionMeasurement(
           new Pose2d(sidePose.getX(), sidePose.getY(), drive.getPose().getRotation()),

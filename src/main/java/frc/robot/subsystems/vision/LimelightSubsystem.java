@@ -8,6 +8,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.util.Constants;
 import frc.robot.util.LimelightHelpers;
 import frc.robot.subsystems.drive.Odometry;
 import limelight.Limelight;
@@ -103,9 +104,9 @@ public class LimelightSubsystem extends SubsystemBase {
   }
   @Override
   public void periodic() {
-    if (getBotPoseSide() != null) {
-      SmartDashboard.putNumber("Limelight Side Pose/X", getBotPoseSide().getX());
-      SmartDashboard.putNumber("Limelight Side Pose/Y", getBotPoseSide().getY());
+    if (getBotPoseSide(Constants.MEGATAG_2_USAGE) != null) {
+      SmartDashboard.putNumber("Limelight Side Pose/X", getBotPoseSide(Constants.MEGATAG_2_USAGE).getX());
+      SmartDashboard.putNumber("Limelight Side Pose/Y", getBotPoseSide(Constants.MEGATAG_2_USAGE).getY());
     }
   }
 
@@ -130,7 +131,7 @@ public class LimelightSubsystem extends SubsystemBase {
   }
 
   // ROBOT POSITION
-  public Pose2d getBotPoseFront() {
+  public Pose2d getBotPoseFront(boolean useMT2) {
     // Sets the robot orientation before getting the robot position
     LimelightHelpers.SetRobotOrientation(
         LimelightConstants.LimelightFront.name,
@@ -141,27 +142,19 @@ public class LimelightSubsystem extends SubsystemBase {
         0.0,
         0.0);
 
-        Pose2d frontPoseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name).pose;
+    Pose2d MegaTag1 = LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name).pose;
+    Pose2d MegaTag2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(LimelightConstants.LimelightFront.name).pose;
 
     // If theres no april tag seen return null
+    Pose2d frontPoseEstimate = useMT2 ? MegaTag2 : MegaTag1;
     if (frontPoseEstimate == null) {
       return null;
     }
 
-    //return frontPoseEstimate;
-    if (LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name).pose
-    == null
-        &&
-    LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name).pose ==
-    null) {
-      return null;
-    }
-
-    return
-    LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name).pose;
+    return frontPoseEstimate;
   }
 
-  public Pose2d getBotPoseSide() {
+  public Pose2d getBotPoseSide(boolean useMT2) {
     // Sets the robot orientation before getting the robot position
     LimelightHelpers.SetRobotOrientation(
         LimelightConstants.LimelightSide.name,
@@ -172,21 +165,16 @@ public class LimelightSubsystem extends SubsystemBase {
         0.0,
         0.0);
 
-        Pose2d sidePoseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightSide.name).pose;
+    Pose2d MegaTag1 = LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightSide.name).pose;
+    Pose2d MegaTag2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(LimelightConstants.LimelightSide.name).pose;
+
+    // If theres no april tag seen return null
+    Pose2d sidePoseEstimate = useMT2 ? MegaTag2 : MegaTag1;
 
     // If theres no april tag seen return null
     if (sidePoseEstimate == null) {
       return null;
     }
-    //return sidePoseEstimate;
-    if (LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightSide.name).pose
-    == null
-        &&
-    LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightSide.name).pose ==
-    null) {
-      return null;
-    }
-    return
-    LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightSide.name).pose;
+    return sidePoseEstimate;
   }
 }
