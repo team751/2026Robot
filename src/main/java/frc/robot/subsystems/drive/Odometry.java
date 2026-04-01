@@ -1,5 +1,6 @@
 package frc.robot.subsystems.drive;
 
+import com.ctre.phoenix6.Utils;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.numbers.N1;
@@ -121,8 +122,13 @@ public class Odometry extends SubsystemBase {
     Pose2d visionPose = new Pose2d(
         estimate.pose.getX(), estimate.pose.getY(), drive.getPose().getRotation());
 
+    // Use CTRE clock (same domain as odometry buffer) minus pipeline latency.
+    // estimate.timestampSeconds is FPGA time, but CTRE uses JVM nanoTime internally —
+    // different clocks cause measurements to fall outside the odometry buffer.
+    double visionTimestamp = Utils.getCurrentTimeSeconds() - (estimate.latency / 1000.0);
+
     drive.addVisionMeasurement(
-        visionPose, estimate.timestampSeconds, computeStdDevs(baseStdDevs, estimate));
+        visionPose, visionTimestamp, computeStdDevs(baseStdDevs, estimate));
 
     // Stability tracking
     double distance = drive.getPose().getTranslation()
@@ -132,23 +138,18 @@ public class Odometry extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // Reject all vision when spinning too fast
     if (isRotatingTooFast()) {
       SmartDashboard.putBoolean("Odometry/VisionRejected", true);
     } else {
       SmartDashboard.putBoolean("Odometry/VisionRejected", false);
 
       int frontResult = applyVisionEstimate(
-          limelights.getBotPoseFront(),
-          LimelightConstants.FRONT_STD_DEVS,
-          "Vision/Front");
+          limelights.getBotPoseFront(), LimelightConstants.FRONT_STD_DEVS, "Vision/Front");
       if (frontResult == 1) frontStableCount++;
       else if (frontResult == 0) frontStableCount = 0;
 
       int sideResult = applyVisionEstimate(
-          limelights.getBotPoseSide(),
-          LimelightConstants.SIDE_STD_DEVS,
-          "Vision/Side");
+          limelights.getBotPoseSide(), LimelightConstants.SIDE_STD_DEVS, "Vision/Side");
       if (sideResult == 1) sideStableCount++;
       else if (sideResult == 0) sideStableCount = 0;
     }

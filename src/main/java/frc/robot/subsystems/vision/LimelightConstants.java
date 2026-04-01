@@ -24,8 +24,8 @@ public class LimelightConstants {
 
   // Per-camera base std devs (x, y, theta). Theta=99999 means heading comes only from gyro.
   // Lower values = more trust. The 3G has a better sensor/wider FOV, so it gets lower base values.
-  public static final Matrix<N3, N1> FRONT_STD_DEVS = VecBuilder.fill(0.25, 0.25, 99999.0); // 3G
-  public static final Matrix<N3, N1> SIDE_STD_DEVS = VecBuilder.fill(0.4, 0.4, 99999.0);    // 3
+  public static final Matrix<N3, N1> FRONT_STD_DEVS = VecBuilder.fill(0.2, 0.2, 99999.0); // 3G
+  public static final Matrix<N3, N1> SIDE_STD_DEVS = VecBuilder.fill(0.3, 0.3, 99999.0);    // 3
 
   // When multiple tags are visible, the solution is more constrained. Multiply std devs by this factor.
   // Lower = more trust in multi-tag. 1.0 = no bonus.
@@ -38,14 +38,14 @@ public class LimelightConstants {
   // MegaTag switching: use MT1 when closest tag is nearer than this (meters), MT2 when farther.
   // MT1 is more accurate at close range (full 6DOF solve). MT2 uses gyro-constrained solve,
   // which is better at distance where single-tag ambiguity makes MT1 unreliable.
-  public static final double MT_SWITCH_DISTANCE_METERS = 1.5;
+  public static final double MT_SWITCH_DISTANCE_METERS = 3000; //1.5;
 
   // --- Pose Stability ---
 
   // Vision must agree with odometry within this distance (meters) to count as stable
   public static final double POSE_STABLE_EPSILON_METERS = 0.10;
   // Number of consecutive agreeing updates before pose is considered stable
-  public static final int POSE_STABLE_THRESHOLD = 100;
+  public static final int POSE_STABLE_THRESHOLD = 20;
 
   public static class LimelightFront {
     public static final String version = "3G";

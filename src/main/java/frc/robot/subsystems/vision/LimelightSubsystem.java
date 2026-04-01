@@ -131,20 +131,32 @@ public class LimelightSubsystem extends SubsystemBase {
 
   // ROBOT POSITION
 
-  /** Returns the closest tag distance from the raw fiducials, or Double.MAX_VALUE if none. */
+  /**
+   * Returns the closest tag distance. Prefers rawFiducials (per-tag distances), but falls back
+   * to avgTagDist when rawFiducials is empty (NT array size mismatch race condition).
+   * Returns Double.MAX_VALUE only if the estimate itself is null or has no tags.
+   */
   private double getClosestTagDist(LimelightHelpers.PoseEstimate estimate) {
-    if (estimate == null || estimate.rawFiducials == null) return Double.MAX_VALUE;
-    double min = Double.MAX_VALUE;
-    for (LimelightHelpers.RawFiducial f : estimate.rawFiducials) {
-      if (f.distToCamera < min) min = f.distToCamera;
+    if (estimate == null || estimate.tagCount == 0) return Double.MAX_VALUE;
+
+    // Try per-tag distances first
+    if (estimate.rawFiducials != null && estimate.rawFiducials.length > 0) {
+      double min = Double.MAX_VALUE;
+      for (LimelightHelpers.RawFiducial f : estimate.rawFiducials) {
+        if (f.distToCamera < min) min = f.distToCamera;
+      }
+      return min;
     }
-    return min;
+
+    // Fallback: avgTagDist is always populated from the NT array directly
+    return estimate.avgTagDist;
   }
 
   /**
    * Chooses MT1 or MT2 based on closest visible tag distance.
    * Close tags (< MT_SWITCH_DISTANCE) → MT1 (full 6DOF, best at close range).
    * Far tags (>= MT_SWITCH_DISTANCE) → MT2 (gyro-constrained, handles ambiguity better).
+   * Falls back to MT1 if the chosen estimate has no data.
    */
   private LimelightHelpers.PoseEstimate chooseMegaTag(
       LimelightHelpers.PoseEstimate mt1,
@@ -156,6 +168,13 @@ public class LimelightSubsystem extends SubsystemBase {
 
     SmartDashboard.putNumber(telemetryPrefix + "/ClosestTagDist", closestDist);
     SmartDashboard.putBoolean(telemetryPrefix + "/UsingMT2", useMT2);
+
+    // If we chose MT2 but it has no data, fall back to MT1
+    if (useMT2 && (mt2 == null || mt2.tagCount == 0)) {
+      SmartDashboard.putBoolean(telemetryPrefix + "/MT2Fallback", true);
+      return mt1;
+    }
+    SmartDashboard.putBoolean(telemetryPrefix + "/MT2Fallback", false);
 
     return useMT2 ? mt2 : mt1;
   }
