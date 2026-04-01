@@ -53,7 +53,7 @@ public class ControlBoard {
 
   private PIDController autoAimController = new PIDController(0.4, 0.0, 0.01);
   private ProfiledPIDController axisAlignController =
-      new ProfiledPIDController(1.5, 0, 0.4, new Constraints(1, 1));
+      new ProfiledPIDController(0.8, 0, 0.0, new Constraints(1, 1));
 
   private enum ControllerPreset {
     DRIVER(0),
@@ -182,9 +182,9 @@ public class ControlBoard {
     controller.rightTrigger.whileTrue(
         new ShootCommand(ShooterSubsystem.getInstance(), TransferSubsystem.getInstance()));
 
-    // controller.rightTrigger.whileTrue(
-    //     new StartEndCommand(() -> autoAim = true, () -> autoAim = false)
-    //         .withName("Auto Aim Toggle"));
+    controller.rightTrigger.whileTrue(
+        new StartEndCommand(() -> autoAim = true, () -> autoAim = false)
+            .withName("Auto Aim Toggle"));
 
     /* Transfer */
     controller.dLeft.whileTrue(
@@ -200,9 +200,9 @@ public class ControlBoard {
     //     () -> IntakeSubsystem.getInstance().requestIntake(),
     //     () -> IntakeSubsystem.getInstance().requestIdle()));        
 
-    // controller.rightJoystickButton.whileTrue(
-    //     new StartEndCommand(() -> axisAlign = true, () -> axisAlign = false)
-    //         .withName("Axis Align Toggle"));
+    controller.rightJoystickButton.whileTrue(
+        new StartEndCommand(() -> axisAlign = true, () -> axisAlign = false)
+            .withName("Axis Align Toggle"));
 
     controller.leftBumper.whileTrue(
         new StartEndCommand(
@@ -223,9 +223,9 @@ public class ControlBoard {
             () -> ExtenderSubsystem.getInstance().requestRetract())); 
 
 //TODO: Turn auto aim back on
-    // controller.leftJoystickButton.whileTrue(
-    //     new StartEndCommand(() -> axisAlign = true, () -> axisAlign = false)
-    //         .withName("Axis Align Toggle"));
+    controller.leftJoystickButton.whileTrue(
+        new StartEndCommand(() -> axisAlign = true, () -> axisAlign = false)
+            .withName("Axis Align Toggle"));
 
     controller.circleButton.onTrue(new InstantCommand(() -> drive.setRobotRotationByAlliance()));
 
@@ -325,7 +325,7 @@ public class ControlBoard {
     if (axisAlign) {
       Pose2d robotPose = drive.getPose();
       Pose2d nearestTrench = FieldConstants.getNearestTrench(robotPose);
-      y = -axisAlignController.calculate(robotPose.getY(), nearestTrench.getY());
+      y = axisAlignController.calculate(robotPose.getY(), nearestTrench.getY());
       rot =
           autoAimController.calculate(
               robotPose.getRotation().getDegrees(),
