@@ -148,7 +148,6 @@ public class Odometry extends SubsystemBase {
       if (frontResult == 1) frontStableCount++;
       else if (frontResult == 0) frontStableCount = 0;
 
-      
       int sideResult = applyVisionEstimate(
           limelights.getBotPoseSide(), LimelightConstants.SIDE_STD_DEVS, "Vision/Side");
       if (sideResult == 1) sideStableCount++;
