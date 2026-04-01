@@ -1,10 +1,6 @@
 package frc.robot.subsystems.drive;
 
 import com.ctre.phoenix6.Utils;
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.numbers.N1;
@@ -132,11 +128,7 @@ public class Odometry extends SubsystemBase {
     double visionTimestamp = Utils.getCurrentTimeSeconds() - (estimate.latency / 1000.0);
 
     drive.addVisionMeasurement(
-<<<<<<< Updated upstream
         visionPose, visionTimestamp, computeStdDevs(baseStdDevs, estimate));
-=======
-        visionPose, Utils.getCurrentTimeSeconds(), computeStdDevs(baseStdDevs, estimate));
->>>>>>> Stashed changes
 
     // Stability tracking
     double distance = drive.getPose().getTranslation()
@@ -156,7 +148,6 @@ public class Odometry extends SubsystemBase {
       if (frontResult == 1) frontStableCount++;
       else if (frontResult == 0) frontStableCount = 0;
 
-      
       int sideResult = applyVisionEstimate(
           limelights.getBotPoseSide(), LimelightConstants.SIDE_STD_DEVS, "Vision/Side");
       if (sideResult == 1) sideStableCount++;
