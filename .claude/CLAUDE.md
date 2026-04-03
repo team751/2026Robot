@@ -80,7 +80,7 @@ Not all subsystems implement this identically: IntakeSubsystem uses request flag
 
 ### Superstructure Coordinator
 
-`Superstructure.java` coordinates all mechanism subsystems through a central state machine. Holds references to SwerveSubsystem, ShooterSubsystem, IntakeSubsystem, ExtenderSubsystem, and TransferSubsystem. ClimberSubsystem reference is commented out.
+`Superstructure.java` holds references to all mechanism subsystems and has a minimal PRE_HOME/IDLE state machine that currently does nothing (stub). Actual mechanism coordination is done directly via StartEndCommands in `ControlBoard.java`, not through Superstructure. ClimberSubsystem reference is commented out.
 
 ## CAN Bus Architecture
 
@@ -133,15 +133,16 @@ Dual TalonFX motors (top/bottom). States: IDLE/TRANSFER/REVERSE. VoltageOut cont
 
 | Input | Action |
 |-------|--------|
-| Left stick | Translation (60% max speed) |
+| Left stick | Translation |
 | Right stick X | Rotation (squared for sensitivity) |
-| Right bumper (hold) | Precise mode: 25% translation, 50% rotation |
-| Left trigger (hold) | Intake + precise mode |
-| Square (hold) | Spit intake |
-| D-pad up (hold) | Extend extender |
-| D-pad down (hold) | Retract extender |
+| Right bumper (hold) | Precise mode: 20% translation, 30% rotation |
+| Left trigger (hold) | IntakeCommand |
+| Left bumper (hold) | Spit (intake + transfer reverse + shooter spit + extend extender) |
+| Square (hold) | Spit (intake + transfer reverse + shooter spit + extend extender) |
+| D-pad up (hold) | Extend extender + run intake |
+| D-pad down (hold) | Retract extender + run intake |
 | Cross (hold) | JiggleCommand (unstick game pieces) |
-| Right trigger (hold) | Shoot + transfer |
+| Right trigger (hold) | Shoot + auto-aim toward alliance hub |
 | D-pad left (hold) | Reverse transfer + shooter spit |
 | Right/Left stick press (hold) | Axis align to nearest trench |
 | Circle | Reset rotation to alliance perspective |
@@ -150,10 +151,14 @@ Dual TalonFX motors (top/bottom). States: IDLE/TRANSFER/REVERSE. VoltageOut cont
 
 | Input | Action |
 |-------|--------|
-| Left stick press | Reset rotation to alliance perspective |
-| Square (hold) | Auto aim toward alliance hub |
+| Right trigger (hold) | ShootCommand fixed-speed (noDistance=true, AASHOOT mode) |
+| D-pad up (hold) | Extend extender + run intake |
+| D-pad down (hold) | Retract extender |
+| D-pad left (hold) | Reverse transfer + shooter spit |
+| Cross (hold) | JiggleCommand |
+| Square (hold) | Spit (intake + transfer reverse + shooter spit + extend extender) |
 
-*Note: Climber bindings and operator axis align are currently commented out in ControlBoard.java.*
+*Note: Climber bindings are commented out. `ControlBoardAlt.java` exists as an alternative config.*
 
 ### Drive Request Config
 

@@ -29,7 +29,7 @@ public class LimelightConstants {
 
   // When multiple tags are visible, the solution is more constrained. Multiply std devs by this factor.
   // Lower = more trust in multi-tag. 1.0 = no bonus.
-  public static final double MULTI_TAG_STD_DEV_FACTOR = 0.5;
+  public static final double MULTI_TAG_STD_DEV_FACTOR = 0.3;
 
   // Reject vision entirely when the robot is spinning faster than this (deg/s).
   // Fast rotation causes gyro-to-vision latency mismatch that corrupts MegaTag2.
@@ -38,7 +38,7 @@ public class LimelightConstants {
   // MegaTag switching: use MT1 when closest tag is nearer than this (meters), MT2 when farther.
   // MT1 is more accurate at close range (full 6DOF solve). MT2 uses gyro-constrained solve,
   // which is better at distance where single-tag ambiguity makes MT1 unreliable.
-  public static final double MT_SWITCH_DISTANCE_METERS = 1.1;
+  public static double MT_SWITCH_DISTANCE_METERS = 1.5;
 
   // --- Pose Stability ---
 

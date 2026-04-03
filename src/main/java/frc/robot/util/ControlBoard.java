@@ -16,6 +16,8 @@ import frc.lib.PS5Controller;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.JiggleCommand;
 import frc.robot.commands.ShootCommand;
+import frc.robot.commands.SimpleUnstuck;
+import frc.robot.commands.SpitCommand;
 import frc.robot.subsystems.Superstructure;
 import frc.robot.subsystems.drive.SwerveConstants;
 import frc.robot.subsystems.drive.SwerveSubsystem;
@@ -24,6 +26,7 @@ import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.simulation.MapSimSwerveTelemetry;
 import frc.robot.subsystems.transfer.TransferSubsystem;
+import frc.robot.subsystems.vision.LimelightConstants;
 
 // import frc.robot.subsystems.climber.ClimberSubsystem;
 
@@ -138,40 +141,24 @@ public class ControlBoard {
     controller.leftTrigger.whileTrue(
         new IntakeCommand(IntakeSubsystem.getInstance(), ExtenderSubsystem.getInstance()));
 
-    // controller.leftTrigger.whileTrue(
-    //     new StartEndCommand(() -> preciseControl = true, () -> preciseControl = false)
-    //         .withName("Precise Control Toggle")); // Fight me owen
-
     controller.crossButton.whileTrue(
         new JiggleCommand(
             IntakeSubsystem.getInstance(),
             ExtenderSubsystem.getInstance(),
             TransferSubsystem.getInstance()));
 
-    controller.squareButton.whileTrue(
-        new StartEndCommand(
-            () -> IntakeSubsystem.getInstance().requestSpit(),
-            () -> IntakeSubsystem.getInstance().requestIdle()));
-    controller.squareButton.whileTrue(
-      new StartEndCommand(
-            () -> TransferSubsystem.getInstance().requestReverse(),
-            () -> TransferSubsystem.getInstance().requestIdle()));   
-    controller.squareButton.whileTrue(
-      new StartEndCommand(
-            () -> ShooterSubsystem.getInstance().requestSpit(),
-            () -> ShooterSubsystem.getInstance().requestIdle()));             
-
-    controller.squareButton.whileTrue(
-      new StartEndCommand(
-            () -> ExtenderSubsystem.getInstance().requestExtend(),
-            () -> ExtenderSubsystem.getInstance().requestRetract()));   
+    controller.squareButton.onTrue(
+    new InstantCommand(() -> {
+        if (LimelightConstants.MT_SWITCH_DISTANCE_METERS == 1.5) {
+            LimelightConstants.MT_SWITCH_DISTANCE_METERS = 300.0;
+        } else {
+            LimelightConstants.MT_SWITCH_DISTANCE_METERS = 1.5;
+        }
+    })
+);
 
     controller.dUp.whileTrue(
         new InstantCommand(() -> ExtenderSubsystem.getInstance().requestExtend()));
-    controller.dUp.whileTrue(
-      new StartEndCommand(
-        () -> IntakeSubsystem.getInstance().requestIntake(),
-        () -> IntakeSubsystem.getInstance().requestIdle()));
 
     controller.dDown.whileTrue(
         new InstantCommand(() -> ExtenderSubsystem.getInstance().requestRetract()));
@@ -181,58 +168,29 @@ public class ControlBoard {
         () -> IntakeSubsystem.getInstance().requestIntake(),
         () -> IntakeSubsystem.getInstance().requestIdle()));
 
+    controller.dLeft.whileTrue(
+        new SimpleUnstuck(TransferSubsystem.getInstance()));
+
     /* Shooter */
     controller.rightTrigger.whileTrue(
         new ShootCommand(ShooterSubsystem.getInstance(), TransferSubsystem.getInstance()));
     controller.rightTrigger.onFalse(new InstantCommand(() -> operatorOffset = 0));
     controller.rightTrigger.whileTrue(
         new StartEndCommand(() -> autoAim = true, () -> autoAim = false)
-            .withName("Auto Aim Toggle"));
-
-    /* Transfer */
-    controller.dLeft.whileTrue(
-        new StartEndCommand(
-          () -> TransferSubsystem.getInstance().requestReverse(),
-          () -> TransferSubsystem.getInstance().requestIdle()));
-    controller.dLeft.whileTrue(
-        new StartEndCommand(
-          () -> ShooterSubsystem.getInstance().requestSpit(),
-          () -> ShooterSubsystem.getInstance().requestIdle()));
-    // controller.dLeft.whileTrue(
-    //   new StartEndCommand(
-    //     () -> IntakeSubsystem.getInstance().requestIntake(),
-    //     () -> IntakeSubsystem.getInstance().requestIdle()));        
+            .withName("Auto Aim Toggle"));     
 
     controller.rightJoystickButton.whileTrue(
         new StartEndCommand(() -> axisAlign = true, () -> axisAlign = false)
             .withName("Axis Align Toggle"));
 
-    controller.leftBumper.whileTrue(
-        new StartEndCommand(
-            () -> IntakeSubsystem.getInstance().requestSpit(),
-            () -> IntakeSubsystem.getInstance().requestIdle()));
-    controller.leftBumper.whileTrue(
-      new StartEndCommand(
-            () -> TransferSubsystem.getInstance().requestReverse(),
-            () -> TransferSubsystem.getInstance().requestIdle()));   
-    controller.leftBumper.whileTrue(
-      new StartEndCommand(
-            () -> ShooterSubsystem.getInstance().requestSpit(),
-            () -> ShooterSubsystem.getInstance().requestIdle()));             
+    controller.leftBumper.whileTrue( new SpitCommand(TransferSubsystem.getInstance(), IntakeSubsystem.getInstance(), ExtenderSubsystem.getInstance()));
 
-    controller.leftBumper.whileTrue(
-      new StartEndCommand(
-            () -> ExtenderSubsystem.getInstance().requestExtend(),
-            () -> ExtenderSubsystem.getInstance().requestRetract())); 
-
-//TODO: Turn auto aim back on
     controller.leftJoystickButton.whileTrue(
         new StartEndCommand(() -> axisAlign = true, () -> axisAlign = false)
             .withName("Axis Align Toggle"));
 
     controller.circleButton.onTrue(new InstantCommand(() -> drive.setRobotRotationByAlliance()));
 
-    /* Swerve */
     controller.rightBumper.whileTrue(
         new StartEndCommand(() -> preciseControl = true, () -> preciseControl = false)
             .withName("Precise Control Toggle")); // Fight me owen
@@ -246,11 +204,6 @@ public class ControlBoard {
     controller.dUp.whileTrue(
         new InstantCommand(() -> ExtenderSubsystem.getInstance().requestExtend()));
 
-    controller.dUp.whileTrue(
-      new StartEndCommand(
-        () -> IntakeSubsystem.getInstance().requestIntake(),
-        () -> IntakeSubsystem.getInstance().requestIdle()));
-
     controller.dDown.whileTrue(
         new InstantCommand(() -> ExtenderSubsystem.getInstance().requestRetract()));
         
@@ -258,31 +211,30 @@ public class ControlBoard {
         new InstantCommand(() -> operatorOffset += isBlue ? -5.0 : 5.0));
     controller.dRight.whileTrue(
         new InstantCommand(() -> operatorOffset += isBlue ? 5.0 : -5.0));
-     
+
     controller.crossButton.whileTrue(
       new JiggleCommand(
         IntakeSubsystem.getInstance(),
         ExtenderSubsystem.getInstance(),
         TransferSubsystem.getInstance())
-      );    
+      );
+      controller.leftTrigger.whileTrue(
+        new IntakeCommand(IntakeSubsystem.getInstance(), ExtenderSubsystem.getInstance()));
 
-    controller.squareButton.whileTrue(
-        new StartEndCommand(
-            () -> IntakeSubsystem.getInstance().requestSpit(),
-            () -> IntakeSubsystem.getInstance().requestIdle()));
-    controller.squareButton.whileTrue(
-      new StartEndCommand(
-            () -> TransferSubsystem.getInstance().requestReverse(),
-            () -> TransferSubsystem.getInstance().requestIdle()));   
-    controller.squareButton.whileTrue(
-      new StartEndCommand(
-            () -> ShooterSubsystem.getInstance().requestSpit(),
-            () -> ShooterSubsystem.getInstance().requestIdle()));             
+    controller.crossButton.whileTrue(
+        new JiggleCommand(
+            IntakeSubsystem.getInstance(),
+            ExtenderSubsystem.getInstance(),
+            TransferSubsystem.getInstance()));
 
     controller.squareButton.onTrue(
-      new StartEndCommand(
-            () -> ExtenderSubsystem.getInstance().requestExtend(),
-            () -> ExtenderSubsystem.getInstance().requestRetract()));   
+    new InstantCommand(() -> {
+        if (LimelightConstants.MT_SWITCH_DISTANCE_METERS == 1.5) {
+            LimelightConstants.MT_SWITCH_DISTANCE_METERS = 300.0;
+        } else {
+            LimelightConstants.MT_SWITCH_DISTANCE_METERS = 1.5;
+        }
+    }));
 
     /* Climber */
     // TODO: Make left trigger shoot(peter requested)
