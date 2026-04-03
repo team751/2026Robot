@@ -246,10 +246,6 @@ public class ControlBoard {
 
   }
 
-  public double getOperatorOffset(){
-    return operatorOffset;
-  }
-
   public SwerveRequest getDriverRequest() {
     if (driver == null) return null;
 
@@ -289,6 +285,11 @@ public class ControlBoard {
     } else {
       y = driver.leftHorizontalJoystick.getAsDouble();
     }
+
+    SmartDashboard.putBoolean("ControlBoard/AutoAim", autoAim);
+    SmartDashboard.putBoolean("ControlBoard/AxisAlign", axisAlign);
+    SmartDashboard.putNumber("ControlBoard/OperatorOffset", operatorOffset);
+    SmartDashboard.putNumber("ControlBoard/limelightdist", LimelightConstants.MT_SWITCH_DISTANCE_METERS);
 
     return driveRequest
         .withVelocityX(SwerveConstants.maxSpeed * x * scale)
