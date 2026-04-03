@@ -27,6 +27,7 @@ import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.simulation.MapSimSwerveTelemetry;
 import frc.robot.subsystems.transfer.TransferSubsystem;
 import frc.robot.subsystems.vision.LimelightConstants;
+import edu.wpi.first.math.geometry.Rotation2d;
 
 // import frc.robot.subsystems.climber.ClimberSubsystem;
 
@@ -59,8 +60,8 @@ public class ControlBoard {
   public boolean isBlue = false;
 
   private PIDController autoAimController = new PIDController(0.4, 0.0, 0.01);
-  private ProfiledPIDController axisAlignController =
-      new ProfiledPIDController(0.5, 0, 0.05, new Constraints(1, 1));
+  private PIDController axisAlignController =
+      new PIDController(0.5, 0, 0.05);//, new Constraints(1, 1));
 
   private enum ControllerPreset {
     DRIVER(0),
@@ -274,8 +275,11 @@ public class ControlBoard {
 
     if (axisAlign) {
       Pose2d robotPose = drive.getPose();
-      Pose2d nearestTrench = FieldConstants.getNearestTrench(robotPose, isBlue);
-      y = axisAlignController.calculate(robotPose.getY(), nearestTrench.getY());
+
+      Pose2d nearestTrench = new Pose2d(5, 5, Rotation2d.fromDegrees(0));
+      Pose2d thing = FieldConstants.getNearestTrench(robotPose, isBlue);
+      SmartDashboard.putNumber("ControlBoard/paigus", thing.getY());
+      y = (isBlue ? 1.0 : -1.0) * axisAlignController.calculate(robotPose.getY(), thing.getY());
       y = Math.min(y, 1.0);
       y = Math.max(y, -1.0);
       rot =
