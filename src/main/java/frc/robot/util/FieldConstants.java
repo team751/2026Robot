@@ -8,6 +8,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -213,14 +214,11 @@ public class FieldConstants {
     return GameElement.HUB_BLUE.getCenter();
   }
 
-  public static Pose2d getNearestTrench(Pose2d robotPose, Boolean isBlue) {
+  public static Pose2d getNearestTrench(Pose2d robotPose, boolean isBlue) {
     return GameElement.getByType(ElementType.TRENCH).stream()
         .filter(e -> e.isBlue() == isBlue)
-        .min(
-            (t1, t2) ->
-                Double.compare(
-                    robotPose.getTranslation().getDistance(t1.getLocation()),
-                    robotPose.getTranslation().getDistance(t2.getLocation())))
+        .min(Comparator.comparingDouble(
+            t -> robotPose.getTranslation().getDistance(t.getLocation())))
         .map(GameElement::getCenter)
         .orElse(null);
   }
