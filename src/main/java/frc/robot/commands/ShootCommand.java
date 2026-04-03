@@ -14,14 +14,14 @@ public class ShootCommand extends Command {
   public ShootCommand(ShooterSubsystem shooter, TransferSubsystem transfer) {
     this.shooter = shooter;
     this.transfer = transfer;
-    addRequirements(shooter, transfer);
+    //addRequirements(shooter, transfer);
   }
 
   public ShootCommand(ShooterSubsystem shooter, TransferSubsystem transfer, Boolean noDistance) {
     this.shooter = shooter;
     this.transfer = transfer;
     this.noDistance = noDistance;
-    addRequirements(shooter, transfer);
+    //addRequirements(shooter, transfer);
   }
 
 

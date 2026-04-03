@@ -142,8 +142,7 @@ public class ControlBoard {
         new JiggleCommand(
             IntakeSubsystem.getInstance(),
             ExtenderSubsystem.getInstance(),
-            TransferSubsystem.getInstance(),
-            ShooterSubsystem.getInstance()));
+            TransferSubsystem.getInstance()));
 
     controller.squareButton.whileTrue(
         new StartEndCommand(
@@ -264,8 +263,7 @@ public class ControlBoard {
       new JiggleCommand(
         IntakeSubsystem.getInstance(),
         ExtenderSubsystem.getInstance(),
-        TransferSubsystem.getInstance(),
-        ShooterSubsystem.getInstance())
+        TransferSubsystem.getInstance())
       );    
 
     controller.squareButton.whileTrue(
@@ -299,7 +297,7 @@ public class ControlBoard {
   public SwerveRequest getDriverRequest() {
     if (driver == null) return null;
 
-    double scale = preciseControl ? 0.3 : 1.0;
+    double scale = preciseControl ? 0.2 : 1.0;
     double rotScale = preciseControl ? 0.30 : 1.0;
 
     double rawStickRot = driver.rightHorizontalJoystick.getAsDouble();

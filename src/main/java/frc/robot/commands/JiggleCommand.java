@@ -10,18 +10,15 @@ public class JiggleCommand extends Command {
   private final IntakeSubsystem intake;
   private final ExtenderSubsystem extender;
   private final TransferSubsystem transfer;
-  private final ShooterSubsystem shooter;
 
   public JiggleCommand(
       IntakeSubsystem intake,
       ExtenderSubsystem extender,
-      TransferSubsystem transfer,
-      ShooterSubsystem shooter) {
+      TransferSubsystem transfer) {
     this.intake = intake;
     this.extender = extender;
     this.transfer = transfer;
-    this.shooter = shooter;
-    addRequirements(intake, extender, transfer, shooter);
+    //addRequirements(intake, extender, transfer);
   }
 
   @Override

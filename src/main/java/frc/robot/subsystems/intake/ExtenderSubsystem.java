@@ -20,7 +20,7 @@ public class ExtenderSubsystem extends SubsystemBase {
   private final VoltageOut extenderControl = new VoltageOut(0);
 
   private final PIDController extenderPID =
-      new PIDController(0.3, 0.0, 0.0); // , new Constraints(20.0, 10.0));
+      new PIDController(0.2, 0.0, 0.0); // , new Constraints(20.0, 10.0));
   // private final ProfiledPIDController  bhextenderPID = new ProfiledPIDController(0.25, 0.0, 0.0,
   // new
   // Constraints(20.0, 10.0));
@@ -55,8 +55,8 @@ public class ExtenderSubsystem extends SubsystemBase {
     double motorOutput = 0;
     switch (state) {
       case EXTENDING -> motorOutput =
-          Math.max(-5.0, Math.min(5.0, calculateMotorControl(IntakeConstants.extenderLength + 8)));
-      case RETRACTING -> motorOutput = Math.max(-4.0, Math.min(4.0, calculateMotorControl(-5)));
+          Math.max(-6.0, Math.min(6.0, calculateMotorControl(IntakeConstants.extenderLength + 7)));
+      case RETRACTING -> motorOutput = Math.max(-5.0, Math.min(5.0, calculateMotorControl(-7)));
       case EXTENDED, RETRACTED -> motorOutput = 0;
       case JIGGLE_IN -> motorOutput = -1.5;
     }
