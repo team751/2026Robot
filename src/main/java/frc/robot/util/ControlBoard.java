@@ -53,7 +53,7 @@ public class ControlBoard {
 
   private PIDController autoAimController = new PIDController(0.4, 0.0, 0.01);
   private ProfiledPIDController axisAlignController =
-      new ProfiledPIDController(0.8, 0, 0.0, new Constraints(1, 1));
+      new ProfiledPIDController(0.5, 0, 0.05, new Constraints(1, 1));
 
   private enum ControllerPreset {
     DRIVER(0),
@@ -326,6 +326,8 @@ public class ControlBoard {
       Pose2d robotPose = drive.getPose();
       Pose2d nearestTrench = FieldConstants.getNearestTrench(robotPose);
       y = axisAlignController.calculate(robotPose.getY(), nearestTrench.getY());
+      y = Math.min(y, 1.0);
+      y = Math.max(y, -1.0);
       rot =
           autoAimController.calculate(
               robotPose.getRotation().getDegrees(),

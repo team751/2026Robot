@@ -127,16 +127,16 @@ public class FieldConstants {
     // ----- TRENCHES -----
 
     /** Blue right trench (lower Y, blue side of field). */
-    TRENCH_BLUE_RIGHT(new Pose2d(2, 0.6, Rotation2d.fromDegrees(90)), true, ElementType.TRENCH),
+    TRENCH_BLUE_RIGHT(new Pose2d(2, 0.65, Rotation2d.fromDegrees(90)), true, ElementType.TRENCH),
 
     /** Blue left trench (higher Y, blue side of field). */
-    TRENCH_BLUE_LEFT(new Pose2d(2, 7.5, Rotation2d.fromDegrees(-90)), true, ElementType.TRENCH),
+    TRENCH_BLUE_LEFT(new Pose2d(2, 7.45, Rotation2d.fromDegrees(-90)), true, ElementType.TRENCH),
 
     /** Red right trench (lower Y, red side of field). */
-    TRENCH_RED_RIGHT(new Pose2d(13.6, 0.6, Rotation2d.fromDegrees(90)), false, ElementType.TRENCH),
+    TRENCH_RED_RIGHT(new Pose2d(13.6, 0.65, Rotation2d.fromDegrees(90)), false, ElementType.TRENCH),
 
     /** Red left trench (higher Y, red side of field). */
-    TRENCH_RED_LEFT(new Pose2d(13.6, 7.5, Rotation2d.fromDegrees(-90)), false, ElementType.TRENCH),
+    TRENCH_RED_LEFT(new Pose2d(13.6, 7.45, Rotation2d.fromDegrees(-90)), false, ElementType.TRENCH),
 
     // ----- OUTPOSTS -----
 
