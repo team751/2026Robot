@@ -1,10 +1,14 @@
 package frc.robot.subsystems.drive;
 
+import java.security.PublicKey;
+
 import com.ctre.phoenix6.Utils;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -61,6 +65,10 @@ public class Odometry extends SubsystemBase {
 
   public Pose2d getPose() {
     return robotPose;
+  }
+
+  public Rotation2d getYaw(){
+    return drive.getRotation();
   }
 
   public void resetPose(Pose2d newPose) {

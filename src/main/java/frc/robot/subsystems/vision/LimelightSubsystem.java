@@ -182,7 +182,7 @@ public class LimelightSubsystem extends SubsystemBase {
   public LimelightHelpers.PoseEstimate getBotPoseFront() {
     LimelightHelpers.SetRobotOrientation(
         LimelightConstants.LimelightFront.name,
-        Odometry.getInstance().getPose().getRotation().getDegrees(),
+        Odometry.getInstance().getYaw().getDegrees(),
         0.0, 0.0, 0.0, 0.0, 0.0);
 
     LimelightHelpers.PoseEstimate mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name);
@@ -194,7 +194,7 @@ public class LimelightSubsystem extends SubsystemBase {
   public LimelightHelpers.PoseEstimate getBotPoseSide() {
     LimelightHelpers.SetRobotOrientation(
         LimelightConstants.LimelightSide.name,
-        Odometry.getInstance().getPose().getRotation().getDegrees(),
+        Odometry.getInstance().getYaw().getDegrees(),
         0.0, 0.0, 0.0, 0.0, 0.0);
 
     LimelightHelpers.PoseEstimate mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightSide.name);

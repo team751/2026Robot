@@ -51,6 +51,10 @@ public class ControlBoard {
   private boolean autoAim = false;
   private boolean axisAlign = false;
 
+  private double operatorOffset = 0;
+
+  public boolean isBlue = false;
+
   private PIDController autoAimController = new PIDController(0.4, 0.0, 0.01);
   private ProfiledPIDController axisAlignController =
       new ProfiledPIDController(0.5, 0, 0.05, new Constraints(1, 1));
@@ -180,7 +184,7 @@ public class ControlBoard {
     /* Shooter */
     controller.rightTrigger.whileTrue(
         new ShootCommand(ShooterSubsystem.getInstance(), TransferSubsystem.getInstance()));
-
+    controller.rightTrigger.onFalse(new InstantCommand(() -> operatorOffset = 0));
     controller.rightTrigger.whileTrue(
         new StartEndCommand(() -> autoAim = true, () -> autoAim = false)
             .withName("Auto Aim Toggle"));
@@ -251,13 +255,9 @@ public class ControlBoard {
         new InstantCommand(() -> ExtenderSubsystem.getInstance().requestRetract()));
         
     controller.dLeft.whileTrue(
-        new StartEndCommand(
-          () -> TransferSubsystem.getInstance().requestReverse(),
-          () -> TransferSubsystem.getInstance().requestIdle()));
-    controller.dLeft.whileTrue(
-        new StartEndCommand(
-          () -> ShooterSubsystem.getInstance().requestSpit(),
-          () -> ShooterSubsystem.getInstance().requestIdle()));
+        new InstantCommand(() -> operatorOffset += isBlue ? -5.0 : 5.0));
+    controller.dRight.whileTrue(
+        new InstantCommand(() -> operatorOffset += isBlue ? 5.0 : -5.0));
      
     controller.crossButton.whileTrue(
       new JiggleCommand(
@@ -294,6 +294,10 @@ public class ControlBoard {
 
   }
 
+  public double getOperatorOffset(){
+    return operatorOffset;
+  }
+
   public SwerveRequest getDriverRequest() {
     if (driver == null) return null;
 
@@ -313,7 +317,7 @@ public class ControlBoard {
           Math.toDegrees(
               Math.atan2(hubPose.getY() - robotPose.getY(), hubPose.getX() - robotPose.getX()));
       //SmartDashboard.putNumber("target offness", angleDiff - robotPose.getRotation().getDegrees());
-      rot = autoAimController.calculate(robotPose.getRotation().getDegrees(), angleDiff);
+      rot = autoAimController.calculate(robotPose.getRotation().getDegrees(), angleDiff + operatorOffset);
       //SmartDashboard.putNumber("pid value", rot);
     }
 
@@ -322,7 +326,7 @@ public class ControlBoard {
 
     if (axisAlign) {
       Pose2d robotPose = drive.getPose();
-      Pose2d nearestTrench = FieldConstants.getNearestTrench(robotPose);
+      Pose2d nearestTrench = FieldConstants.getNearestTrench(robotPose, isBlue);
       y = axisAlignController.calculate(robotPose.getY(), nearestTrench.getY());
       y = Math.min(y, 1.0);
       y = Math.max(y, -1.0);

@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.drive.Odometry;
@@ -63,6 +64,8 @@ public class Robot extends TimedRobot {
     PortForwarder.add(5801, "10.7.51.75",5801);
     robotContainer = new RobotContainer();
     LimelightSubsystem.getInstance().initLimsplz();
+    controlBoard.isBlue =  !DriverStation.getAlliance().isPresent()
+            || DriverStation.getAlliance().get() != Alliance.Red;
   }
 
   @Override
@@ -115,6 +118,8 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     Odometry.getInstance();
+    controlBoard.isBlue =  !DriverStation.getAlliance().isPresent()
+            || DriverStation.getAlliance().get() != Alliance.Red;
     // LimelightSubsystem.getInstance();
     // ClimberSubsystem.getInstance().zeroClimber();
 
@@ -126,7 +131,9 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    SmartDashboard.putNumber("Op offset", controlBoard.getOperatorOffset());
+  }
 
   @Override
   public void simulationInit() {}

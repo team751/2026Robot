@@ -213,10 +213,7 @@ public class FieldConstants {
     return GameElement.HUB_BLUE.getCenter();
   }
 
-  public static Pose2d getNearestTrench(Pose2d robotPose) {
-    boolean isBlue =
-        !DriverStation.getAlliance().isPresent()
-            || DriverStation.getAlliance().get() != Alliance.Red;
+  public static Pose2d getNearestTrench(Pose2d robotPose, Boolean isBlue) {
     return GameElement.getByType(ElementType.TRENCH).stream()
         .filter(e -> e.isBlue() == isBlue)
         .min(
