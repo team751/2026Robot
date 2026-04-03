@@ -20,7 +20,7 @@ public class TransferSubsystem extends SubsystemBase {
   private final VoltageOut bottomControl = new VoltageOut(0);
 
   /* State Machine Logic */
-  private enum TransferState {
+  public enum TransferState {
     IDLE,
     TRANSFER,
     REVERSE,
@@ -56,6 +56,15 @@ public class TransferSubsystem extends SubsystemBase {
     bottomMotor.setControl(bottomControl.withOutput(bottomVoltage));
     SmartDashboard.putNumber("Transfer/Top Speed", topMotor.getVelocity().getValueAsDouble());
     SmartDashboard.putNumber("Transfer/Bottom Speed", bottomMotor.getVelocity().getValueAsDouble());
+  }
+
+  public TransferState getState() {
+    return state;
+  }
+
+  public void requestState(TransferState newState) {
+    state = newState;
+    SmartDashboard.putString("Transfer/State", state.toString());
   }
 
   public void requestTransfer() {
