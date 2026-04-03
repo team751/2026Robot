@@ -62,13 +62,13 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 4.0,
+    "velocity": 2.0,
     "rotation": 90.0
   },
   "reversed": false,
   "folder": "Auto1bluepaths",
   "idealStartingState": {
-    "velocity": 4.0,
+    "velocity": 0.0,
     "rotation": 25.0
   },
   "useDefaultConstraints": true
