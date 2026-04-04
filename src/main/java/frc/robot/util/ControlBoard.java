@@ -284,7 +284,7 @@ public class ControlBoard {
 
       Pose2d nearestTrench = new Pose2d(5, 5, Rotation2d.fromDegrees(0));
       Pose2d thing = FieldConstants.getNearestTrench(robotPose, isBlue);
-      SmartDashboard.putNumber("ControlBoard/paigus", thing.getY());
+      //SmartDashboard.putNumber("ControlBoard/paigus", thing.getY());
       y = (isBlue ? 1.0 : -1.0) * axisAlignController.calculate(robotPose.getY(), thing.getY());
       y = Math.min(y, 1.0);
       y = Math.max(y, -1.0);
@@ -296,10 +296,10 @@ public class ControlBoard {
       y = driver.leftHorizontalJoystick.getAsDouble();
     }
 
-    SmartDashboard.putBoolean("ControlBoard/AutoAim", autoAim);
-    SmartDashboard.putBoolean("ControlBoard/AxisAlign", axisAlign);
-    SmartDashboard.putNumber("ControlBoard/OperatorOffset", operatorOffset);
-    SmartDashboard.putNumber("ControlBoard/limelightdist", LimelightConstants.MT_SWITCH_DISTANCE_METERS);
+    // SmartDashboard.putBoolean("ControlBoard/AutoAim", autoAim);
+    // SmartDashboard.putBoolean("ControlBoard/AxisAlign", axisAlign);
+    // SmartDashboard.putNumber("ControlBoard/OperatorOffset", operatorOffset);
+    // SmartDashboard.putNumber("ControlBoard/limelightdist", LimelightConstants.MT_SWITCH_DISTANCE_METERS);
 
     return driveRequest
         .withVelocityX(SwerveConstants.maxSpeed * x * scale)

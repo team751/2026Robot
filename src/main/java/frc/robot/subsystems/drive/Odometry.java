@@ -119,10 +119,10 @@ public class Odometry extends SubsystemBase {
 
     // Publish raw vision pose for debugging regardless of acceptance
     if (estimate != null && estimate.tagCount > 0) {
-      SmartDashboard.putNumber(telemetryPrefix + "/RawX", estimate.pose.getX());
-      SmartDashboard.putNumber(telemetryPrefix + "/RawY", estimate.pose.getY());
-      SmartDashboard.putNumber(telemetryPrefix + "/TagCount", estimate.tagCount);
-      SmartDashboard.putNumber(telemetryPrefix + "/AvgTagDist", estimate.avgTagDist);
+      // SmartDashboard.putNumber(telemetryPrefix + "/RawX", estimate.pose.getX());
+      // SmartDashboard.putNumber(telemetryPrefix + "/RawY", estimate.pose.getY());
+      // SmartDashboard.putNumber(telemetryPrefix + "/TagCount", estimate.tagCount);
+      // SmartDashboard.putNumber(telemetryPrefix + "/AvgTagDist", estimate.avgTagDist);
     }
 
     if (!isValidEstimate(estimate)) return -1;
@@ -167,7 +167,7 @@ public class Odometry extends SubsystemBase {
 
     SmartDashboard.putBoolean("Odometry/PoseStable", isPoseStable());
     SmartDashboard.putBoolean("Odometry/FrontStable", isFrontStable());
-    SmartDashboard.putBoolean("Odometry/SideStable", isSideStable());
+    // SmartDashboard.putBoolean("Odometry/SideStable", isSideStable());
     SmartDashboard.putData(field);
   }
 }

@@ -53,8 +53,8 @@ public class IntakeSubsystem extends SubsystemBase {
         case SPITTING -> setIntakeMotor(IntakeConstants.spitSpeed);
       }
     }
-    SmartDashboard.putString("Intake/Intake State", state.toString());
-    SmartDashboard.putNumber("Intake/Intake Speed", intakeMotor.getVelocity().getValueAsDouble());
+    //SmartDashboard.putString("Intake/Intake State", state.toString());
+    //SmartDashboard.putNumber("Intake/Intake Speed", intakeMotor.getVelocity().getValueAsDouble());
   }
 
   /**

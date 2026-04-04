@@ -78,7 +78,7 @@ public class ExtenderSubsystem extends SubsystemBase {
       state = ExtenderState.RETRACTED;
     }
 
-    SmartDashboard.putNumber("Extender/Extension", estimatedExtension);
+    //SmartDashboard.putNumber("Extender/Extension", estimatedExtension);
   }
 
   /**
@@ -92,7 +92,7 @@ public class ExtenderSubsystem extends SubsystemBase {
 
   private double calculateMotorControl(double target) {
     double pidOutput = extenderPID.calculate(estimatedExtension, target);
-    SmartDashboard.putNumber("Extender/PIDThing", pidOutput);
+    //SmartDashboard.putNumber("Extender/PIDThing", pidOutput);
     return pidOutput;
   }
 

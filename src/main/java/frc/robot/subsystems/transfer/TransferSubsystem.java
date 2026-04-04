@@ -54,8 +54,8 @@ public class TransferSubsystem extends SubsystemBase {
   private void setMotors(double topVoltage, double bottomVoltage) {
     topMotor.setControl(topControl.withOutput(topVoltage));
     bottomMotor.setControl(bottomControl.withOutput(bottomVoltage));
-    SmartDashboard.putNumber("Transfer/Top Speed", topMotor.getVelocity().getValueAsDouble());
-    SmartDashboard.putNumber("Transfer/Bottom Speed", bottomMotor.getVelocity().getValueAsDouble());
+    // SmartDashboard.putNumber("Transfer/Top Speed", topMotor.getVelocity().getValueAsDouble());
+    // SmartDashboard.putNumber("Transfer/Bottom Speed", bottomMotor.getVelocity().getValueAsDouble());
   }
 
   public TransferState getState() {
@@ -64,21 +64,21 @@ public class TransferSubsystem extends SubsystemBase {
 
   public void requestState(TransferState newState) {
     state = newState;
-    SmartDashboard.putString("Transfer/State", state.toString());
+    //SmartDashboard.putString("Transfer/State", state.toString());
   }
 
   public void requestTransfer() {
     state = TransferState.TRANSFER;
-    SmartDashboard.putString("Transfer/State", state.toString());
+    //SmartDashboard.putString("Transfer/State", state.toString());
   }
 
   public void requestReverse() {
     state = TransferState.REVERSE;
-    SmartDashboard.putString("Transfer/State", state.toString());
+    //SmartDashboard.putString("Transfer/State", state.toString());
   }
 
   public void requestIdle() {
     state = TransferState.IDLE;
-    SmartDashboard.putString("Transfer/State", state.toString());
+    //SmartDashboard.putString("Transfer/State", state.toString());
   }
 }

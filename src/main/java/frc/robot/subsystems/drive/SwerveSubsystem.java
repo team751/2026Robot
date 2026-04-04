@@ -272,11 +272,11 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
     m_hasAppliedOperatorPerspective = true;
 
     SmartDashboard.putNumber("OperatorPerspectiveDeg", newRot.getDegrees());
-    SmartDashboard.putString(
-        "OperatorPerspectiveAlliance",
-        DriverStation.getAlliance().isPresent()
-            ? DriverStation.getAlliance().get().name()
-            : "Unknown");
+    // SmartDashboard.putString(
+    //     "OperatorPerspectiveAlliance",
+    //     DriverStation.getAlliance().isPresent()
+    //         ? DriverStation.getAlliance().get().name()
+    //         : "Unknown");
   }
 
   // Simulation support

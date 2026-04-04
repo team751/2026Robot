@@ -46,7 +46,7 @@ public class Superstructure extends SubsystemBase {
   @Override
   public void periodic() {
     double time = RobotController.getFPGATime();
-    SmartDashboard.putNumber("Superstructure/loopCycleTime", time - lastFPGATimestamp);
+    //SmartDashboard.putNumber("Superstructure/loopCycleTime", time - lastFPGATimestamp);
     lastFPGATimestamp = time;
 
     SuperstructureState nextState = systemState;
