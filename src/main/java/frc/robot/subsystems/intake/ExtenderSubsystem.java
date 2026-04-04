@@ -63,7 +63,7 @@ public class ExtenderSubsystem extends SubsystemBase {
 
     if ((state == ExtenderState.JIGGLE_IN)
         && !isExtended()
-        && Math.abs(extenderMotor.getVelocity().getValueAsDouble()) < 0.05) {
+        && Math.abs(extenderMotor.getVelocity().getValueAsDouble()) < 0.01) {
       state = ExtenderState.EXTENDING;
     }
 

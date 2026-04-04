@@ -75,19 +75,10 @@ public class ShooterSubsystem extends SubsystemBase {
     shooterTransferMotor.setControl(shooterTransferControl.withOutput(transferVoltage));
   }
 
-  public double getTargetRPS(){
-    return targetRPS;
-  }
-
-  public double getShooterSpeed(){
-    return flywheelMotor.getVelocity().getValueAsDouble();
-  }
-
-
   /** Runs both the main shooter motor and transfer motor */
   private void setShooterSpeed(double flywheelVelocity, double transferVoltage) {
     flywheelMotor.setControl(flywheelControl.withVelocity(flywheelVelocity));
-    if (Math.abs(getTargetRPS() - getShooterSpeed()) < 0.3){
+    if (Math.abs(flywheelVelocity - flywheelMotor.getVelocity().getValueAsDouble()) < 0.1){
       shooterTransferMotor.setControl(shooterTransferControl.withOutput(transferVoltage));
     }
   }
