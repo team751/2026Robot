@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.drive.Odometry;
 import frc.robot.subsystems.drive.SwerveSubsystem;
+import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.vision.LimelightSubsystem;
 // import frc.robot.subsystems.vision.LimelightSubsystem;
 import frc.robot.util.ControlBoard;
@@ -99,6 +100,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
+    ShooterSubsystem.getInstance().isAuto = true;
     autonomousCommand = robotContainer.getAutonomousCommand();
     if (autonomousCommand != null) {
       CommandScheduler.getInstance().schedule(autonomousCommand);
@@ -118,6 +120,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     Odometry.getInstance();
+    ShooterSubsystem.getInstance().isAuto = false;
     controlBoard.isBlue =  !DriverStation.getAlliance().isPresent()
             || DriverStation.getAlliance().get() != Alliance.Red;
     // LimelightSubsystem.getInstance();

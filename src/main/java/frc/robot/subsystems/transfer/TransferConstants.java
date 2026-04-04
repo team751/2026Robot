@@ -38,8 +38,8 @@ public class TransferConstants {
     transfertopConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     transfertopConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
-    transfertopConfig.CurrentLimits.StatorCurrentLimit = 20;
-    transfertopConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+    transfertopConfig.CurrentLimits.SupplyCurrentLimit = 20;
+    transfertopConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
     // transfertopConfig.TorqueCurrent.PeakForwardTorqueCurrent = 40;
     // transfertopConfig.TorqueCurrent.PeakReverseTorqueCurrent = -40;
   }
@@ -63,8 +63,8 @@ public class TransferConstants {
 
     transferbottomConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     transferbottomConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-    transferbottomConfig.CurrentLimits.StatorCurrentLimit = 20;
-    transferbottomConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+    transferbottomConfig.CurrentLimits.SupplyCurrentLimit = 20;
+    transferbottomConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
     // transferbottomConfig.TorqueCurrent.PeakForwardTorqueCurrent = 40;
     // transferbottomConfig.TorqueCurrent.PeakReverseTorqueCurrent = -40;
   }

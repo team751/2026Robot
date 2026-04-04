@@ -29,6 +29,7 @@ public class ShooterSubsystem extends SubsystemBase {
   private final VoltageOut shooterTransferControl = new VoltageOut(0);
 
   private double targetRPS;
+  public Boolean isAuto = false;
 
   /* State Machine Logic */
   private enum ShooterState {
@@ -78,7 +79,7 @@ public class ShooterSubsystem extends SubsystemBase {
   /** Runs both the main shooter motor and transfer motor */
   private void setShooterSpeed(double flywheelVelocity, double transferVoltage) {
     flywheelMotor.setControl(flywheelControl.withVelocity(flywheelVelocity));
-    if (Math.abs(flywheelVelocity - flywheelMotor.getVelocity().getValueAsDouble()) < 0.1){
+    if (Math.abs(flywheelVelocity - flywheelMotor.getVelocity().getValueAsDouble()) < 0.1 || isAuto){
       shooterTransferMotor.setControl(shooterTransferControl.withOutput(transferVoltage));
     }
   }

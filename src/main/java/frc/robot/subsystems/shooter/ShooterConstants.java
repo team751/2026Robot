@@ -54,8 +54,8 @@ public class ShooterConstants {
     flywheelConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     flywheelConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
-    flywheelConfig.CurrentLimits.StatorCurrentLimit = 80;
-    flywheelConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+    flywheelConfig.CurrentLimits.SupplyCurrentLimit = 80;
+    flywheelConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
   }
 
   static {
@@ -77,8 +77,8 @@ public class ShooterConstants {
 
     followConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     followConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-    followConfig.CurrentLimits.StatorCurrentLimit = 80;
-    followConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+    followConfig.CurrentLimits.SupplyCurrentLimit = 80;
+    followConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
   }
 
   static {
