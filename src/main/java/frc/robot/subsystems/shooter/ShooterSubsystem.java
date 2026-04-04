@@ -28,6 +28,8 @@ public class ShooterSubsystem extends SubsystemBase {
   // Follower(ShooterConstants.flywheelMotorConfig.canID, MotorAlignmentValue.Aligned);
   private final VoltageOut shooterTransferControl = new VoltageOut(0);
 
+  private double targetRPS;
+
   /* State Machine Logic */
   private enum ShooterState {
     IDLE,
@@ -64,6 +66,7 @@ public class ShooterSubsystem extends SubsystemBase {
   /** Runs just the main flywheel motor */
   private void setShooterMotor(double flywheelVelocity) {
     flywheelMotor.setControl(flywheelControl.withVelocity(flywheelVelocity));
+    targetRPS = flywheelVelocity;
   }
 
   /** Runs just the transfer motor on shooter */
@@ -72,11 +75,21 @@ public class ShooterSubsystem extends SubsystemBase {
     shooterTransferMotor.setControl(shooterTransferControl.withOutput(transferVoltage));
   }
 
+  public double getTargetRPS(){
+    return targetRPS;
+  }
+
+  public double getShooterSpeed(){
+    return flywheelMotor.getVelocity().getValueAsDouble();
+  }
+
 
   /** Runs both the main shooter motor and transfer motor */
   private void setShooterSpeed(double flywheelVelocity, double transferVoltage) {
     flywheelMotor.setControl(flywheelControl.withVelocity(flywheelVelocity));
-    shooterTransferMotor.setControl(shooterTransferControl.withOutput(transferVoltage));
+    if (Math.abs(getTargetRPS() - getShooterSpeed()) < 0.3){
+      shooterTransferMotor.setControl(shooterTransferControl.withOutput(transferVoltage));
+    }
   }
 
   private double getRobotDistanceFromHub() {
@@ -100,7 +113,7 @@ public class ShooterSubsystem extends SubsystemBase {
     double distanceCM = getRobotDistanceFromHub();
     return ((distanceCM - ShooterConstants.shooterDistanceCurveYIntercept)
             / ShooterConstants.shooterDistanceCurveSlope)
-        - 1.5;
+        - 1.7;
   }
 
   public void requestIdle() {
