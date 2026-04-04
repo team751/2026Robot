@@ -49,7 +49,7 @@ public class IntakeConstants {
     intakeConfig.Feedback.RotorToSensorRatio = 1;
     intakeConfig.Feedback.SensorToMechanismRatio = 1;
 
-    intakeConfig.CurrentLimits.StatorCurrentLimit = 120;
+    intakeConfig.CurrentLimits.StatorCurrentLimit = 60;
     intakeConfig.CurrentLimits.StatorCurrentLimitEnable = false;
     intakeConfig.TorqueCurrent.PeakForwardTorqueCurrent = 40;
     intakeConfig.TorqueCurrent.PeakReverseTorqueCurrent = -40;
@@ -76,10 +76,8 @@ public class IntakeConstants {
     extenderConfig.Feedback.RotorToSensorRatio = 1;
     extenderConfig.Feedback.SensorToMechanismRatio = 1;
 
-    extenderConfig.CurrentLimits.StatorCurrentLimit = 120;
-    extenderConfig.CurrentLimits.StatorCurrentLimitEnable = false;
-    extenderConfig.TorqueCurrent.PeakForwardTorqueCurrent = 40;
-    extenderConfig.TorqueCurrent.PeakReverseTorqueCurrent = -40;
+    extenderConfig.CurrentLimits.StatorCurrentLimit = 40;
+    extenderConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
     extenderConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive; // Positive intake
     extenderConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
