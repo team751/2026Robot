@@ -16,11 +16,11 @@
     },
     {
       "anchor": {
-        "x": 9.149013798905366,
+        "x": 9.149013798905367,
         "y": 7.403587989936441
       },
       "prevControl": {
-        "x": 8.115231081302965,
+        "x": 8.115231081302966,
         "y": 7.402813802083334
       },
       "nextControl": {
@@ -40,7 +40,7 @@
         "y": 7.419701408813537
       },
       "nextControl": {
-        "x": 13.404242420663911,
+        "x": 13.404242420663909,
         "y": 7.387474571059344
       },
       "isLocked": false,
@@ -52,7 +52,7 @@
         "y": 5.026
       },
       "prevControl": {
-        "x": 16.246958614848164,
+        "x": 16.246958614848165,
         "y": 7.197258220780368
       },
       "nextControl": null,
@@ -74,8 +74,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 2.0,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.8,
@@ -83,7 +83,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -148.26739738069862
+    "rotation": -148.2673973806986
   },
   "reversed": false,
   "folder": "Auto1redpaths",

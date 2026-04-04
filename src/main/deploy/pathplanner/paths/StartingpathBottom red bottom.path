@@ -20,7 +20,7 @@
         "y": 5.026105479784605
       },
       "prevControl": {
-        "x": 14.201083868793481,
+        "x": 14.20108386879348,
         "y": 5.081177507203742
       },
       "nextControl": null,
@@ -33,8 +33,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 2.0,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.8,
@@ -48,7 +48,7 @@
   "folder": "Auto1redpaths",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -144.876637044629724
+    "rotation": -144.87663704462972
   },
   "useDefaultConstraints": true
 }
