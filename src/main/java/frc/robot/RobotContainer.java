@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.commands.JiggleCommand;
 import frc.robot.subsystems.intake.ExtenderSubsystem;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
@@ -33,6 +34,15 @@ public class RobotContainer {
               spit.cancel();
               IntakeSubsystem.getInstance().requestIdle();
             });
+
+    Command jiggle = 
+    new JiggleCommand(
+            IntakeSubsystem.getInstance(),
+            ExtenderSubsystem.getInstance(),
+            TransferSubsystem.getInstance());
+            
+    Command jigglestop = 
+        new InstantCommand(() -> jiggle.cancel());    
 
     Command intake =
         new SequentialCommandGroup(
@@ -86,6 +96,11 @@ public class RobotContainer {
     /*Shooter */
     NamedCommands.registerCommand("Shoot", shoot);
     NamedCommands.registerCommand("StopShoot", stopShoot);
+
+    /*Jiggle */
+    NamedCommands.registerCommand("Jiggle", jiggle);
+    NamedCommands.registerCommand("StopJiggle", jigglestop);
+
     /*Intake */
     NamedCommands.registerCommand("Intake", intake);
     NamedCommands.registerCommand("StopIntake", stopIntake);
