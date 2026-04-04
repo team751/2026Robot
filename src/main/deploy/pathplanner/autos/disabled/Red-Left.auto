@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "StartingpathBottom mirrored bottom"
+            "pathName": "StartingpathBottom mirrored"
           }
         },
         {
@@ -38,7 +38,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "intakeBottom mirrored bottom"
+            "pathName": "intakeBottom mirrored"
           }
         },
         {
@@ -54,7 +54,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Intakep2 mirrored bottom"
+                  "pathName": "Intakep2 mirrored"
                 }
               }
             ]
@@ -73,28 +73,9 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "StopIntake"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Retract"
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "scoreintake mirrored bottom"
-                }
-              }
-            ]
+            "pathName": "scoreintake mirrored"
           }
         }
       ]
