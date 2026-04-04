@@ -104,8 +104,8 @@ public class LimelightSubsystem extends SubsystemBase {
   public void periodic() {
     LimelightHelpers.PoseEstimate side = getBotPoseSide();
     if (side != null && side.tagCount > 0) {
-      SmartDashboard.putNumber("Limelight Side Pose/X", side.pose.getX());
-      SmartDashboard.putNumber("Limelight Side Pose/Y", side.pose.getY());
+      // SmartDashboard.putNumber("Limelight Side Pose/X", side.pose.getX());
+      // SmartDashboard.putNumber("Limelight Side Pose/Y", side.pose.getY());
     }
   }
 
@@ -166,15 +166,15 @@ public class LimelightSubsystem extends SubsystemBase {
     double closestDist = getClosestTagDist(mt1);
     boolean useMT2 = closestDist >= LimelightConstants.MT_SWITCH_DISTANCE_METERS;
 
-    SmartDashboard.putNumber(telemetryPrefix + "/ClosestTagDist", closestDist);
-    SmartDashboard.putBoolean(telemetryPrefix + "/UsingMT2", useMT2);
+    // SmartDashboard.putNumber(telemetryPrefix + "/ClosestTagDist", closestDist);
+    // SmartDashboard.putBoolean(telemetryPrefix + "/UsingMT2", useMT2);
 
     // If we chose MT2 but it has no data, fall back to MT1
     if (useMT2 && (mt2 == null || mt2.tagCount == 0)) {
-      SmartDashboard.putBoolean(telemetryPrefix + "/MT2Fallback", true);
+      //SmartDashboard.putBoolean(telemetryPrefix + "/MT2Fallback", true);
       return mt1;
     }
-    SmartDashboard.putBoolean(telemetryPrefix + "/MT2Fallback", false);
+    //SmartDashboard.putBoolean(telemetryPrefix + "/MT2Fallback", false);
 
     return useMT2 ? mt2 : mt1;
   }

@@ -38,7 +38,7 @@ public class LimelightConstants {
   // MegaTag switching: use MT1 when closest tag is nearer than this (meters), MT2 when farther.
   // MT1 is more accurate at close range (full 6DOF solve). MT2 uses gyro-constrained solve,
   // which is better at distance where single-tag ambiguity makes MT1 unreliable.
-  public static double MT_SWITCH_DISTANCE_METERS = 1.5;
+  public static final double MT_SWITCH_DISTANCE_METERS = 1000;
 
   // --- Pose Stability ---
 

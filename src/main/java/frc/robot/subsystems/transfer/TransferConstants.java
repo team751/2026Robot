@@ -11,7 +11,7 @@ import frc.robot.util.Constants;
 public class TransferConstants {
   // TODO: Set current limits and tune the motors. also name/find the canbus to put the motors on
   public static double transfertopspeed = 6;
-  public static double transferbottomspeed = 6;
+  public static double transferbottomspeed = 9;
 
   public static final CTREConfig<TalonFX, TalonFXConfiguration> transfertopconfig =
       new CTREConfig<>(TalonFXConfiguration::new);
@@ -23,7 +23,7 @@ public class TransferConstants {
     transfertopconfig
         .withName("Transfer Top Motor")
         .withCanID(Constants.rightTransferMotorID)
-        .withBus(Robot.gamepiecebus);
+        .withBus(Robot.riobus);
 
     TalonFXConfiguration transfertopConfig = transfertopconfig.config;
     transfertopConfig.Slot0.kP = 0.1; // Increase until speed oscillates
@@ -48,7 +48,7 @@ public class TransferConstants {
     transferbottomconfig
         .withName("Transfer Bottom Motor")
         .withCanID(Constants.leftTransferMotorID)
-        .withBus(Robot.gamepiecebus);
+        .withBus(Robot.riobus);
 
     TalonFXConfiguration transferbottomConfig = transferbottomconfig.config;
 

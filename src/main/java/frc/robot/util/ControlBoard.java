@@ -148,15 +148,15 @@ public class ControlBoard {
             ExtenderSubsystem.getInstance(),
             TransferSubsystem.getInstance()));
 
-    controller.squareButton.onTrue(
-    new InstantCommand(() -> {
-        if (LimelightConstants.MT_SWITCH_DISTANCE_METERS == 1.5) {
-            LimelightConstants.MT_SWITCH_DISTANCE_METERS = 300.0;
-        } else {
-            LimelightConstants.MT_SWITCH_DISTANCE_METERS = 1.5;
-        }
-    })
-);
+    // controller.squareButton.onTrue(
+    // new InstantCommand(() -> {
+    //     if (LimelightConstants.MT_SWITCH_DISTANCE_METERS == 1.5) {
+    //         LimelightConstants.MT_SWITCH_DISTANCE_METERS = 300.0;
+    //     } else {
+    //         LimelightConstants.MT_SWITCH_DISTANCE_METERS = 1.5;
+    //     }
+    // })
+//);
 
     controller.dUp.whileTrue(
         new InstantCommand(() -> ExtenderSubsystem.getInstance().requestExtend()));
@@ -178,7 +178,13 @@ public class ControlBoard {
     controller.rightTrigger.onFalse(new InstantCommand(() -> operatorOffset = 0));
     controller.rightTrigger.whileTrue(
         new StartEndCommand(() -> autoAim = true, () -> autoAim = false)
-            .withName("Auto Aim Toggle"));     
+            .withName("Auto Aim Toggle"));    
+            
+    controller.rightTrigger.whileTrue(
+        new JiggleCommand(
+            IntakeSubsystem.getInstance(),
+            ExtenderSubsystem.getInstance(),
+            TransferSubsystem.getInstance()));
 
     controller.rightJoystickButton.whileTrue(
         new StartEndCommand(() -> axisAlign = true, () -> axisAlign = false)
@@ -228,14 +234,14 @@ public class ControlBoard {
             ExtenderSubsystem.getInstance(),
             TransferSubsystem.getInstance()));
 
-    controller.squareButton.onTrue(
-    new InstantCommand(() -> {
-        if (LimelightConstants.MT_SWITCH_DISTANCE_METERS == 1.5) {
-            LimelightConstants.MT_SWITCH_DISTANCE_METERS = 300.0;
-        } else {
-            LimelightConstants.MT_SWITCH_DISTANCE_METERS = 1.5;
-        }
-    }));
+    // controller.squareButton.onTrue(
+    // new InstantCommand(() -> {
+    //     if (LimelightConstants.MT_SWITCH_DISTANCE_METERS == 1.5) {
+    //         LimelightConstants.MT_SWITCH_DISTANCE_METERS = 300.0;
+    //     } else {
+    //         LimelightConstants.MT_SWITCH_DISTANCE_METERS = 1.5;
+    //     }
+    // }));
 
     /* Climber */
     // TODO: Make left trigger shoot(peter requested)

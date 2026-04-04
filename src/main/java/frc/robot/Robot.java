@@ -56,12 +56,12 @@ public class Robot extends TimedRobot {
     //   PortForwarder.add(port, "limelight.local", port);
     // }
     // Stream
-    PortForwarder.add(5800, "10.7.51.71",5800);
-    PortForwarder.add(5800, "10.7.51.75",5800);
+    // PortForwarder.add(5800, "10.7.51.71",5800);
+    // PortForwarder.add(5800, "10.7.51.75",5800);
 
     // Dashboard
-    PortForwarder.add(5801, "10.7.51.71",5801);
-    PortForwarder.add(5801, "10.7.51.75",5801);
+    // PortForwarder.add(5801, "10.7.51.71",5801);
+    // PortForwarder.add(5801, "10.7.51.75",5801);
     robotContainer = new RobotContainer();
     LimelightSubsystem.getInstance().initLimsplz();
     controlBoard.isBlue =  !DriverStation.getAlliance().isPresent()

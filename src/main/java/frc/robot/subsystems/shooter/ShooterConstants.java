@@ -4,6 +4,8 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+
+import edu.wpi.first.units.Units;
 import frc.lib.CTREConfig;
 import frc.robot.Robot;
 import frc.robot.util.Constants;
@@ -35,7 +37,7 @@ public class ShooterConstants {
     flywheelMotorConfig
         .withName("Main Flywheel")
         .withCanID(Constants.flywheelMotorID)
-        .withBus(Robot.gamepiecebus);
+        .withBus(Robot.riobus);
 
     TalonFXConfiguration flywheelConfig = flywheelMotorConfig.config;
     flywheelConfig.Slot0.kP = 0.1; // Increase until speed oscillates
@@ -52,17 +54,15 @@ public class ShooterConstants {
     flywheelConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     flywheelConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
-    // flywheelConfig.CurrentLimits.StatorCurrentLimit = 120;
-    // flywheelConfig.CurrentLimits.StatorCurrentLimitEnable = false;
-    // flywheelConfig.TorqueCurrent.PeakForwardTorqueCurrent = 40;
-    // flywheelConfig.TorqueCurrent.PeakReverseTorqueCurrent = -40;
+    flywheelConfig.CurrentLimits.StatorCurrentLimit = 30;
+    flywheelConfig.CurrentLimits.StatorCurrentLimitEnable = false;
   }
 
   static {
     followMotorConfig
         .withName("Follow Flywheel")
         .withCanID(Constants.followMotorID)
-        .withBus(Robot.gamepiecebus);
+        .withBus(Robot.riobus);
 
     TalonFXConfiguration followConfig = followMotorConfig.config;
 
@@ -77,17 +77,15 @@ public class ShooterConstants {
 
     followConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     followConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-    // followConfig.CurrentLimits.StatorCurrentLimit = 120;
-    // followConfig.CurrentLimits.StatorCurrentLimitEnable = false;
-    // followConfig.TorqueCurrent.PeakForwardTorqueCurrent = 40;
-    // followConfig.TorqueCurrent.PeakReverseTorqueCurrent = -40;
+    followConfig.CurrentLimits.StatorCurrentLimit = 30;
+    followConfig.CurrentLimits.StatorCurrentLimitEnable = false;
   }
 
   static {
     transferMotorConfig
         .withName("Shooter Transfer")
         .withCanID(Constants.shooterTransferMotorID)
-        .withBus(Robot.gamepiecebus);
+        .withBus(Robot.riobus);
 
     TalonFXConfiguration shooterTransferConfig = transferMotorConfig.config;
 
