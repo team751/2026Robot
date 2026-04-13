@@ -5,7 +5,10 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,6 +16,7 @@ import java.util.stream.Collectors;
  * Field element positions and dimensions for the 2026 Rebuilt game.
  *
  * <p>All coordinates use the WPILib field coordinate system (meters):
+ *
  * <ul>
  *   <li>Origin (0, 0) at the bottom-right corner of the BLUE alliance wall
  *   <li>+X toward the RED wall
@@ -82,52 +86,80 @@ public class FieldConstants {
   public static final double OUTPOST_HEIGHT = Units.inchesToMeters(7.0);
 
   // ---- Game Elements ----
+  public enum ElementType {
+    HUB,
+    TOWER,
+    TRENCH,
+    OUTPOST
+  }
+
   public enum GameElement {
 
     // ----- HUBS -----
 
     /** Blue hub — scoring target on the blue alliance side. */
-    HUB_BLUE(new Pose2d(4.5974, 4.034536, Rotation2d.fromDegrees(0)), true),
+    HUB_BLUE(new Pose2d(4.5974, 4.034536, Rotation2d.fromDegrees(0)), true, ElementType.HUB),
 
     /** Red hub — scoring target on the red alliance side. */
-    HUB_RED(new Pose2d(11.938, 4.034536, Rotation2d.fromDegrees(180)), false),
+    HUB_RED(
+        new Pose2d(
+            11.938,
+            4.034536,
+                //- 0.33 /* the robot looked like it was aiming 33 centimeters off from the hub. we might want to remove this in the future */,
+            Rotation2d.fromDegrees(180)),
+        false,
+        ElementType.HUB),
 
     // ----- TOWERS -----
 
     /** Blue climbing tower (near the blue alliance wall). */
-    TOWER_BLUE(new Pose2d(Units.inchesToMeters(42), Units.inchesToMeters(159), Rotation2d.fromDegrees(0)),true),
+    TOWER_BLUE(
+        new Pose2d(Units.inchesToMeters(42), Units.inchesToMeters(159), Rotation2d.fromDegrees(0)),
+        true,
+        ElementType.TOWER),
 
     /** Red climbing tower (near the red alliance wall). */
-    TOWER_RED(new Pose2d(Units.inchesToMeters(609), Units.inchesToMeters(170), Rotation2d.fromDegrees(180)),false),
+    TOWER_RED(
+        new Pose2d(
+            Units.inchesToMeters(609), Units.inchesToMeters(170), Rotation2d.fromDegrees(180)),
+        false,
+        ElementType.TOWER),
 
     // ----- TRENCHES -----
 
     /** Blue right trench (lower Y, blue side of field). */
-    TRENCH_BLUE_RIGHT(new Pose2d(4.6251, 1.4315, Rotation2d.fromDegrees(90)), true),
+    TRENCH_BLUE_RIGHT(new Pose2d(2.0, 0.55, Rotation2d.fromDegrees(90)), true, ElementType.TRENCH),
 
     /** Blue left trench (higher Y, blue side of field). */
-    TRENCH_BLUE_LEFT(new Pose2d(4.6251, 6.6385, Rotation2d.fromDegrees(-90)), true),
+    TRENCH_BLUE_LEFT(new Pose2d(2.0, 7.55, Rotation2d.fromDegrees(-90)), true, ElementType.TRENCH),
 
     /** Red right trench (lower Y, red side of field). */
-    TRENCH_RED_RIGHT(new Pose2d(11.9149, 1.4315, Rotation2d.fromDegrees(90)), false),
+    TRENCH_RED_RIGHT(new Pose2d(13.6, 0.55, Rotation2d.fromDegrees(90)), false, ElementType.TRENCH),
 
     /** Red left trench (higher Y, red side of field). */
-    TRENCH_RED_LEFT(new Pose2d(11.9149, 6.6385, Rotation2d.fromDegrees(-90)), false),
+    TRENCH_RED_LEFT(new Pose2d(13.6, 7.55, Rotation2d.fromDegrees(-90)), false, ElementType.TRENCH),
 
     // ----- OUTPOSTS -----
 
     /** Blue outpost — human player station on the blue alliance wall. */
-    OUTPOST_BLUE(new Pose2d(0, 0.665988, Rotation2d.fromDegrees(0)), true),
+    OUTPOST_BLUE(new Pose2d(0.0, 0.665988, Rotation2d.fromDegrees(0)), true, ElementType.OUTPOST),
 
     /** Red outpost — human player station on the red alliance wall. */
-    OUTPOST_RED(new Pose2d(16.621, 7.403338, Rotation2d.fromDegrees(180)), false);
+    OUTPOST_RED(
+        new Pose2d(16.621, 7.403338, Rotation2d.fromDegrees(180)), false, ElementType.OUTPOST);
 
     private final Pose2d center;
     private final boolean isBlue;
+    private final ElementType type;
 
-    GameElement(Pose2d center, boolean isBlue) {
+    GameElement(Pose2d center, boolean isBlue, ElementType type) {
       this.center = center;
       this.isBlue = isBlue;
+      this.type = type;
+    }
+
+    GameElement(Pose2d center, boolean isBlue) {
+      this(center, isBlue, null);
     }
 
     public Pose2d getCenter() {
@@ -142,10 +174,16 @@ public class FieldConstants {
       return isBlue;
     }
 
+    public ElementType getType() {
+      return type;
+    }
+
     public static List<GameElement> getColor(boolean isBlue) {
-      return Arrays.stream(values())
-          .filter(e -> e.isBlue() == isBlue)
-          .collect(Collectors.toList());
+      return Arrays.stream(values()).filter(e -> e.isBlue() == isBlue).collect(Collectors.toList());
+    }
+
+    public static List<GameElement> getByType(ElementType type) {
+      return Arrays.stream(values()).filter(e -> e.type == type).collect(Collectors.toList());
     }
 
     public static Pose2d getPoseWithOffset(GameElement element, double offsetMeters) {
@@ -154,7 +192,7 @@ public class FieldConstants {
 
     @Override
     public String toString() {
-      return String.format("%s [Pose=%s, isBlue=%b]", name(), center, isBlue);
+      return String.format("%s [Pose=%s, isBlue=%b, type=%s]", name(), center, isBlue, type);
     }
   }
 
@@ -165,6 +203,24 @@ public class FieldConstants {
     while (angle > Math.PI) angle -= 2 * Math.PI;
     while (angle < -Math.PI) angle += 2 * Math.PI;
     return angle;
+  }
+
+  public static Pose2d getAllianceHub() {
+    if (DriverStation.getAlliance().isPresent()) {
+      if (DriverStation.getAlliance().get() == Alliance.Red) {
+        return GameElement.HUB_RED.getCenter();
+      }
+    }
+    return GameElement.HUB_BLUE.getCenter();
+  }
+
+  public static Pose2d getNearestTrench(Pose2d robotPose, boolean isBlue) {
+    return GameElement.getByType(ElementType.TRENCH).stream()
+        .filter(e -> e.isBlue() == isBlue)
+        .min(Comparator.comparingDouble(
+            t -> robotPose.getTranslation().getDistance(t.getLocation())))
+        .map(GameElement::getCenter)
+        .orElse(null);
   }
 
   /**

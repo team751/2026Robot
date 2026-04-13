@@ -43,7 +43,8 @@ public class RebuiltFuelOnFly extends GamePieceProjectile {
 				launchingSpeed,
 				shooterAngle);
 
-		super.withTouchGroundHeight(Inches.of(10).in(Meters));
-		super.enableBecomesGamePieceOnFieldAfterTouchGround();
-	}
+    super.withTouchGroundHeight(Inches.of(3).in(Meters));
+    super.enableBecomesGamePieceOnFieldAfterTouchGround();
+  }
 }
+
