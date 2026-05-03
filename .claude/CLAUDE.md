@@ -216,6 +216,7 @@ To mirror an auto for the opposite side of the field, create **new** path files 
 - Constraint zones, event markers, and global constraints are copied unchanged
 - Velocities are copied unchanged — only positions and rotations are flipped
 - Normalize rotation values by adding/subtracting 360° if they fall outside a readable range
+- Insure that reset odomtery isn't turned on. If it is, turn it off.
 
 ## Commands (`commands/`)
 
