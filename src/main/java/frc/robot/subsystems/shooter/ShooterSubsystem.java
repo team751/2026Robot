@@ -2,9 +2,6 @@ package frc.robot.subsystems.shooter;
 
 import static edu.wpi.first.units.Units.*;
 
-import org.ironmaple.simulation.SimulatedArena;
-import org.ironmaple.simulation.seasonspecific.rebuilt2026.RebuiltFuelOnFly;
-
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
@@ -16,6 +13,8 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.drive.SwerveSubsystem;
 import frc.robot.util.FieldConstants;
+import org.ironmaple.simulation.SimulatedArena;
+import org.ironmaple.simulation.seasonspecific.rebuilt2026.RebuiltFuelOnFly;
 
 public class ShooterSubsystem extends SubsystemBase {
   private static ShooterSubsystem instance;
@@ -136,50 +135,51 @@ public class ShooterSubsystem extends SubsystemBase {
 
   public void simulationPeriodic() {
     if (state == ShooterState.SHOOT || state == ShooterState.AASHOOT) {
-              // Check cooldown - must wait 0.25 seconds between shots
-              double currentTime = Timer.getFPGATimestamp();
-              if (currentTime - lastShotTime < 0.3) {
-                return; // Still in cooldown period
-              }
+      // Check cooldown - must wait 0.25 seconds between shots
+      double currentTime = Timer.getFPGATimestamp();
+      if (currentTime - lastShotTime < 0.3) {
+        return; // Still in cooldown period
+      }
 
-              // Attempt to obtain a game piece from the intake
-              // Exit early if no balls available - prevents spawning projectiles when empty
-              if (!SwerveSubsystem.simDrivetrain.mapleSimIntake.obtainGamePieceFromIntake()) {
-                return;
-              }
+      // Attempt to obtain a game piece from the intake
+      // Exit early if no balls available - prevents spawning projectiles when empty
+      if (!SwerveSubsystem.simDrivetrain.mapleSimIntake.obtainGamePieceFromIntake()) {
+        return;
+      }
 
-              // Only create and launch projectile if we successfully obtained a ball
-              RebuiltFuelOnFly fuelOnFly =
-                  new RebuiltFuelOnFly(
-                      // Specify the position of the chassis when the fuel is launched
-                      SwerveSubsystem.simDrivetrain
-                          .mapleSimDrive
-                          .getSimulatedDriveTrainPose()
-                          .getTranslation(),
-                      // Specify the translation of the shooter from the robot center (in the
-                      // shooter's reference frame)
-                      new Translation2d(0, 0),
-                      // Specify the field-relative speed of the chassis, adding it to the initial
-                      // velocity of the projectile
-                      SwerveSubsystem.simDrivetrain.mapleSimDrive
-                          .getDriveTrainSimulatedChassisSpeedsRobotRelative(),
-                      // The shooter facing direction is the same as the robot's facing direction
-                      SwerveSubsystem.simDrivetrain
-                          .mapleSimDrive
-                          .getSimulatedDriveTrainPose()
-                          .getRotation(),
-                      // Initial height of the flying fuel
-                      Meters.of(1),
-                      // The launch speed is proportional to the RPM; assumed to be 16 meters/second
-                      // at 6000 RPM
-                      MetersPerSecond.of(8.35),
-                      // The angle at which the fuel is launched
-                      Radians.of(1.4));
+      // Only create and launch projectile if we successfully obtained a ball
+      RebuiltFuelOnFly fuelOnFly =
+          new RebuiltFuelOnFly(
+              // Specify the position of the chassis when the fuel is launched
+              SwerveSubsystem.simDrivetrain
+                  .mapleSimDrive
+                  .getSimulatedDriveTrainPose()
+                  .getTranslation(),
+              // Specify the translation of the shooter from the robot center (in the
+              // shooter's reference frame)
+              new Translation2d(0, 0),
+              // Specify the field-relative speed of the chassis, adding it to the initial
+              // velocity of the projectile
+              SwerveSubsystem.simDrivetrain.mapleSimDrive
+                  .getDriveTrainSimulatedChassisSpeedsRobotRelative(),
+              // The shooter facing direction is the same as the robot's facing direction
+              SwerveSubsystem.simDrivetrain
+                  .mapleSimDrive
+                  .getSimulatedDriveTrainPose()
+                  .getRotation(),
+              // Initial height of the flying fuel
+              Meters.of(1),
+              // The launch speed is proportional to the RPM; assumed to be 16 meters/second
+              // at 6000 RPM
+              MetersPerSecond.of(8.35),
+              // The angle at which the fuel is launched
+              Radians.of(1.4));
 
-              SimulatedArena.getInstance().addGamePieceProjectile(fuelOnFly);
+      SimulatedArena.getInstance().addGamePieceProjectile(fuelOnFly);
 
-              // Update last shot time for cooldown tracking
-              lastShotTime = currentTime;
-            };
+      // Update last shot time for cooldown tracking
+      lastShotTime = currentTime;
     }
+    ;
+  }
 }
