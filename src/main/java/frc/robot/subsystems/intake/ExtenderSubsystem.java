@@ -4,7 +4,10 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.simulation.DIOSim;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.drive.SwerveSubsystem;
 
 public class ExtenderSubsystem extends SubsystemBase {
   private static ExtenderSubsystem instance;
@@ -28,6 +31,16 @@ public class ExtenderSubsystem extends SubsystemBase {
   DigitalInput backLeftLimit = new DigitalInput(IntakeConstants.BackLeftLimitID);
   DigitalInput frontRightLimit = new DigitalInput(IntakeConstants.FrontRightLimitID);
   DigitalInput backRightLimit = new DigitalInput(IntakeConstants.BackRightLimitID);
+
+  /* Sim-only: lets us "press" the limit switches in code so the state machine progresses */
+  private final DIOSim frontLeftSim = new DIOSim(frontLeftLimit);
+  private final DIOSim backLeftSim = new DIOSim(backLeftLimit);
+  private final DIOSim frontRightSim = new DIOSim(frontRightLimit);
+  private final DIOSim backRightSim = new DIOSim(backRightLimit);
+
+  private ExtenderState lastSimState = ExtenderState.RETRACTED;
+  private double simStateChangedTime = 0.0;
+  private static final double SIM_TRAVEL_TIME = 0.5; // seconds for extender to fully extend/retract
 
   /* State Machine Logic */
   private enum ExtenderState {
@@ -132,5 +145,49 @@ public class ExtenderSubsystem extends SubsystemBase {
 
   public ExtenderState getState() {
     return state;
+  }
+
+  public void simulationPeriodic() {
+    // Track when the state last changed so we can simulate mechanical travel time
+    if (state != lastSimState) {
+      simStateChangedTime = Timer.getFPGATimestamp();
+      lastSimState = state;
+    }
+    double elapsed = Timer.getFPGATimestamp() - simStateChangedTime;
+
+    // After SIM_TRAVEL_TIME has passed, "press" the appropriate limit switches.
+    // periodic() reads these via isExtended()/isRetracted() and advances the state machine.
+    switch (state) {
+      case EXTENDING -> {
+        if (elapsed > SIM_TRAVEL_TIME) {
+          backLeftSim.setValue(true);
+          backRightSim.setValue(true);
+          frontLeftSim.setValue(false);
+          frontRightSim.setValue(false);
+        }
+      }
+      case RETRACTING, JIGGLE_IN -> {
+        if (elapsed > SIM_TRAVEL_TIME) {
+          backLeftSim.setValue(false);
+          backRightSim.setValue(false);
+          frontLeftSim.setValue(true);
+          frontRightSim.setValue(true);
+        }
+      }
+      case EXTENDED -> {
+        backLeftSim.setValue(true);
+        backRightSim.setValue(true);
+        frontLeftSim.setValue(false);
+        frontRightSim.setValue(false);
+        SwerveSubsystem.simDrivetrain.mapleSimIntake.startIntake();
+      }
+      case RETRACTED -> {
+        backLeftSim.setValue(false);
+        backRightSim.setValue(false);
+        frontLeftSim.setValue(true);
+        frontRightSim.setValue(true);
+        SwerveSubsystem.simDrivetrain.mapleSimIntake.stopIntake();
+      }
+    }
   }
 }
