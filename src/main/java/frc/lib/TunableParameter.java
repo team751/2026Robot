@@ -1,6 +1,6 @@
 package frc.lib;
 
-//import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+// import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.ArrayList;
 import java.util.function.DoubleConsumer;
 
@@ -16,13 +16,13 @@ public class TunableParameter {
     this.lastValue = initialValue;
     this.callback = callback;
 
-    //SmartDashboard.putNumber(name, initialValue);
+    // SmartDashboard.putNumber(name, initialValue);
 
     parameters.add(this);
   }
 
   private void fetch() {
-    double value = 0.0;//SmartDashboard.getNumber(name, lastValue);
+    double value = 0.0; // SmartDashboard.getNumber(name, lastValue);
     if (value != lastValue) {
       lastValue = value;
       callback.accept(value);

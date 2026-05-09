@@ -3,7 +3,6 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.intake.ExtenderSubsystem;
 import frc.robot.subsystems.intake.IntakeSubsystem;
-import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.transfer.TransferSubsystem;
 
 public class JiggleCommand extends Command {
@@ -12,13 +11,11 @@ public class JiggleCommand extends Command {
   private final TransferSubsystem transfer;
 
   public JiggleCommand(
-      IntakeSubsystem intake,
-      ExtenderSubsystem extender,
-      TransferSubsystem transfer) {
+      IntakeSubsystem intake, ExtenderSubsystem extender, TransferSubsystem transfer) {
     this.intake = intake;
     this.extender = extender;
     this.transfer = transfer;
-    //addRequirements(intake, extender, transfer);
+    // addRequirements(intake, extender, transfer);
   }
 
   @Override

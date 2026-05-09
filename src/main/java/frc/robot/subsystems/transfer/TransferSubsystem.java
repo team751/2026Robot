@@ -2,7 +2,6 @@ package frc.robot.subsystems.transfer;
 
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 // TODO: need to test this
@@ -47,15 +46,14 @@ public class TransferSubsystem extends SubsystemBase {
       case REVERSE -> setMotors(
           -TransferConstants.transfertopspeed, -TransferConstants.transferbottomspeed);
     }
-
-
   }
 
   private void setMotors(double topVoltage, double bottomVoltage) {
     topMotor.setControl(topControl.withOutput(topVoltage));
     bottomMotor.setControl(bottomControl.withOutput(bottomVoltage));
     // SmartDashboard.putNumber("Transfer/Top Speed", topMotor.getVelocity().getValueAsDouble());
-    // SmartDashboard.putNumber("Transfer/Bottom Speed", bottomMotor.getVelocity().getValueAsDouble());
+    // SmartDashboard.putNumber("Transfer/Bottom Speed",
+    // bottomMotor.getVelocity().getValueAsDouble());
   }
 
   public TransferState getState() {
@@ -64,21 +62,21 @@ public class TransferSubsystem extends SubsystemBase {
 
   public void requestState(TransferState newState) {
     state = newState;
-    //SmartDashboard.putString("Transfer/State", state.toString());
+    // SmartDashboard.putString("Transfer/State", state.toString());
   }
 
   public void requestTransfer() {
     state = TransferState.TRANSFER;
-    //SmartDashboard.putString("Transfer/State", state.toString());
+    // SmartDashboard.putString("Transfer/State", state.toString());
   }
 
   public void requestReverse() {
     state = TransferState.REVERSE;
-    //SmartDashboard.putString("Transfer/State", state.toString());
+    // SmartDashboard.putString("Transfer/State", state.toString());
   }
 
   public void requestIdle() {
     state = TransferState.IDLE;
-    //SmartDashboard.putString("Transfer/State", state.toString());
+    // SmartDashboard.putString("Transfer/State", state.toString());
   }
 }

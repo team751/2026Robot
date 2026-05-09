@@ -2,7 +2,6 @@ package frc.robot.subsystems.intake;
 
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class IntakeSubsystem extends SubsystemBase {
@@ -53,8 +52,9 @@ public class IntakeSubsystem extends SubsystemBase {
         case SPITTING -> setIntakeMotor(IntakeConstants.spitSpeed);
       }
     }
-    //SmartDashboard.putString("Intake/Intake State", state.toString());
-    //SmartDashboard.putNumber("Intake/Intake Speed", intakeMotor.getVelocity().getValueAsDouble());
+    // SmartDashboard.putString("Intake/Intake State", state.toString());
+    // SmartDashboard.putNumber("Intake/Intake Speed",
+    // intakeMotor.getVelocity().getValueAsDouble());
   }
 
   /**

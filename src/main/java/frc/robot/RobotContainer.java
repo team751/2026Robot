@@ -35,14 +35,13 @@ public class RobotContainer {
               IntakeSubsystem.getInstance().requestIdle();
             });
 
-    Command jiggle = 
-    new JiggleCommand(
+    Command jiggle =
+        new JiggleCommand(
             IntakeSubsystem.getInstance(),
             ExtenderSubsystem.getInstance(),
             TransferSubsystem.getInstance());
-            
-    Command jigglestop = 
-        new InstantCommand(() -> jiggle.cancel());    
+
+    Command jigglestop = new InstantCommand(() -> jiggle.cancel());
 
     Command intake =
         new SequentialCommandGroup(

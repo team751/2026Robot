@@ -5,10 +5,9 @@
 package frc.robot.subsystems.vision;
 
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.util.LimelightHelpers;
 import frc.robot.subsystems.drive.Odometry;
+import frc.robot.util.LimelightHelpers;
 import limelight.Limelight;
 
 /* Rough Overview of Vision/Limelight
@@ -30,14 +29,14 @@ public class LimelightSubsystem extends SubsystemBase {
     return instance;
   }
 
-  public void initLimsplz(){
+  public void initLimsplz() {
     Limelight tmpFront;
     Limelight tmpSide;
 
     try {
       tmpFront = new Limelight(LimelightConstants.LimelightFront.name);
       tmpFront
-        .getSettings()
+          .getSettings()
           .withCameraOffset(
               new Pose3d(
                   LimelightConstants.LimelightFront.xOffset,
@@ -54,7 +53,7 @@ public class LimelightSubsystem extends SubsystemBase {
     try {
       tmpSide = new Limelight(LimelightConstants.LimelightSide.name);
       tmpSide
-        .getSettings()
+          .getSettings()
           .withCameraOffset(
               new Pose3d(
                   LimelightConstants.LimelightSide.xOffset,
@@ -78,14 +77,14 @@ public class LimelightSubsystem extends SubsystemBase {
     if (limelightFront == null) {
       System.err.println("Limelight Front failed to initialize.");
     } else {
-    limelightFront
-        .getSettings()
-        .withCameraOffset(
-            new Pose3d(
-                LimelightConstants.LimelightFront.xOffset,
-                LimelightConstants.LimelightFront.yOffset,
-                LimelightConstants.LimelightFront.zOffset,
-                LimelightConstants.LimelightFront.rotationOffset));
+      limelightFront
+          .getSettings()
+          .withCameraOffset(
+              new Pose3d(
+                  LimelightConstants.LimelightFront.xOffset,
+                  LimelightConstants.LimelightFront.yOffset,
+                  LimelightConstants.LimelightFront.zOffset,
+                  LimelightConstants.LimelightFront.rotationOffset));
     }
     if (limelightSide == null) {
       System.err.println("Limelight Side failed to initialize.");
@@ -100,6 +99,7 @@ public class LimelightSubsystem extends SubsystemBase {
                   LimelightConstants.LimelightSide.rotationOffset));
     }
   }
+
   @Override
   public void periodic() {
     LimelightHelpers.PoseEstimate side = getBotPoseSide();
@@ -132,9 +132,9 @@ public class LimelightSubsystem extends SubsystemBase {
   // ROBOT POSITION
 
   /**
-   * Returns the closest tag distance. Prefers rawFiducials (per-tag distances), but falls back
-   * to avgTagDist when rawFiducials is empty (NT array size mismatch race condition).
-   * Returns Double.MAX_VALUE only if the estimate itself is null or has no tags.
+   * Returns the closest tag distance. Prefers rawFiducials (per-tag distances), but falls back to
+   * avgTagDist when rawFiducials is empty (NT array size mismatch race condition). Returns
+   * Double.MAX_VALUE only if the estimate itself is null or has no tags.
    */
   private double getClosestTagDist(LimelightHelpers.PoseEstimate estimate) {
     if (estimate == null || estimate.tagCount == 0) return Double.MAX_VALUE;
@@ -153,10 +153,9 @@ public class LimelightSubsystem extends SubsystemBase {
   }
 
   /**
-   * Chooses MT1 or MT2 based on closest visible tag distance.
-   * Close tags (< MT_SWITCH_DISTANCE) → MT1 (full 6DOF, best at close range).
-   * Far tags (>= MT_SWITCH_DISTANCE) → MT2 (gyro-constrained, handles ambiguity better).
-   * Falls back to MT1 if the chosen estimate has no data.
+   * Chooses MT1 or MT2 based on closest visible tag distance. Close tags (< MT_SWITCH_DISTANCE) →
+   * MT1 (full 6DOF, best at close range). Far tags (>= MT_SWITCH_DISTANCE) → MT2 (gyro-constrained,
+   * handles ambiguity better). Falls back to MT1 if the chosen estimate has no data.
    */
   private LimelightHelpers.PoseEstimate chooseMegaTag(
       LimelightHelpers.PoseEstimate mt1,
@@ -171,10 +170,10 @@ public class LimelightSubsystem extends SubsystemBase {
 
     // If we chose MT2 but it has no data, fall back to MT1
     if (useMT2 && (mt2 == null || mt2.tagCount == 0)) {
-      //SmartDashboard.putBoolean(telemetryPrefix + "/MT2Fallback", true);
+      // SmartDashboard.putBoolean(telemetryPrefix + "/MT2Fallback", true);
       return mt1;
     }
-    //SmartDashboard.putBoolean(telemetryPrefix + "/MT2Fallback", false);
+    // SmartDashboard.putBoolean(telemetryPrefix + "/MT2Fallback", false);
 
     return useMT2 ? mt2 : mt1;
   }
@@ -183,10 +182,17 @@ public class LimelightSubsystem extends SubsystemBase {
     LimelightHelpers.SetRobotOrientation(
         LimelightConstants.LimelightFront.name,
         Odometry.getInstance().getYaw().getDegrees(),
-        0.0, 0.0, 0.0, 0.0, 0.0);
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0);
 
-    LimelightHelpers.PoseEstimate mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name);
-    LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(LimelightConstants.LimelightFront.name);
+    LimelightHelpers.PoseEstimate mt1 =
+        LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightFront.name);
+    LimelightHelpers.PoseEstimate mt2 =
+        LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(
+            LimelightConstants.LimelightFront.name);
 
     return chooseMegaTag(mt1, mt2, "Vision/Front");
   }
@@ -195,10 +201,16 @@ public class LimelightSubsystem extends SubsystemBase {
     LimelightHelpers.SetRobotOrientation(
         LimelightConstants.LimelightSide.name,
         Odometry.getInstance().getYaw().getDegrees(),
-        0.0, 0.0, 0.0, 0.0, 0.0);
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0);
 
-    LimelightHelpers.PoseEstimate mt1 = LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightSide.name);
-    LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(LimelightConstants.LimelightSide.name);
+    LimelightHelpers.PoseEstimate mt1 =
+        LimelightHelpers.getBotPoseEstimate_wpiBlue(LimelightConstants.LimelightSide.name);
+    LimelightHelpers.PoseEstimate mt2 =
+        LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(LimelightConstants.LimelightSide.name);
 
     return chooseMegaTag(mt1, mt2, "Vision/Side");
   }

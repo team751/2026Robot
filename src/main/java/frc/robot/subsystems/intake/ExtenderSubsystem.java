@@ -4,7 +4,6 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ExtenderSubsystem extends SubsystemBase {
@@ -78,7 +77,7 @@ public class ExtenderSubsystem extends SubsystemBase {
       state = ExtenderState.RETRACTED;
     }
 
-    //SmartDashboard.putNumber("Extender/Extension", estimatedExtension);
+    // SmartDashboard.putNumber("Extender/Extension", estimatedExtension);
   }
 
   /**
@@ -92,7 +91,7 @@ public class ExtenderSubsystem extends SubsystemBase {
 
   private double calculateMotorControl(double target) {
     double pidOutput = extenderPID.calculate(estimatedExtension, target);
-    //SmartDashboard.putNumber("Extender/PIDThing", pidOutput);
+    // SmartDashboard.putNumber("Extender/PIDThing", pidOutput);
     return pidOutput;
   }
 

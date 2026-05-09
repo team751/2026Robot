@@ -1,7 +1,6 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.RobotController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 // import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.drive.SwerveSubsystem;
@@ -46,7 +45,7 @@ public class Superstructure extends SubsystemBase {
   @Override
   public void periodic() {
     double time = RobotController.getFPGATime();
-    //SmartDashboard.putNumber("Superstructure/loopCycleTime", time - lastFPGATimestamp);
+    // SmartDashboard.putNumber("Superstructure/loopCycleTime", time - lastFPGATimestamp);
     lastFPGATimestamp = time;
 
     SuperstructureState nextState = systemState;

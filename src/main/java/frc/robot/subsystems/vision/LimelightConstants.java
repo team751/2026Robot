@@ -25,9 +25,10 @@ public class LimelightConstants {
   // Per-camera base std devs (x, y, theta). Theta=99999 means heading comes only from gyro.
   // Lower values = more trust. The 3G has a better sensor/wider FOV, so it gets lower base values.
   public static final Matrix<N3, N1> FRONT_STD_DEVS = VecBuilder.fill(0.2, 0.2, 99999.0); // 3G
-  public static final Matrix<N3, N1> SIDE_STD_DEVS = VecBuilder.fill(0.3, 0.3, 99999.0);    // 3
+  public static final Matrix<N3, N1> SIDE_STD_DEVS = VecBuilder.fill(0.3, 0.3, 99999.0); // 3
 
-  // When multiple tags are visible, the solution is more constrained. Multiply std devs by this factor.
+  // When multiple tags are visible, the solution is more constrained. Multiply std devs by this
+  // factor.
   // Lower = more trust in multi-tag. 1.0 = no bonus.
   public static final double MULTI_TAG_STD_DEV_FACTOR = 0.3;
 
@@ -61,12 +62,13 @@ public class LimelightConstants {
     public static final double yOffset =
         Units.Meters.convertFrom(-14.5331, Units.Centimeters); // Left/Right (- left, +right)
     public static final double xOffset =
-        Units.Meters.convertFrom(4.1568, Units.Centimeters); // Forward/Backward (+ forward, - backward)
+        Units.Meters.convertFrom(
+            4.1568, Units.Centimeters); // Forward/Backward (+ forward, - backward)
 
     public static final Rotation3d rotationOffset =
         new Rotation3d(
             0,
-            Units.Radians.convertFrom(30,Units.Degrees), // Up is + and down is - (Degrees)
+            Units.Radians.convertFrom(30, Units.Degrees), // Up is + and down is - (Degrees)
             0); // Left is - and right is + (degrees)
   }
 

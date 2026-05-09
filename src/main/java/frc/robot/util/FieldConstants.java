@@ -105,7 +105,8 @@ public class FieldConstants {
         new Pose2d(
             11.938,
             4.034536,
-                //- 0.33 /* the robot looked like it was aiming 33 centimeters off from the hub. we might want to remove this in the future */,
+            // - 0.33 /* the robot looked like it was aiming 33 centimeters off from the hub. we
+            // might want to remove this in the future */,
             Rotation2d.fromDegrees(180)),
         false,
         ElementType.HUB),
@@ -217,8 +218,9 @@ public class FieldConstants {
   public static Pose2d getNearestTrench(Pose2d robotPose, boolean isBlue) {
     return GameElement.getByType(ElementType.TRENCH).stream()
         .filter(e -> e.isBlue() == isBlue)
-        .min(Comparator.comparingDouble(
-            t -> robotPose.getTranslation().getDistance(t.getLocation())))
+        .min(
+            Comparator.comparingDouble(
+                t -> robotPose.getTranslation().getDistance(t.getLocation())))
         .map(GameElement::getCenter)
         .orElse(null);
   }

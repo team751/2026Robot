@@ -1,7 +1,5 @@
 package frc.robot.commands;
 
-import java.util.prefs.NodeChangeEvent;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.transfer.TransferSubsystem;
@@ -14,22 +12,21 @@ public class ShootCommand extends Command {
   public ShootCommand(ShooterSubsystem shooter, TransferSubsystem transfer) {
     this.shooter = shooter;
     this.transfer = transfer;
-    //addRequirements(shooter, transfer);
+    // addRequirements(shooter, transfer);
   }
 
   public ShootCommand(ShooterSubsystem shooter, TransferSubsystem transfer, Boolean noDistance) {
     this.shooter = shooter;
     this.transfer = transfer;
     this.noDistance = noDistance;
-    //addRequirements(shooter, transfer);
+    // addRequirements(shooter, transfer);
   }
-
 
   @Override
   public void initialize() {
-    if (noDistance){
+    if (noDistance) {
       shooter.requestAutoAimlessShoot();
-    }else{
+    } else {
       shooter.requestShoot();
     }
     transfer.requestTransfer();

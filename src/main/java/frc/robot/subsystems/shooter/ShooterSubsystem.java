@@ -58,7 +58,8 @@ public class ShooterSubsystem extends SubsystemBase {
   public void periodic() {
     switch (state) {
       case IDLE -> setShooterSpeed(0, 0);
-      case AASHOOT -> setShooterSpeed(ShooterConstants.flywheelSpeed, ShooterConstants.transferVoltage);
+      case AASHOOT -> setShooterSpeed(
+          ShooterConstants.flywheelSpeed, ShooterConstants.transferVoltage);
       case REVERSE -> setTransferMotor(ShooterConstants.transferSpitVoltage);
       case SHOOT -> setShooterSpeed(calculateShooterSpeed(), ShooterConstants.transferVoltage);
     }
@@ -79,7 +80,8 @@ public class ShooterSubsystem extends SubsystemBase {
   /** Runs both the main shooter motor and transfer motor */
   private void setShooterSpeed(double flywheelVelocity, double transferVoltage) {
     flywheelMotor.setControl(flywheelControl.withVelocity(flywheelVelocity));
-    if (Math.abs(flywheelVelocity - flywheelMotor.getVelocity().getValueAsDouble()) < 0.1 || isAuto){
+    if (Math.abs(flywheelVelocity - flywheelMotor.getVelocity().getValueAsDouble()) < 0.1
+        || isAuto) {
       shooterTransferMotor.setControl(shooterTransferControl.withOutput(transferVoltage));
     }
   }
