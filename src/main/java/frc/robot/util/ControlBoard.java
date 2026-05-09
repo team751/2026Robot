@@ -64,6 +64,7 @@ public class ControlBoard {
   private boolean preciseControl = false;
   private boolean autoAim = false;
   private boolean axisAlign = false;
+  private double lastShotTime = 0.25; // Start with a cooldown so we don't immediately shoot when the robot starts up
 
   private double operatorOffset = 0;
 
