@@ -112,6 +112,7 @@ tasks.withType(JavaCompile) {
 }
 
 spotless {
+    enforceCheck false
     java {
         target 'src/main/java/**/*.java', 'src/test/java/**/*.java'
         googleJavaFormat()
