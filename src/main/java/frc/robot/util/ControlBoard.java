@@ -239,7 +239,7 @@ public class ControlBoard {
 													.getTranslation(),
 											// Specify the translation of the shooter from the robot center (in the
 											// shooter's reference frame)
-											new Translation2d(0.5, 0.2),
+											new Translation2d(0, 0),
 											// Specify the field-relative speed of the chassis, adding it to the initial
 											// velocity of the projectile
 											SwerveSubsystem.simDrivetrain.mapleSimDrive
@@ -253,9 +253,9 @@ public class ControlBoard {
 											Meters.of(1),
 											// The launch speed is proportional to the RPM; assumed to be 16 meters/second
 											// at 6000 RPM
-											MetersPerSecond.of(5),
+											MetersPerSecond.of(8.5),
 											// The angle at which the fuel is launched
-											Radians.of(1.0472));
+											Radians.of(1.4));
 
 							SimulatedArena.getInstance().addGamePieceProjectile(fuelOnFly);
 
