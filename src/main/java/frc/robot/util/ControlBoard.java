@@ -1,7 +1,5 @@
 package frc.robot.util;
 
-import org.ironmaple.simulation.seasonspecific.rebuilt2026.RebuiltFuelOnFly;
-
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveModule;
 import com.ctre.phoenix6.swerve.SwerveRequest;
@@ -30,7 +28,6 @@ import frc.robot.subsystems.simulation.MapSimSwerveTelemetry;
 import frc.robot.subsystems.transfer.TransferSubsystem;
 import frc.robot.subsystems.vision.LimelightConstants;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 
 // import frc.robot.subsystems.climber.ClimberSubsystem;
 
@@ -210,24 +207,6 @@ public class ControlBoard {
   private void configureOperatorBindings(PS5Controller controller) {
     controller.rightTrigger.whileTrue(
         new ShootCommand(ShooterSubsystem.getInstance(), TransferSubsystem.getInstance(), true));
-        RebuiltFuelOnFly fuelOnFly = new RebuiltFuelOnFly(
-        // Specify the position of the chassis when the note is launched
-        robotSimulationWorldPose.getTranslation(),
-        // Specify the translation of the shooter from the robot center (in the shooter’s reference frame)
-        new Translation2d(0.2, 0),
-        // Specify the field-relative speed of the chassis, adding it to the initial velocity of the projectile
-        chassisSpeedsFieldRelative,
-        // The shooter facing direction is the same as the robot’s facing direction
-        robotSimulationWorldPose.getRotation()
-                // Add the shooter’s rotation
-                + shooterRotation,
-        // Initial height of the flying note
-        0.45,
-        // The launch speed is proportional to the RPM; assumed to be 16 meters/second at 6000 RPM
-        velocityRPM / 6000 * 20,
-        // The angle at which the note is launched
-        Math.toRadians(55)
-);
             
     controller.dUp.whileTrue(
         new InstantCommand(() -> ExtenderSubsystem.getInstance().requestExtend()));
