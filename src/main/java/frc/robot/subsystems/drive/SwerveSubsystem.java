@@ -77,7 +77,9 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
   public SwerveSubsystem(
       SwerveDrivetrainConstants drivetrainConstants, SwerveModuleConstants<?, ?, ?>... modules) {
 
-    super(drivetrainConstants, modules);
+    super(
+        drivetrainConstants,
+        MapleSimSwerveDrivetrain.regulateModuleConstantsForSimulation(modules));
 
     CommandScheduler.getInstance().registerSubsystem(this);
 
