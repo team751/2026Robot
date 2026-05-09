@@ -208,56 +208,6 @@ public class ControlBoard {
     controller.rightBumper.whileTrue(
         new StartEndCommand(() -> preciseControl = true, () -> preciseControl = false)
             .withName("Precise Control Toggle")); // Fight me owen
-
-    /*Maplesim Shooter */
-    controller.rightTrigger.whileTrue(
-        Commands.run(
-            () -> {
-              // Check cooldown - must wait 0.25 seconds between shots
-              double currentTime = Timer.getFPGATimestamp();
-              if (currentTime - lastShotTime < 0.3) {
-                return; // Still in cooldown period
-              }
-
-              // Attempt to obtain a game piece from the intake
-              // Exit early if no balls available - prevents spawning projectiles when empty
-              if (!SwerveSubsystem.simDrivetrain.mapleSimIntake.obtainGamePieceFromIntake()) {
-                return;
-              }
-
-              // Only create and launch projectile if we successfully obtained a ball
-              RebuiltFuelOnFly fuelOnFly =
-                  new RebuiltFuelOnFly(
-                      // Specify the position of the chassis when the fuel is launched
-                      SwerveSubsystem.simDrivetrain
-                          .mapleSimDrive
-                          .getSimulatedDriveTrainPose()
-                          .getTranslation(),
-                      // Specify the translation of the shooter from the robot center (in the
-                      // shooter's reference frame)
-                      new Translation2d(0, 0),
-                      // Specify the field-relative speed of the chassis, adding it to the initial
-                      // velocity of the projectile
-                      SwerveSubsystem.simDrivetrain.mapleSimDrive
-                          .getDriveTrainSimulatedChassisSpeedsRobotRelative(),
-                      // The shooter facing direction is the same as the robot's facing direction
-                      SwerveSubsystem.simDrivetrain
-                          .mapleSimDrive
-                          .getSimulatedDriveTrainPose()
-                          .getRotation(),
-                      // Initial height of the flying fuel
-                      Meters.of(1),
-                      // The launch speed is proportional to the RPM; assumed to be 16 meters/second
-                      // at 6000 RPM
-                      MetersPerSecond.of(8.5),
-                      // The angle at which the fuel is launched
-                      Radians.of(1.4));
-
-              SimulatedArena.getInstance().addGamePieceProjectile(fuelOnFly);
-
-              // Update last shot time for cooldown tracking
-              lastShotTime = currentTime;
-            }));
   }
 
   /* Operator bindings */
