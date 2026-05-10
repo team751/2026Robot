@@ -26,9 +26,6 @@ import frc.robot.subsystems.transfer.TransferSubsystem;
 
 // import frc.robot.subsystems.climber.ClimberSubsystem;
 
-// TODO: Clean up the controller bindings for this
-// TODO: Fix intake commands
-
 // TODO: shift button! \/\/\/
 // controller.circleButton.and(controller.crossButton).whileTrue(
 //   new StartEndCommand(() -> ShooterSubsystem.getInstance().requestShoot(), () ->
