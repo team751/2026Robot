@@ -179,7 +179,7 @@ PathPlanner-based. AutoBuilder configured in `SwerveSubsystem` constructor. `Rob
 
 ### Mirroring Autos
 
-To mirror an auto for the opposite side of the field, create **new** path files (never edit the originals) and a new `.auto` file referencing them.
+To mirror an auto for the opposite side of the field, create **new** path files (never edit the originals) and a new `.auto` file referencing them. Always make sure that reset odometry is turned off for all autos unless you are specifically told to leave it on.
 
 **Field dimensions:**
 - Field length (X): `16.540988` m (from `FieldConstants.FIELD_LENGTH`)
