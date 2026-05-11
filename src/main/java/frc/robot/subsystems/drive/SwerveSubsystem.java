@@ -99,10 +99,10 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
         SwerveConstants.robotConfig, // RobotConfig
         () -> {
           // Boolean supplier for alliance color
-          // var alliance = DriverStation.getAlliance();
-          // if (alliance.isPresent()) {
-          //     return alliance.get() == DriverStation.Alliance.Red;
-          // }
+          var alliance = DriverStation.getAlliance();
+          if (alliance.isPresent()) {
+              return alliance.get() == DriverStation.Alliance.Red;
+          }
           return false;
         },
         this);
