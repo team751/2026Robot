@@ -137,13 +137,12 @@ Dual TalonFX motors (top/bottom). States: IDLE/TRANSFER/REVERSE. VoltageOut cont
 | Right stick X | Rotation (squared for sensitivity) |
 | Right bumper (hold) | Precise mode: 20% translation, 30% rotation |
 | Left trigger (hold) | IntakeCommand |
-| Left bumper (hold) | Spit (intake + transfer reverse + shooter spit + extend extender) |
-| Square (hold) | Spit (intake + transfer reverse + shooter spit + extend extender) |
-| D-pad up (hold) | Extend extender + run intake |
+| Left bumper (hold) | SpitCommand (transfer reverse + intake spit + extend extender) |
+| D-pad up (hold) | Extend extender |
 | D-pad down (hold) | Retract extender + run intake |
 | Cross (hold) | JiggleCommand (unstick game pieces) |
-| Right trigger (hold) | Shoot + auto-aim toward alliance hub |
-| D-pad left (hold) | Reverse transfer + shooter spit |
+| Right trigger (hold) | ShootCommand + auto-aim toward alliance hub + JiggleCommand simultaneously |
+| D-pad left (hold) | SimpleUnstuck (briefly reverses transfer, restores prior state on release) |
 | Right/Left stick press (hold) | Axis align to nearest trench |
 | Circle | Reset rotation to alliance perspective |
 
@@ -152,13 +151,14 @@ Dual TalonFX motors (top/bottom). States: IDLE/TRANSFER/REVERSE. VoltageOut cont
 | Input | Action |
 |-------|--------|
 | Right trigger (hold) | ShootCommand fixed-speed (noDistance=true, AASHOOT mode) |
-| D-pad up (hold) | Extend extender + run intake |
+| Left trigger (hold) | IntakeCommand |
+| D-pad up (hold) | Extend extender |
 | D-pad down (hold) | Retract extender |
-| D-pad left (hold) | Reverse transfer + shooter spit |
+| D-pad left (hold) | Decrement aim angle offset by 5° |
+| D-pad right (hold) | Increment aim angle offset by 5° |
 | Cross (hold) | JiggleCommand |
-| Square (hold) | Spit (intake + transfer reverse + shooter spit + extend extender) |
 
-*Note: Climber bindings are commented out. `ControlBoardAlt.java` exists as an alternative config.*
+*Note: Climber bindings are commented out. Square button spit binding is commented out on both controllers. `ControlBoardAlt.java` exists as an alternative config.*
 
 ### Drive Request Config
 
@@ -216,13 +216,15 @@ To mirror an auto for the opposite side of the field, create **new** path files 
 - Constraint zones, event markers, and global constraints are copied unchanged
 - Velocities are copied unchanged — only positions and rotations are flipped
 - Normalize rotation values by adding/subtracting 360° if they fall outside a readable range
-- Insure that reset odomtery isn't turned on. If it is, turn it off.
+- Ensure that reset odometry isn't turned on. If it is, turn it off.
 
 ## Commands (`commands/`)
 
 - **IntakeCommand** — coordinates intake sequence
 - **ShootCommand** — runs ShooterSubsystem + TransferSubsystem together; accepts `noDistance` boolean (true = AASHOOT fixed-speed mode); both go idle on end
 - **JiggleCommand** — oscillates extender in/out while coordinating intake/transfer/shooter; used to unstick game pieces
+- **SpitCommand** — reverses transfer + spits intake + extends extender; all mechanisms idle/retract on end
+- **SimpleUnstuck** — reverses transfer while held, restores the prior `TransferState` on release
 - **WiggleCommand** — empty stub, not yet implemented
 
 ## Simulation
