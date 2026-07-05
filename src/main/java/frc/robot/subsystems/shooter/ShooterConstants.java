@@ -6,7 +6,6 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import frc.lib.CTREConfig;
 import frc.robot.Robot;
-import frc.robot.util.Constants;
 import frc.robot.util.Constants.*;
 
 public class ShooterConstants {
