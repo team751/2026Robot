@@ -6,7 +6,7 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import frc.lib.CTREConfig;
 import frc.robot.Robot;
-import frc.robot.util.Constants;
+import frc.robot.util.Constants.*;
 
 public class TransferConstants {
   // TODO: Set current limits and tune the motors. also name/find the canbus to put the motors on
@@ -22,7 +22,7 @@ public class TransferConstants {
   static {
     transfertopconfig
         .withName("Transfer Top Motor")
-        .withCanID(Constants.rightTransferMotorID)
+        .withCanID(IDConstants.rightTransferMotorID)
         .withBus(Robot.riobus);
 
     TalonFXConfiguration transfertopConfig = transfertopconfig.config;
@@ -47,7 +47,7 @@ public class TransferConstants {
   static {
     transferbottomconfig
         .withName("Transfer Bottom Motor")
-        .withCanID(Constants.leftTransferMotorID)
+        .withCanID(IDConstants.leftTransferMotorID)
         .withBus(Robot.riobus);
 
     TalonFXConfiguration transferbottomConfig = transferbottomconfig.config;

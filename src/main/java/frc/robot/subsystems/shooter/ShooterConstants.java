@@ -7,6 +7,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import frc.lib.CTREConfig;
 import frc.robot.Robot;
 import frc.robot.util.Constants;
+import frc.robot.util.Constants.*;
 
 public class ShooterConstants {
   // TODO: Set current limits and tune the motors. also name/find the canbus to put the motors on
@@ -34,7 +35,7 @@ public class ShooterConstants {
   static {
     flywheelMotorConfig
         .withName("Main Flywheel")
-        .withCanID(Constants.flywheelMotorID)
+        .withCanID(IDConstants.flywheelMotorID)
         .withBus(Robot.riobus);
 
     TalonFXConfiguration flywheelConfig = flywheelMotorConfig.config;
@@ -59,7 +60,7 @@ public class ShooterConstants {
   static {
     followMotorConfig
         .withName("Follow Flywheel")
-        .withCanID(Constants.followMotorID)
+        .withCanID(IDConstants.followMotorID)
         .withBus(Robot.riobus);
 
     TalonFXConfiguration followConfig = followMotorConfig.config;
@@ -82,7 +83,7 @@ public class ShooterConstants {
   static {
     transferMotorConfig
         .withName("Shooter Transfer")
-        .withCanID(Constants.shooterTransferMotorID)
+        .withCanID(IDConstants.shooterTransferMotorID)
         .withBus(Robot.riobus);
 
     TalonFXConfiguration shooterTransferConfig = transferMotorConfig.config;

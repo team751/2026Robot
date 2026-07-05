@@ -12,7 +12,7 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.*;
 import frc.robot.Robot;
-import frc.robot.util.Constants;
+import frc.robot.util.Constants.*;
 
 /* TunerConstants.java info
  * This is where all the motors and encoders and the gyro is configured for driving.
@@ -178,9 +178,9 @@ public class TunerConstants {
   // TODO: Make sure that you set the offset values for all the motors and for the pigeon!
 
   // Front Left
-  private static final int kFrontLeftDriveMotorId = Constants.frontLeftDriveID;
-  private static final int kFrontLeftSteerMotorId = Constants.frontLeftSteerID;
-  private static final int kFrontLeftEncoderId = Constants.frontLeftEncoderID;
+  private static final int kFrontLeftDriveMotorId = IDConstants.frontLeftDriveID;
+  private static final int kFrontLeftSteerMotorId = IDConstants.frontLeftSteerID;
+  private static final int kFrontLeftEncoderId = IDConstants.frontLeftEncoderID;
   private static final Angle kFrontLeftEncoderOffset = Units.Rotations.of(-0.041016);
   // -0.041016
   private static final boolean kFrontLeftSteerMotorInverted = true;
@@ -190,9 +190,9 @@ public class TunerConstants {
   private static final Distance kFrontLeftYPos = Units.Inches.of(10.375);
 
   // Front Right
-  private static final int kFrontRightDriveMotorId = Constants.frontRightDriveID;
-  private static final int kFrontRightSteerMotorId = Constants.frontRightSteerID;
-  private static final int kFrontRightEncoderId = Constants.frontRightEncoderID;
+  private static final int kFrontRightDriveMotorId = IDConstants.frontRightDriveID;
+  private static final int kFrontRightSteerMotorId = IDConstants.frontRightSteerID;
+  private static final int kFrontRightEncoderId = IDConstants.frontRightEncoderID;
   private static final Angle kFrontRightEncoderOffset = Units.Rotations.of(-0.497070);
   // -0.497070
   private static final boolean kFrontRightSteerMotorInverted = true;
@@ -202,9 +202,9 @@ public class TunerConstants {
   private static final Distance kFrontRightYPos = Units.Inches.of(-10.375);
 
   // Back Left
-  private static final int kBackLeftDriveMotorId = Constants.backLeftDriveID;
-  private static final int kBackLeftSteerMotorId = Constants.backLeftSteerID;
-  private static final int kBackLeftEncoderId = Constants.backLeftEncoderID;
+  private static final int kBackLeftDriveMotorId = IDConstants.backLeftDriveID;
+  private static final int kBackLeftSteerMotorId = IDConstants.backLeftSteerID;
+  private static final int kBackLeftEncoderId = IDConstants.backLeftEncoderID;
   private static final Angle kBackLeftEncoderOffset = Units.Rotations.of(0.445557);
   // 0.445557
   private static final boolean kBackLeftSteerMotorInverted = true;
@@ -214,9 +214,9 @@ public class TunerConstants {
   private static final Distance kBackLeftYPos = Units.Inches.of(10.375);
 
   // Back Right
-  private static final int kBackRightDriveMotorId = Constants.backRightDriveID;
-  private static final int kBackRightSteerMotorId = Constants.backRightSteerID;
-  private static final int kBackRightEncoderId = Constants.backRightEncoderID;
+  private static final int kBackRightDriveMotorId = IDConstants.backRightDriveID;
+  private static final int kBackRightSteerMotorId = IDConstants.backRightSteerID;
+  private static final int kBackRightEncoderId = IDConstants.backRightEncoderID;
   private static final Angle kBackRightEncoderOffset = Units.Rotations.of(-0.380371244);
   // -0.380371244
   private static final boolean kBackRightSteerMotorInverted = true;

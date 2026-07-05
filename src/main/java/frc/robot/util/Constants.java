@@ -16,6 +16,7 @@ import edu.wpi.first.hal.HAL;
  */
 
 public class Constants {
+  public static class IDConstants {
   // Swerve Motor ID's
   // Front Left
   public static final int frontLeftDriveID = 10;
@@ -75,4 +76,5 @@ public class Constants {
   // public static final String drivebus = "Drivebus";
 
   public static final boolean disableHAL = !HAL.initialize(500, 0);
+  }
 }

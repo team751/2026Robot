@@ -6,7 +6,7 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import frc.lib.CTREConfig;
 import frc.robot.Robot;
-import frc.robot.util.Constants;
+import frc.robot.util.Constants.*;
 
 public class IntakeConstants {
   // TODO: Set current limits and tune the motors. also name/find the canbus to put the motors on
@@ -33,7 +33,7 @@ public class IntakeConstants {
   static {
     intakeMotorConfig
         .withName("Intake Motor")
-        .withCanID(Constants.intakeMotorID)
+        .withCanID(IDConstants.intakeMotorID)
         .withBus(Robot.riobus);
 
     TalonFXConfiguration intakeConfig = intakeMotorConfig.config;
@@ -59,7 +59,7 @@ public class IntakeConstants {
   static {
     extenderMotorConfig
         .withName("Extender Motor")
-        .withCanID(Constants.extenderMotorID)
+        .withCanID(IDConstants.extenderMotorID)
         .withBus(Robot.riobus);
 
     TalonFXConfiguration extenderConfig = extenderMotorConfig.config;
