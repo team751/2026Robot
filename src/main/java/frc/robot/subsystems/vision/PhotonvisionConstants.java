@@ -3,7 +3,7 @@ package frc.robot.subsystems.vision;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 
-public class PhotonvisionConstants {
+public class PhotonVisionConstants {
     public static final String FRONT_CAMERA_NAME = "front";
     public static final String SIDE_CAMERA_NAME = "side";
 
