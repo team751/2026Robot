@@ -2,6 +2,7 @@ package frc.robot;
 
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.SignalLogger;
+import com.ctre.phoenix6.Utils;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -12,6 +13,7 @@ import frc.robot.subsystems.drive.Odometry;
 import frc.robot.subsystems.drive.SwerveSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.vision.LimelightSubsystem;
+import frc.robot.subsystems.vision.PhotonVisionSim;
 // import frc.robot.subsystems.vision.LimelightSubsystem;
 import frc.robot.util.ControlBoard;
 
@@ -62,6 +64,9 @@ public class Robot extends TimedRobot {
     // PortForwarder.add(5801, "10.7.51.75",5801);
     robotContainer = new RobotContainer();
     LimelightSubsystem.getInstance().initLimsplz();
+    if (Utils.isSimulation()) {
+      PhotonVisionSim.getInstance();
+    }
     controlBoard.isBlue =
         !DriverStation.getAlliance().isPresent()
             || DriverStation.getAlliance().get() != Alliance.Red;

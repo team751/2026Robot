@@ -6,12 +6,18 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.vision.LimelightConstants;
 import frc.robot.subsystems.vision.LimelightSubsystem;
+import frc.robot.subsystems.vision.PhotonVisionConstants;
+import frc.robot.subsystems.vision.PhotonVisionSubsystem;
 import frc.robot.util.LimelightHelpers;
+import java.util.List;
+import org.photonvision.EstimatedRobotPose;
+import org.photonvision.targeting.PhotonTrackedTarget;
 
 /* Rough overview of what Odometry.java does and how it works.
  * Odometry tells the driver where the robot is at all times.
@@ -42,6 +48,7 @@ public class Odometry extends SubsystemBase {
   private static Odometry instance;
   private final SwerveSubsystem drive;
   private final LimelightSubsystem limelights;
+  private final PhotonVisionSubsystem photon;
   private Field2d field = new Field2d();
   public Pose2d robotPose;
 
@@ -52,6 +59,7 @@ public class Odometry extends SubsystemBase {
   public Odometry() {
     this.drive = SwerveSubsystem.getInstance();
     this.limelights = LimelightSubsystem.getInstance();
+    this.photon = PhotonVisionSubsystem.getInstance();
     this.robotPose = new Pose2d();
   }
 
@@ -137,6 +145,43 @@ public class Odometry extends SubsystemBase {
     return (distance < LimelightConstants.POSE_STABLE_EPSILON_METERS) ? 1 : 0;
   }
 
+  private double avgTargetDistanceMeters(List<PhotonTrackedTarget> targets) {
+    double sum = 0.0;
+    for (PhotonTrackedTarget target : targets) {
+      sum += target.getBestCameraToTarget().getTranslation().getNorm();
+    }
+    return sum / targets.size();
+  }
+
+  /**
+   * Applies a PhotonVision estimate the same way applyVisionEstimate() applies a Limelight one.
+   * Kept separate (rather than sharing one method) because the two libraries hand us different
+   * result types with no common interface, and an EstimatedRobotPose only reaches here when it's
+   * already valid — there's no null/zero-tag case left to guard against like there is for
+   * LimelightHelpers.PoseEstimate.
+   */
+  private void applyPhotonEstimate(EstimatedRobotPose estimate, Matrix<N3, N1> baseStdDevs) {
+    Pose2d visionPose =
+        new Pose2d(
+            estimate.estimatedPose.getX(),
+            estimate.estimatedPose.getY(),
+            drive.getPose().getRotation());
+
+    // Same clock-domain problem as Limelight (see applyVisionEstimate): estimate.timestampSeconds
+    // is FPGA Timer time, but CTRE's addVisionMeasurement wants Utils.getCurrentTimeSeconds().
+    // Photon gives an absolute timestamp instead of a latency field, so compute the elapsed
+    // capture latency ourselves and apply it to the CTRE clock.
+    double captureLatencySeconds = Timer.getFPGATimestamp() - estimate.timestampSeconds;
+    double visionTimestamp = Utils.getCurrentTimeSeconds() - captureLatencySeconds;
+
+    Matrix<N3, N1> stdDevs = baseStdDevs.times(avgTargetDistanceMeters(estimate.targetsUsed));
+    if (estimate.targetsUsed.size() > 1) {
+      stdDevs = stdDevs.times(PhotonVisionConstants.MULTI_TAG_STD_DEV_FACTOR);
+    }
+
+    drive.addVisionMeasurement(visionPose, visionTimestamp, stdDevs);
+  }
+
   @Override
   public void periodic() {
     if (isRotatingTooFast()) {
@@ -155,6 +200,13 @@ public class Odometry extends SubsystemBase {
               limelights.getBotPoseSide(), LimelightConstants.SIDE_STD_DEVS, "Vision/Side");
       if (sideResult == 1) sideStableCount++;
       else if (sideResult == 0) sideStableCount = 0;
+
+      for (EstimatedRobotPose estimate : photon.getFrontEstimates()) {
+        applyPhotonEstimate(estimate, PhotonVisionConstants.FRONT_STD_DEVS);
+      }
+      for (EstimatedRobotPose estimate : photon.getSideEstimates()) {
+        applyPhotonEstimate(estimate, PhotonVisionConstants.SIDE_STD_DEVS);
+      }
     }
 
     robotPose = drive.getPose();

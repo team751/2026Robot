@@ -119,7 +119,7 @@ public class MapleSimSwerveDrivetrain {
                     Units.Meters.of(moduleConstants[0].WheelRadius),
                     Units.KilogramSquareMeters.of(moduleConstants[0].SteerInertia),
                     wheelCOF));
-    mapleSimDrive = new SwerveDriveSimulation(simulationConfig, new Pose2d(3, 3, new Rotation2d()));
+    mapleSimDrive = new SwerveDriveSimulation(simulationConfig, new Pose2d(4, 4, new Rotation2d()));
 
     SwerveModuleSimulation[] moduleSimulations = mapleSimDrive.getModules();
     for (int i = 0; i < this.simModules.length; i++)
