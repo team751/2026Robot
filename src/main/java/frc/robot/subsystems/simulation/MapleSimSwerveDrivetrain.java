@@ -119,7 +119,10 @@ public class MapleSimSwerveDrivetrain {
                     Units.Meters.of(moduleConstants[0].WheelRadius),
                     Units.KilogramSquareMeters.of(moduleConstants[0].SteerInertia),
                     wheelCOF));
-    mapleSimDrive = new SwerveDriveSimulation(simulationConfig, new Pose2d(4, 4, new Rotation2d()));
+    // Spawn on open floor facing the blue hub tags — (4, 4) is INSIDE the hub's tag ring, where
+    // no camera can see a tag face and the physics spawns the robot embedded in the structure.
+    mapleSimDrive =
+        new SwerveDriveSimulation(simulationConfig, new Pose2d(2.5, 4, new Rotation2d()));
 
     SwerveModuleSimulation[] moduleSimulations = mapleSimDrive.getModules();
     for (int i = 0; i < this.simModules.length; i++)
