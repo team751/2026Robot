@@ -10,6 +10,18 @@ import edu.wpi.first.units.measure.*;
 import frc.robot.Robot;
 import java.util.function.Supplier;
 
+/**
+ * A builder for CTRE devices (TalonFX, CANcoder, etc). Instead of writing out CAN ID, bus, and
+ * TalonFXConfiguration setup by hand for every motor, each *Constants class builds one of these
+ * with the chained {@code .withX()} methods and then calls {@link #createDevice} to get back a
+ * real, configured device object.
+ *
+ * <p>Example: {@code CTREConfig<TalonFX, TalonFXConfiguration> config = new
+ * CTREConfig<>(TalonFXConfiguration::new).withName("Flywheel").withCanID(33);}
+ *
+ * @param <Device> the CTRE hardware type being built, e.g. TalonFX
+ * @param <Config> the matching configuration type, e.g. TalonFXConfiguration
+ */
 public class CTREConfig<Device extends ParentDevice, Config extends ParentConfiguration> {
   public String name = "UNNAMED";
   public int canID = 0;
@@ -41,6 +53,14 @@ public class CTREConfig<Device extends ParentDevice, Config extends ParentConfig
     return this;
   }
 
+  /**
+   * Actually constructs the hardware device (e.g. {@code new TalonFX(canID, canbus)}), applies the
+   * {@link #config} to it, and — for TalonFX motors — trims the CAN bus traffic down to just the
+   * signals we actually read (position, velocity, voltage, current) at 50Hz instead of the default
+   * firehose. This keeps the CAN bus from getting congested as more devices are added.
+   *
+   * @param deviceSupplier a constructor reference like {@code TalonFX::new}
+   */
   public Device createDevice(DeviceSupplier<Device> deviceSupplier) {
     Device device = deviceSupplier.get(canID, canbus);
 
@@ -62,6 +82,8 @@ public class CTREConfig<Device extends ParentDevice, Config extends ParentConfig
             positionSignal, velocitySignal, voltageSignal, currentStatorSignal, currentSupplySignal
           };
 
+      // Only stream the signals we listed above, and drop everything else CTRE would
+      // otherwise broadcast by default — this is what "optimizing" the bus means here.
       CTREUtil.tryUntilOK(
           () -> BaseStatusSignal.setUpdateFrequencyForAll(50.0, signals), talon.getDeviceID());
       CTREUtil.tryUntilOK(talon::optimizeBusUtilization, talon.getDeviceID());

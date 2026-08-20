@@ -96,6 +96,13 @@ public class Odometry extends SubsystemBase {
     return yawRate > LimelightConstants.MAX_ANGULAR_VELOCITY_DPS;
   }
 
+  /**
+   * Standard deviations tell the pose-fusion filter how much to trust this specific vision reading
+   * vs. the existing wheel-odometry pose — smaller std dev = more trust. We scale the camera's base
+   * std devs (from LimelightConstants) up with distance, since AprilTag pose estimates get noisier
+   * the farther away the tag is, and scale them down when multiple tags are visible at once, since
+   * multi-tag solves are much better constrained than single-tag.
+   */
   private Matrix<N3, N1> computeStdDevs(
       Matrix<N3, N1> baseStdDevs, LimelightHelpers.PoseEstimate estimate) {
     Matrix<N3, N1> scaled = baseStdDevs.times(estimate.avgTagDist);
@@ -106,6 +113,10 @@ public class Odometry extends SubsystemBase {
   }
 
   /**
+   * Feeds one camera's vision pose estimate into the drivetrain's built-in pose fusion (a Kalman
+   * filter under the hood), then reports whether that estimate agreed closely enough with our
+   * current pose to count toward "the vision is stable" tracking in {@link #periodic()}.
+   *
    * @return the stability count delta: +1 if vision agrees with odometry, reset to 0 if not, or -1
    *     if the estimate was rejected (caller should not update counter).
    */

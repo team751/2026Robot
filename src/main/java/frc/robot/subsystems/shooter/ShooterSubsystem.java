@@ -16,6 +16,16 @@ import frc.robot.util.FieldConstants;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.seasonspecific.rebuilt2026.RebuiltFuelOnFly;
 
+/**
+ * Runs the shooter: a main flywheel motor, a follower motor mounted opposed to it (so the two
+ * wheels spin toward each other and pinch the game piece), and a small transfer motor that feeds
+ * pieces into the flywheels once they're spinning. Unlike IntakeSubsystem's request-flag pattern,
+ * {@code request*()} here sets {@link #state} directly — periodic() just reads it.
+ *
+ * <p>In simulation there's no real flywheel to launch a physical game piece, so {@link
+ * #simulationPeriodic()} manually spawns a simulated projectile ({@link RebuiltFuelOnFly}) with a
+ * fixed launch speed/angle whenever a shot is requested.
+ */
 public class ShooterSubsystem extends SubsystemBase {
   private static ShooterSubsystem instance;
 
@@ -84,7 +94,12 @@ public class ShooterSubsystem extends SubsystemBase {
     shooterTransferMotor.setControl(shooterTransferControl.withOutput(transferVoltage));
   }
 
-  /** Runs both the main shooter motor and transfer motor */
+  /**
+   * Runs both the main shooter motor and transfer motor. The transfer only actually feeds a piece
+   * in once the flywheel is within 0.1 RPS of its target speed — feeding too early would launch the
+   * piece at the wrong speed. {@code isAuto} bypasses that wait entirely during autonomous, trading
+   * shot consistency for not stalling out a scripted auto routine.
+   */
   private void setShooterSpeed(double flywheelVelocity, double transferVoltage) {
     flywheelMotor.setControl(flywheelControl.withVelocity(flywheelVelocity));
     if (Math.abs(flywheelVelocity - flywheelMotor.getVelocity().getValueAsDouble()) < 0.1
@@ -93,6 +108,7 @@ public class ShooterSubsystem extends SubsystemBase {
     }
   }
 
+  /** Straight-line distance from the robot to the current alliance's hub, in centimeters. */
   private double getRobotDistanceFromHub() {
     SwerveSubsystem swerve = SwerveSubsystem.getInstance();
     Pose2d hubPose = FieldConstants.getAllianceHub();
@@ -100,12 +116,19 @@ public class ShooterSubsystem extends SubsystemBase {
     return 100 * Math.hypot(hubPose.getX() - robotPose.getX(), hubPose.getY() - robotPose.getY());
   }
 
+  /** Whether the robot is within the distance range the speed curve was tuned for. */
   private boolean canShoot() {
     double distanceCM = getRobotDistanceFromHub();
     return distanceCM >= ShooterConstants.minShootingDistance
         && distanceCM <= ShooterConstants.maxShootingDistance;
   }
 
+  /**
+   * Picks a flywheel RPS from distance to the hub. Outside the tuned distance range ({@link
+   * #canShoot} is false), falls back to the fixed {@link ShooterConstants#flywheelSpeed} rather
+   * than extrapolating the curve, since the linear fit isn't trustworthy far outside the range it
+   * was measured over.
+   */
   private double calculateShooterSpeed() {
     if (!canShoot()) {
       return ShooterConstants.flywheelSpeed;
@@ -136,6 +159,8 @@ public class ShooterSubsystem extends SubsystemBase {
   public void simulationPeriodic() {
     if (state == ShooterState.SHOOT || state == ShooterState.AASHOOT) {
       // Check cooldown - must wait 0.25 seconds between shots
+      // (comment says 0.25s but the actual check below uses 0.3s — trust the code, not the
+      // comment, if you're trying to figure out the real cooldown)
       double currentTime = Timer.getFPGATimestamp();
       if (currentTime - lastShotTime < 0.3) {
         return; // Still in cooldown period

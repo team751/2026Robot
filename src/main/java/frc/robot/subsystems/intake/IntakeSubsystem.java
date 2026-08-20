@@ -4,6 +4,15 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+/**
+ * Runs the single intake motor at one of three fixed voltages (idle/intaking/spitting). Uses the
+ * "request flag" state-machine pattern: {@code request*()} methods just set a flag, and the actual
+ * state transition + motor output only happens inside {@link #periodic()} — this keeps state
+ * changes atomic even if request methods get called from multiple places in one loop.
+ *
+ * <p>Doesn't know or care whether the extender is out — {@link frc.robot.commands.IntakeCommand} is
+ * responsible for sequencing "extend, then intake".
+ */
 public class IntakeSubsystem extends SubsystemBase {
   private static IntakeSubsystem instance;
 

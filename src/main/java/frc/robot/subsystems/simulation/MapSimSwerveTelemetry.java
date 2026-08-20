@@ -21,6 +21,14 @@ import edu.wpi.first.wpilibj.util.Color8Bit;
 import frc.robot.subsystems.drive.SwerveSubsystem;
 import org.ironmaple.simulation.SimulatedArena;
 
+/**
+ * Publishes swerve drive state (pose, module speeds/angles, chassis speeds) to NetworkTables so
+ * tools like AdvantageScope and Elastic/Shuffleboard can visualize what the robot is doing.
+ * Registered as the drivetrain's telemetry callback in {@code ControlBoard.tryInit()}, but only
+ * when running in simulation — see {@link #telemeterize}, which reads the simulated pose from
+ * {@link SwerveSubsystem#simDrivetrain} rather than the passed-in {@code state.Pose} (real hardware
+ * uses CTRE's own built-in telemetry object instead of this one).
+ */
 public class MapSimSwerveTelemetry {
   private final double MaxSpeed;
 

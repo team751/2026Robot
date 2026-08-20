@@ -186,6 +186,10 @@ public class MapleSimSwerveDrivetrain {
   }
 
   // Static utils classes
+  // Bridges a real TalonFX's simulated internal state (TalonFXSimState) to MapleSim's physics
+  // engine: MapleSim computes "here's where this motor's shaft actually is/how fast it's
+  // turning" each physics step, and this feeds that back into the TalonFX so code reading
+  // getPosition()/getVelocity() sees physically consistent values, even in simulation.
   public static class TalonFXMotorControllerSim implements SimulatedMotorController {
     public final int id;
 

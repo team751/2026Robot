@@ -7,6 +7,15 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import java.util.function.DoubleSupplier;
 
+/**
+ * Wraps a raw WPILib {@link Joystick} for a PS5 controller into named fields (buttons, sticks,
+ * d-pad) so command bindings in {@link frc.robot.util.ControlBoard} read like "cross button" and
+ * "left trigger" instead of magic axis/button numbers.
+ *
+ * <p>All stick axes are negated in the constructor below — WPILib joysticks report "up"/"left" as
+ * negative by default, and this flips that so up/left reads as positive, matching normal
+ * math/graphing conventions.
+ */
 public class PS5Controller {
   /* Axes */
   public final DoubleSupplier leftVerticalJoystick;
@@ -74,6 +83,8 @@ public class PS5Controller {
     touchpadButton = new JoystickButton(joystick, Button.kTouchpad.value);
   }
 
+  // Unused stub — rightTrigger above is bound as a digital JoystickButton (pressed/not pressed),
+  // so nothing currently reads an analog trigger value through this method.
   public double getRightTrigger() {
     return 0.0;
   }

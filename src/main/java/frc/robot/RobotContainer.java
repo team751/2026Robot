@@ -20,10 +20,20 @@ import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.transfer.TransferSubsystem;
 
+/**
+ * Registers "Named Commands" that PathPlanner autos can reference by string (e.g. an event marker
+ * in a .path file saying "Shoot" runs the {@code shoot} command built below), and builds the auto
+ * chooser dropdown shown on the dashboard. This only wires things up once at startup — actual
+ * driver control bindings live in {@link frc.robot.util.ControlBoard}, not here.
+ */
 public class RobotContainer {
   private final SendableChooser<Command> autoChooser;
 
   public RobotContainer() {
+    // Each of these blocks builds one Command and its "stop" counterpart, then registers
+    // both under a name PathPlanner autos can reference. The stop commands cancel the
+    // main command and force the subsystem back to idle, since a plain .cancel() alone
+    // doesn't reliably leave motors at 0.
     // COMMANDS FOR NAMED COMMANDS
     Command spit =
         new RunCommand(

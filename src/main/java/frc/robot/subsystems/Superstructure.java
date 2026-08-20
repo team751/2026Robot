@@ -11,6 +11,14 @@ import frc.robot.subsystems.transfer.TransferSubsystem;
 
 // import frc.robot.subsystems.intake.IntakeSubsystem;
 
+/**
+ * Intended to be the central coordinator that holds references to every mechanism subsystem and
+ * manages a robot-wide state machine (home → idle → ...). Right now it's a stub: the state machine
+ * below does nothing (both PRE_HOME and IDLE cases are empty), and real coordination between
+ * subsystems is actually done directly via StartEndCommands wired up in {@link
+ * frc.robot.util.ControlBoard}, not through this class. Kept around as the place to grow into if
+ * mechanism coordination gets complex enough to need a real state machine.
+ */
 public class Superstructure extends SubsystemBase {
   private static Superstructure instance = null;
 

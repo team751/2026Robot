@@ -5,6 +5,11 @@ import frc.robot.subsystems.intake.ExtenderSubsystem;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.transfer.TransferSubsystem;
 
+/**
+ * Ejects a game piece back out the front: extends the intake, reverses the transfer, and spits the
+ * intake wheels backward, all at once. Used (driver left bumper) to get rid of a piece we don't
+ * want, e.g. wrong game piece or intentionally clearing to reset.
+ */
 public class SpitCommand extends Command {
   private final TransferSubsystem transfer;
   private final IntakeSubsystem intake;

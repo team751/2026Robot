@@ -29,6 +29,12 @@ public class LimelightSubsystem extends SubsystemBase {
     return instance;
   }
 
+  /**
+   * Creates both Limelight objects and tells each one where it's physically mounted on the robot
+   * (its camera offset — see LimelightConstants). Called once from {@code Robot.robotInit()}. Each
+   * camera is wrapped in its own try/catch so a Limelight being unplugged/unreachable at boot
+   * doesn't prevent the other camera (or the rest of the robot) from starting up.
+   */
   public void initLimsplz() {
     Limelight tmpFront;
     Limelight tmpSide;
@@ -73,6 +79,8 @@ public class LimelightSubsystem extends SubsystemBase {
     limelightSide = tmpSide;
 
     // Sets the settings for each limelight with their offset from the center of the robot
+    // (note: this duplicates the withCameraOffset() calls already made in the try blocks
+    // above — harmless since it's the same values, just redundant)
 
     if (limelightFront == null) {
       System.err.println("Limelight Front failed to initialize.");
@@ -119,6 +127,8 @@ public class LimelightSubsystem extends SubsystemBase {
     return LimelightHelpers.getTV(LimelightConstants.LimelightSide.name);
   }
 
+  // Requires BOTH cameras to see a target, not just one — a stricter check than most teams
+  // use, but means callers of hasTarget() can trust it implies confident tracking coverage.
   public boolean hasTarget() {
     return frontHasTarget() && sideHasTarget();
   }

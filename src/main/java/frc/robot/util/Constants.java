@@ -75,10 +75,16 @@ public class Constants {
     // @Deprecated
     // public static final String drivebus = "Drivebus";
 
+    // Calls into the HAL (Hardware Abstraction Layer) as a side effect when this class first
+    // loads. Note: this field itself is never read anywhere else in the codebase — it's the
+    // HAL.initialize() call happening at class-load time that matters, not the boolean value.
     public static final boolean disableHAL = !HAL.initialize(500, 0);
   }
 
   public static class VisionConstants {
+    // Names of the simulated PhotonVision cameras used in sim (see PhotonVisionConstants /
+    // docs/vision-and-odometry.md) — not the real Limelight names, which live in
+    // LimelightConstants instead.
     public static final String[] photonNames = {"photon-front", "photon-side"};
   }
 }

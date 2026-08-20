@@ -5,6 +5,17 @@ import frc.robot.subsystems.intake.ExtenderSubsystem;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.transfer.TransferSubsystem;
 
+/**
+ * Oscillates the extender in and out (extend → jiggle in → retract → extend → ...) while running
+ * the intake/transfer in sync, to shake loose a game piece that's jammed or stuck in the mechanism.
+ * Bound to the cross button on both controllers, and also run alongside {@code ShootCommand} on the
+ * driver's right trigger to help feed pieces into the shooter.
+ *
+ * <p>Note: {@code addRequirements()} is commented out, so this command does NOT claim the
+ * intake/extender/transfer subsystems — it can run at the same time as other commands using them
+ * (e.g. ShootCommand), which is intentional for the right-trigger shoot+jiggle combo, but means
+ * this command won't get auto-cancelled if something else takes over those subsystems.
+ */
 public class JiggleCommand extends Command {
   private final IntakeSubsystem intake;
   private final ExtenderSubsystem extender;
@@ -28,6 +39,10 @@ public class JiggleCommand extends Command {
 
   @Override
   public void execute() {
+    // This is the actual "jiggle": once fully extended, immediately start retracting a bit
+    // (JIGGLE_IN, see ExtenderSubsystem) while running intake+transfer forward. Once it
+    // reaches fully retracted, go back to extending. Repeating this rapidly is what shakes
+    // a stuck piece free.
     if (extender.isExtended()) {
       extender.requestJiggleIn();
       transfer.requestTransfer();

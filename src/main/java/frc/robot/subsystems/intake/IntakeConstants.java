@@ -8,6 +8,7 @@ import frc.lib.CTREConfig;
 import frc.robot.Robot;
 import frc.robot.util.Constants.*;
 
+/** Motor voltages, limit switch DIO ports, and CTRE motor configs for intake + extender. */
 public class IntakeConstants {
   // TODO: Set current limits and tune the motors. also name/find the canbus to put the motors on
 
@@ -16,6 +17,9 @@ public class IntakeConstants {
   public static final double extenderSpeed = 2; // Volts
   public static final double retractorSpeed = -2; // Volts
 
+  // DIO ports for the 4 physical limit switches on the extender — front pair triggers when
+  // fully retracted, back pair triggers when fully extended. See ExtenderSubsystem for how
+  // these combine into isExtended()/isRetracted().
   public static final int FrontLeftLimitID = 0;
   public static final int BackLeftLimitID = 1;
   public static final int FrontRightLimitID = 2;

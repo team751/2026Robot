@@ -36,6 +36,16 @@ import frc.robot.subsystems.transfer.TransferSubsystem;
 // could also be helpful during comp for re-zeroing components mid match if we need to (like intake
 // explodes and dies and we need to align it again)
 
+/**
+ * Builds the two PS5 controllers (driver + operator), binds every button/trigger/d-pad to a
+ * command, and computes the driver's swerve drive request every loop (translation, rotation,
+ * auto-aim, axis-align). See the project README/docs for the full control layout table.
+ *
+ * <p>Bindings are grouped into {@link #configureDriverBindings} and {@link
+ * #configureOperatorBindings}. Both controllers can request the same commands (e.g. both drivers
+ * have an intake trigger), since {@code addRequirements()} on each Command already prevents
+ * conflicting commands from running on the same subsystem at once.
+ */
 public class ControlBoard {
   private static ControlBoard instance;
 
@@ -51,6 +61,10 @@ public class ControlBoard {
 
   public boolean isBlue = false;
 
+  // Turns the robot to face the hub (used while shooting) and to snap onto the nearest
+  // trench's Y-axis (used for axis-align). Both drive the rotational rate of the swerve
+  // request in getDriverRequest() below — they're not position controllers, they're
+  // "how fast should we spin right now to close this angle/position error" controllers.
   private PIDController autoAimController = new PIDController(0.4, 0.0, 0.01);
   private PIDController axisAlignController =
       new PIDController(0.5, 0, 0.05); // , new Constraints(1, 1));
@@ -121,6 +135,12 @@ public class ControlBoard {
     }
   }
 
+  /**
+   * Axis-align only cares about lining the robot up along the trench's Y-axis, not facing a
+   * specific direction — so instead of driving to one fixed heading, this snaps to whichever of 0°
+   * or 180° is closer to the robot's current heading. That way axis-align works no matter which way
+   * the robot happens to be facing when the driver activates it.
+   */
   private static double getAxisAlignAngle(double currentDegrees) {
     currentDegrees = currentDegrees % 360;
     if (currentDegrees > 180) currentDegrees -= 360;
@@ -245,12 +265,22 @@ public class ControlBoard {
 
   }
 
+  /**
+   * Computes this loop's swerve drive request (translation + rotation) from the driver's sticks,
+   * called every loop as the drivetrain's default command (see {@link #tryInit}). Rotation and
+   * translation can each be overridden — rotation by auto-aim, and Y-translation + rotation by
+   * axis-align — depending on which toggles are currently held.
+   */
   public SwerveRequest getDriverRequest() {
     if (driver == null) return null;
 
+    // Precise mode (right bumper) slows everything down for fine positioning.
     double scale = preciseControl ? 0.2 : 1.0;
     double rotScale = preciseControl ? 0.30 : 1.0;
 
+    // Squaring the stick input (while keeping its sign) gives finer control near the
+    // center of the stick and still reaches full speed at full deflection — a common
+    // FRC trick so small stick movements don't cause big rotation jumps.
     double rawStickRot = driver.rightHorizontalJoystick.getAsDouble();
     double rot =
         rotScale
@@ -258,13 +288,18 @@ public class ControlBoard {
             * (Math.copySign(rawStickRot * rawStickRot, rawStickRot));
 
     if (autoAim) {
+      // While autoAim is held (right trigger), rotation is entirely taken over by a PID
+      // controller pointing the robot at the hub instead of the driver's stick.
       Pose2d robotPose = drive.getPose();
       Pose2d hubPose = FieldConstants.getAllianceHub();
+      // atan2(dy, dx) gives the field-relative angle from the robot straight to the hub.
       double angleDiff =
           Math.toDegrees(
               Math.atan2(hubPose.getY() - robotPose.getY(), hubPose.getX() - robotPose.getX()));
       // SmartDashboard.putNumber("target offness", angleDiff -
       // robotPose.getRotation().getDegrees());
+      // operatorOffset lets the operator nudge the aim angle in 5° steps (D-pad left/right)
+      // to compensate for shots that consistently land off-center.
       rot =
           autoAimController.calculate(
               robotPose.getRotation().getDegrees(), angleDiff + operatorOffset);
@@ -275,14 +310,20 @@ public class ControlBoard {
     double y;
 
     if (axisAlign) {
+      // While axisAlign is held (either joystick press), Y-translation and rotation are
+      // both taken over to auto-drive the robot onto the nearest trench's Y line and
+      // square up to it, so the driver only needs to control forward/back (X) themselves.
       Pose2d robotPose = drive.getPose();
 
-      Pose2d nearestTrench = new Pose2d(5, 5, Rotation2d.fromDegrees(0));
+      Pose2d nearestTrench = new Pose2d(5, 5, Rotation2d.fromDegrees(0)); // unused — dead code
       Pose2d thing = FieldConstants.getNearestTrench(robotPose, isBlue);
       // SmartDashboard.putNumber("ControlBoard/paigus", thing.getY());
+      // PID drives robot Y toward the trench's Y; sign flips because +Y means something
+      // different to blue vs. red alliance perspective.
       y = (isBlue ? 1.0 : -1.0) * axisAlignController.calculate(robotPose.getY(), thing.getY());
       y = Math.min(y, 1.0);
       y = Math.max(y, -1.0);
+      // Square up to face either 0° or 180° (whichever's closer) — see getAxisAlignAngle().
       rot =
           autoAimController.calculate(
               robotPose.getRotation().getDegrees(),

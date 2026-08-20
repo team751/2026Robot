@@ -1,3 +1,5 @@
+// DISABLED for the 2026 season — see the note at the top of ClimberConstants.java for what's
+// needed to bring this mechanism back.
 // package frc.robot.subsystems.climber;
 
 // import com.ctre.phoenix6.controls.DutyCycleOut;

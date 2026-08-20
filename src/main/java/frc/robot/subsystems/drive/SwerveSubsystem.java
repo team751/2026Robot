@@ -30,6 +30,14 @@ import frc.robot.subsystems.drive.generated.TunerConstants.TunerSwerveDrivetrain
 import frc.robot.subsystems.simulation.MapleSimSwerveDrivetrain;
 import java.util.function.Supplier;
 
+/**
+ * The actual swerve drivetrain. Extends CTRE's generated {@code TunerSwerveDrivetrain} (built from
+ * Tuner X's config — see {@link TunerConstants}) and layers on: PathPlanner's AutoBuilder setup (so
+ * autonomous paths can drive this drivetrain), alliance-aware "operator perspective" handling (so
+ * joystick-forward always means away from your own wall), tilt/speed stability checks, and — only
+ * in simulation — a MapleSim physics thread that makes {@link #getPose()} return a physically
+ * simulated pose instead of pure wheel-odometry math.
+ */
 public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem {
   // Rotation2d.kZero;
   private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
@@ -84,12 +92,17 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
     CommandScheduler.getInstance().registerSubsystem(this);
 
     // Configure AutoBuilder HERE (remove from Robot.java)
+    // These PID gains are what PathPlanner uses to correct the robot back onto its planned
+    // path during autonomous — separate from (and not related to) the driver's manual
+    // auto-aim/axis-align PID controllers in ControlBoard.
     PathFollowingController controller =
         new PPHolonomicDriveController(
             new PIDConstants(0.5, 0.0, 0.04), // Translation PID
             new PIDConstants(4.75, 0.0, 0.0) // Rotation PID
             );
 
+    // Wires this drivetrain up to PathPlanner: how to read our pose, reset it, read our
+    // current speeds, and command new speeds, plus which alliance to mirror paths for.
     AutoBuilder.configure(
         this::getPose, // Robot pose supplier
         this::resetPose, // Method to reset odometry
@@ -128,11 +141,14 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
     if (Utils.isSimulation()) startSimThread();
   }
 
+  /** Current robot-relative chassis speeds, computed from each module's actual state. */
   public ChassisSpeeds getRobotRelativeSpeeds() {
     return getKinematics().toChassisSpeeds(getState().ModuleStates);
   }
 
   // This method now accepts DriveFeedforwards as PathPlanner expects
+  // Called by PathPlanner every loop during autonomous to drive the robot along the path;
+  // feedForward is unused here since ApplyRobotSpeeds handles velocity control internally.
   private void drive(ChassisSpeeds robotSpeeds, DriveFeedforwards feedForward) {
     this.setControl(m_pathApplyRobotSpeeds.withSpeeds(robotSpeeds));
   }
@@ -184,6 +200,11 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
     SmartDashboard.putNumber("Swerve/Rotation", pose.getRotation().getDegrees());
   }
 
+  /**
+   * Current robot pose. On real hardware this comes from CTRE's own wheel+vision odometry fusion;
+   * in simulation it comes from MapleSim's physics engine instead, since the real odometry math has
+   * nothing physical to track against in sim.
+   */
   public Pose2d getPose() {
     return simDrivetrain == null
         ? getState().Pose
@@ -198,7 +219,10 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
     return getState().Speeds;
   }
 
-  // IMU stability thresholds
+  // IMU stability thresholds — used to tell whether the robot is sitting flat and still
+  // (e.g. not tipping, not currently driving hard) vs. actively moving/tilting. Not
+  // currently consumed anywhere in this codebase, but available for anything that needs
+  // to know "is the robot safe to trust right now" (e.g. before a climb sequence).
   private static final double PITCH_STABLE_DEG = 5.0;
   private static final double ROLL_STABLE_DEG = 5.0;
   private static final double TILT_RATE_STABLE_DPS = 10.0;
@@ -224,6 +248,9 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
 
   @Override
   public void resetPose(Pose2d pose) {
+    // In sim, the physics engine also needs to be told the new pose, not just CTRE's
+    // internal odometry — otherwise getPose() (which reads from MapleSim, see above)
+    // would disagree with what we just reset to.
     if (simDrivetrain != null) {
       simDrivetrain.mapleSimDrive.setSimulationWorldPose(pose);
       Timer.delay(0.05); // Wait for simulation to update
@@ -287,6 +314,12 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
   private Notifier m_simNotifier = null;
   private static final double kSimLoopPeriod = 0.005;
 
+  /**
+   * Only called in simulation (see the constructor). Spins up MapleSim's physics engine on a
+   * separate {@link Notifier} timer running at 200Hz ({@link #kSimLoopPeriod} = 5ms) — much faster
+   * than the normal 50Hz robot loop — since physics simulation (collisions, wheel slip, etc) needs
+   * a tighter timestep to stay numerically stable than the main control loop does.
+   */
   private void startSimThread() {
     simDrivetrain =
         new MapleSimSwerveDrivetrain(

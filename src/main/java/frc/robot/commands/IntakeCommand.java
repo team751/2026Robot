@@ -4,6 +4,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.intake.ExtenderSubsystem;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 
+/**
+ * Coordinates extending the intake and then spinning it once it's actually out. Extending and
+ * running the intake motor at the same time would just grind the mechanism against whatever it's
+ * unfolding past, so this waits for {@link ExtenderSubsystem#isExtended()} before intaking. Runs
+ * continuously while held (driver left trigger); see {@link #isFinished}.
+ */
 public class IntakeCommand extends Command {
   private final IntakeSubsystem intake;
   private final ExtenderSubsystem extender;
@@ -21,6 +27,7 @@ public class IntakeCommand extends Command {
 
   @Override
   public void execute() {
+    // Only start spinning the intake wheels once the extender has finished unfolding.
     if (extender.isExtended()) {
       intake.requestIntake();
     }

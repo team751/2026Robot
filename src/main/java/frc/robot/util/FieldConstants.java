@@ -227,7 +227,8 @@ public class FieldConstants {
 
   /**
    * Returns a Pose2d offset from a center pose by a distance at an angle. Keeps the original
-   * rotation.
+   * rotation. Useful for computing a point some distance in front of/beside a game element (e.g. a
+   * standoff position to aim from) without hardcoding a second set of coordinates.
    */
   public static Pose2d offsetByAngle(
       Pose2d center, double offsetMeters, double angleOffsetDegrees) {

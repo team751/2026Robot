@@ -4,6 +4,13 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+/**
+ * Runs the two transfer motors (top/bottom) that move a game piece from the intake toward the
+ * shooter. Separate from — and not to be confused with — {@link
+ * frc.robot.subsystems.shooter.ShooterSubsystem}'s own internal transfer motor, which is a distinct
+ * mechanism right at the flywheel. {@link #requestState} lets callers like {@link
+ * frc.robot.commands.SimpleUnstuck} save and restore an exact state rather than just idling.
+ */
 public class TransferSubsystem extends SubsystemBase {
   private static TransferSubsystem instance;
 

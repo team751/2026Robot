@@ -8,6 +8,12 @@ import frc.lib.CTREConfig;
 import frc.robot.Robot;
 import frc.robot.util.Constants.*;
 
+/**
+ * Voltages and CTRE motor configs for the two transfer motors ("top"/"bottom" refer to their
+ * physical mounting, not left/right — see the naming note on {@code
+ * IDConstants.rightTransferMotorID}/{@code leftTransferMotorID} in {@code frc.robot.util.Constants}
+ * for why the CAN IDs look mismatched from these names).
+ */
 public class TransferConstants {
   // TODO: Set current limits and tune the motors. also name/find the canbus to put the motors on
   public static double transfertopspeed = 6;

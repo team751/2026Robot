@@ -1,3 +1,7 @@
+// DISABLED for the 2026 season — the whole climber mechanism (this file and
+// ClimberSubsystem.java) is commented out. CAN IDs for the climber motors are also commented
+// out in frc/robot/util/Constants.java. To re-enable: uncomment both files, restore the motor
+// IDs in Constants.java, and re-add the ClimberSubsystem reference in Superstructure.java.
 // package frc.robot.subsystems.climber;
 
 // import com.ctre.phoenix6.configs.TalonFXConfiguration;

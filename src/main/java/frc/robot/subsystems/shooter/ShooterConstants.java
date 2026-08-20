@@ -8,6 +8,13 @@ import frc.lib.CTREConfig;
 import frc.robot.Robot;
 import frc.robot.util.Constants.*;
 
+/**
+ * Shooter motor configs plus the linear speed-vs-distance curve used by {@code
+ * ShooterSubsystem.calculateShooterSpeed()} to pick a flywheel speed based on how far the robot is
+ * from the hub. {@code flywheelSpeed} doubles as the fixed AASHOOT speed (used when {@code
+ * noDistance} is true) and as the fallback speed when the robot is outside the curve's valid range
+ * — see {@link #minShootingDistance}/{@link #maxShootingDistance}.
+ */
 public class ShooterConstants {
   // TODO: Set current limits and tune the motors. also name/find the canbus to put the motors on
   public static double flywheelSpeed = 36; // Rotations per Second
@@ -15,6 +22,9 @@ public class ShooterConstants {
   public static double slowPercent = 0.5; // Percent 0.0-1.0
   public static double transferSpitVoltage = -2;
 
+  // Used by ShooterSubsystem.calculateShooterSpeed() to turn hub distance into a flywheel
+  // speed — see that method for the exact formula. Tune this pair by shooting from several
+  // known distances and fitting a line to the flywheel speed that worked at each one.
   public static final double shooterDistanceCurveYIntercept = -420; // RPM at 0 distance
   public static final double shooterDistanceCurveSlope = 16.8; // RPM per cm
   public static final double minShootingDistance =

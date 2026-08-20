@@ -13,6 +13,9 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+  // This is the stock WPILib template file — it's basically unused in this project.
+  // Real robot-wide constants (CAN IDs, etc) live in frc.robot.util.Constants instead;
+  // see that file's header comment for the motor ID numbering scheme.
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
   }
