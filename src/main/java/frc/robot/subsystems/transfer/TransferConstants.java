@@ -23,7 +23,7 @@ public class TransferConstants {
     transfertopconfig
         .withName("Transfer Top Motor")
         .withCanID(IDConstants.rightTransferMotorID)
-        .withBus(Robot.riobus);
+        .withBus(Robot.gamepiecebus);
 
     TalonFXConfiguration transfertopConfig = transfertopconfig.config;
     transfertopConfig.Slot0.kP = 0.1; // Increase until speed oscillates
@@ -48,7 +48,7 @@ public class TransferConstants {
     transferbottomconfig
         .withName("Transfer Bottom Motor")
         .withCanID(IDConstants.leftTransferMotorID)
-        .withBus(Robot.riobus);
+        .withBus(Robot.gamepiecebus);
 
     TalonFXConfiguration transferbottomConfig = transferbottomconfig.config;
 

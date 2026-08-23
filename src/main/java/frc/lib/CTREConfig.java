@@ -13,7 +13,7 @@ import java.util.function.Supplier;
 public class CTREConfig<Device extends ParentDevice, Config extends ParentConfiguration> {
   public String name = "UNNAMED";
   public int canID = 0;
-  public CANBus canbus = Robot.riobus;
+  public CANBus canbus = Robot.gamepiecebus;
   public Config config;
   public boolean optimizeBus = true;
 
