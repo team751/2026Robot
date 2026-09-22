@@ -64,11 +64,7 @@ public class ShooterSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     switch (state) {
-      case IDLE -> {
-        // Stop the feed immediately; don't wait for the flywheel to spin down
-        setShooterMotor(0);
-        setTransferMotor(0);
-      }
+      case IDLE -> setShooterSpeed(0, 0);
       case AASHOOT -> setShooterSpeed(
           ShooterConstants.flywheelSpeed, ShooterConstants.transferVoltage);
       case REVERSE -> setTransferMotor(ShooterConstants.transferSpitVoltage);
