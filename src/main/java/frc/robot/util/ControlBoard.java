@@ -171,11 +171,11 @@ public class ControlBoard {
         new StartEndCommand(() -> autoAim = true, () -> autoAim = false)
             .withName("Auto Aim Toggle"));
 
-    controller.rightTrigger.whileTrue(
-        new JiggleCommand(
-            IntakeSubsystem.getInstance(),
-            ExtenderSubsystem.getInstance(),
-            TransferSubsystem.getInstance()));
+    // controller.rightTrigger.whileTrue(
+    //     new JiggleCommand(
+    //         IntakeSubsystem.getInstance(),
+    //         ExtenderSubsystem.getInstance(),
+    //         TransferSubsystem.getInstance()));
 
     controller.rightJoystickButton.whileTrue(
         new StartEndCommand(() -> axisAlign = true, () -> axisAlign = false)
