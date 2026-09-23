@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "red left bottom"
+            "pathName": "red left"
           }
         },
         {
@@ -30,15 +30,21 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "StopShoot"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "Copy of Copy of red left bottom"
+            "pathName": "Copy of red left"
           }
         }
       ]
     }
   },
-  "resetOdom": true,
+  "resetOdom": false,
   "folder": "Comp Autos",
   "choreoAuto": false
 }

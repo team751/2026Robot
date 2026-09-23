@@ -30,15 +30,21 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "StopShoot"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": "Copy of Copy of red left bottom"
+            "pathName": "Copy of red left bottom"
           }
         }
       ]
     }
   },
-  "resetOdom": true,
+  "resetOdom": false,
   "folder": "Comp Autos",
   "choreoAuto": false
 }
