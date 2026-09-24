@@ -209,8 +209,8 @@ public class ControlBoard {
     controller.dDown.whileTrue(
         new InstantCommand(() -> ExtenderSubsystem.getInstance().requestRetract()));
 
-    controller.dLeft.whileTrue(new InstantCommand(() -> operatorOffset += isBlue ? -5.0 : 5.0));
-    controller.dRight.whileTrue(new InstantCommand(() -> operatorOffset += isBlue ? 5.0 : -5.0));
+    controller.dRight.whileTrue(new InstantCommand(() -> operatorOffset += isBlue ? -5.0 : 5.0));
+    controller.dLeft.whileTrue(new InstantCommand(() -> operatorOffset += isBlue ? 5.0 : -5.0));
 
     controller.crossButton.whileTrue(
         new JiggleCommand(
