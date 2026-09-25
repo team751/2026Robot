@@ -125,7 +125,7 @@
       ]
     }
   },
-  "resetOdom": false,
+  "resetOdom": true,
   "folder": "Comp Autos",
   "choreoAuto": false
 }
