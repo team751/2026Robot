@@ -3,6 +3,7 @@ package frc.robot.subsystems.intake;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.littletonrobotics.junction.Logger;
 
 public class IntakeSubsystem extends SubsystemBase {
   private static IntakeSubsystem instance;
@@ -52,9 +53,13 @@ public class IntakeSubsystem extends SubsystemBase {
         case SPITTING -> setIntakeMotor(IntakeConstants.spitSpeed);
       }
     }
-    // SmartDashboard.putString("Intake/Intake State", state.toString());
-    // SmartDashboard.putNumber("Intake/Intake Speed",
-    // intakeMotor.getVelocity().getValueAsDouble());
+
+    Logger.recordOutput("Intake/State", state);
+    Logger.recordOutput("Intake/Velocity", intakeMotor.getVelocity().getValueAsDouble());
+    Logger.recordOutput(
+        "Intake/AppliedVolts", intakeMotor.getMotorVoltage().getValueAsDouble());
+    Logger.recordOutput(
+        "Intake/StatorCurrentAmps", intakeMotor.getStatorCurrent().getValueAsDouble());
   }
 
   /**

@@ -20,7 +20,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -29,6 +28,7 @@ import frc.robot.subsystems.drive.generated.TunerConstants;
 import frc.robot.subsystems.drive.generated.TunerConstants.TunerSwerveDrivetrain;
 import frc.robot.subsystems.simulation.MapleSimSwerveDrivetrain;
 import java.util.function.Supplier;
+import org.littletonrobotics.junction.Logger;
 
 public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem {
   // Rotation2d.kZero;
@@ -99,10 +99,10 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
         SwerveConstants.robotConfig, // RobotConfig
         () -> {
           // Boolean supplier for alliance color
-          // var alliance = DriverStation.getAlliance();
-          // if (alliance.isPresent()) {
-          //   return alliance.get() == DriverStation.Alliance.Red;
-          // }
+          var alliance = DriverStation.getAlliance();
+          if (alliance.isPresent()) {
+            return alliance.get() == DriverStation.Alliance.Red;
+          }
           return false;
         },
         this);
@@ -160,28 +160,29 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
 
     //     setOperatorPerspectiveAndAdjustPose(rot);
     //   }
-
-    //   // DriverStation.getAlliance()
-    //   //     .ifPresent(
-    //   //         allianceColor -> {
-    //   //             var rot =
-    //   //                 allianceColor == Alliance.Red
-    //   //                 ? kRedAlliancePerspectiveRotation
-    //   //                 : kBlueAlliancePerspectiveRotation;
-    //   //             setOperatorPerspectiveForward(rot);
-    //   //             m_hasAppliedOperatorPerspective = true;
-    //   //             SmartDashboard.putNumber("OperatorPerspectiveDeg", rot.getDegrees());
-    //   //             SmartDashboard.putString("OperatorPerspectiveAlliance",
-    // allianceColor.name());
-    //   //         }
-    //   //     );
     // }
 
-    // Shows where SwerveDrive thinks the robot is positioned on the field.
-    Pose2d pose = getPose();
-    SmartDashboard.putNumber("Swerve/Pose x", pose.getX());
-    SmartDashboard.putNumber("Swerve/Pose y", pose.getY());
-    SmartDashboard.putNumber("Swerve/Rotation", pose.getRotation().getDegrees());
+    // AdvantageKit telemetry — logged every cycle, written to the .wpilog and NT4.
+    var state = getState();
+
+    Logger.recordOutput("Swerve/Pose", getPose());
+    Logger.recordOutput("Swerve/ModuleStates", state.ModuleStates);
+    Logger.recordOutput("Swerve/ModuleTargets", state.ModuleTargets);
+    Logger.recordOutput("Swerve/ModulePositions", state.ModulePositions);
+    Logger.recordOutput("Swerve/ChassisSpeeds", state.Speeds);
+    Logger.recordOutput("Swerve/OdometryPeriod", state.OdometryPeriod);
+    Logger.recordOutput("Swerve/SuccessfulDaqs", state.SuccessfulDaqs);
+    Logger.recordOutput("Swerve/FailedDaqs", state.FailedDaqs);
+
+    Logger.recordOutput("Swerve/RawHeading", state.RawHeading);
+    Logger.recordOutput("Swerve/Pitch", getPigeon2().getPitch().getValueAsDouble());
+    Logger.recordOutput("Swerve/Roll", getPigeon2().getRoll().getValueAsDouble());
+    Logger.recordOutput(
+        "Swerve/YawRate", getPigeon2().getAngularVelocityZWorld().getValueAsDouble());
+
+    Logger.recordOutput("Swerve/PitchStable", getPitchStable());
+    Logger.recordOutput("Swerve/RollStable", getRollStable());
+    Logger.recordOutput("Swerve/Stable", getStable());
   }
 
   public Pose2d getPose() {
@@ -274,12 +275,7 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
     m_operatorPerspectiveRotation = newRot;
     m_hasAppliedOperatorPerspective = true;
 
-    SmartDashboard.putNumber("OperatorPerspectiveDeg", newRot.getDegrees());
-    // SmartDashboard.putString(
-    //     "OperatorPerspectiveAlliance",
-    //     DriverStation.getAlliance().isPresent()
-    //         ? DriverStation.getAlliance().get().name()
-    //         : "Unknown");
+    Logger.recordOutput("Swerve/OperatorPerspectiveDeg", newRot.getDegrees());
   }
 
   // Simulation support

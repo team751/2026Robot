@@ -6,12 +6,11 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.vision.LimelightConstants;
 import frc.robot.subsystems.vision.LimelightSubsystem;
 import frc.robot.util.LimelightHelpers;
+import org.littletonrobotics.junction.Logger;
 
 /* Rough overview of what Odometry.java does and how it works.
  * Odometry tells the driver where the robot is at all times.
@@ -42,7 +41,6 @@ public class Odometry extends SubsystemBase {
   private static Odometry instance;
   private final SwerveSubsystem drive;
   private final LimelightSubsystem limelights;
-  private Field2d field = new Field2d();
   public Pose2d robotPose;
 
   // Per-camera stability counters
@@ -114,10 +112,10 @@ public class Odometry extends SubsystemBase {
 
     // Publish raw vision pose for debugging regardless of acceptance
     if (estimate != null && estimate.tagCount > 0) {
-      // SmartDashboard.putNumber(telemetryPrefix + "/RawX", estimate.pose.getX());
-      // SmartDashboard.putNumber(telemetryPrefix + "/RawY", estimate.pose.getY());
-      // SmartDashboard.putNumber(telemetryPrefix + "/TagCount", estimate.tagCount);
-      // SmartDashboard.putNumber(telemetryPrefix + "/AvgTagDist", estimate.avgTagDist);
+      Logger.recordOutput(telemetryPrefix + "/RawPose", estimate.pose);
+      Logger.recordOutput(telemetryPrefix + "/TagCount", estimate.tagCount);
+      Logger.recordOutput(telemetryPrefix + "/AvgTagDist", estimate.avgTagDist);
+      Logger.recordOutput(telemetryPrefix + "/Latency", estimate.latency);
     }
 
     if (!isValidEstimate(estimate)) return -1;
@@ -139,11 +137,10 @@ public class Odometry extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (isRotatingTooFast()) {
-      SmartDashboard.putBoolean("Odometry/VisionRejected", true);
-    } else {
-      SmartDashboard.putBoolean("Odometry/VisionRejected", false);
+    boolean rejected = isRotatingTooFast();
+    Logger.recordOutput("Odometry/VisionRejected", rejected);
 
+    if (!rejected) {
       int frontResult =
           applyVisionEstimate(
               limelights.getBotPoseFront(), LimelightConstants.FRONT_STD_DEVS, "Vision/Front");
@@ -158,11 +155,12 @@ public class Odometry extends SubsystemBase {
     }
 
     robotPose = drive.getPose();
-    field.setRobotPose(robotPose.getX(), robotPose.getY(), robotPose.getRotation());
 
-    SmartDashboard.putBoolean("Odometry/PoseStable", isPoseStable());
-    SmartDashboard.putBoolean("Odometry/FrontStable", isFrontStable());
-    // SmartDashboard.putBoolean("Odometry/SideStable", isSideStable());
-    SmartDashboard.putData(field);
+    Logger.recordOutput("Odometry/Robot", robotPose);
+    Logger.recordOutput("Odometry/PoseStable", isPoseStable());
+    Logger.recordOutput("Odometry/FrontStable", isFrontStable());
+    Logger.recordOutput("Odometry/SideStable", isSideStable());
+    Logger.recordOutput("Odometry/FrontStableCount", frontStableCount);
+    Logger.recordOutput("Odometry/SideStableCount", sideStableCount);
   }
 }

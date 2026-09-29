@@ -3,6 +3,7 @@ package frc.robot.subsystems.transfer;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.littletonrobotics.junction.Logger;
 
 public class TransferSubsystem extends SubsystemBase {
   private static TransferSubsystem instance;
@@ -44,14 +45,19 @@ public class TransferSubsystem extends SubsystemBase {
       case REVERSE -> setMotors(
           -TransferConstants.transfertopspeed, -TransferConstants.transferbottomspeed);
     }
+
+    Logger.recordOutput("Transfer/State", state);
+    Logger.recordOutput("Transfer/TopVelocity", topMotor.getVelocity().getValueAsDouble());
+    Logger.recordOutput("Transfer/BottomVelocity", bottomMotor.getVelocity().getValueAsDouble());
+    Logger.recordOutput(
+        "Transfer/TopCurrent", topMotor.getStatorCurrent().getValueAsDouble());
+    Logger.recordOutput(
+        "Transfer/BottomCurrent", bottomMotor.getStatorCurrent().getValueAsDouble());
   }
 
   private void setMotors(double topVoltage, double bottomVoltage) {
     topMotor.setControl(topControl.withOutput(topVoltage));
     bottomMotor.setControl(bottomControl.withOutput(bottomVoltage));
-    // SmartDashboard.putNumber("Transfer/Top Speed", topMotor.getVelocity().getValueAsDouble());
-    // SmartDashboard.putNumber("Transfer/Bottom Speed",
-    // bottomMotor.getVelocity().getValueAsDouble());
   }
 
   public TransferState getState() {
@@ -60,21 +66,17 @@ public class TransferSubsystem extends SubsystemBase {
 
   public void requestState(TransferState newState) {
     state = newState;
-    // SmartDashboard.putString("Transfer/State", state.toString());
   }
 
   public void requestTransfer() {
     state = TransferState.TRANSFER;
-    // SmartDashboard.putString("Transfer/State", state.toString());
   }
 
   public void requestReverse() {
     state = TransferState.REVERSE;
-    // SmartDashboard.putString("Transfer/State", state.toString());
   }
 
   public void requestIdle() {
     state = TransferState.IDLE;
-    // SmartDashboard.putString("Transfer/State", state.toString());
   }
 }
