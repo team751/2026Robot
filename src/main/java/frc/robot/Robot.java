@@ -3,6 +3,7 @@ package frc.robot;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.SignalLogger;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -33,6 +34,10 @@ public class Robot extends TimedRobot {
   private Command autonomousCommand;
 
   public Robot() {
+    // Record all NetworkTables data (+ DS/joystick data) to a .wpilog on the RIO
+    DataLogManager.start();
+    DriverStation.startDataLog(DataLogManager.getLog());
+
     // Odometry.getInstance();
     scheduler = CommandScheduler.getInstance();
     swerve = SwerveSubsystem.getInstance();

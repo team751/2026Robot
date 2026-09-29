@@ -6,6 +6,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -48,6 +50,16 @@ public class Odometry extends SubsystemBase {
   // Per-camera stability counters
   private int frontStableCount = 0;
   private int sideStableCount = 0;
+
+  // Raw Limelight poses (what each camera sees, before fusion) for AdvantageScope / logs
+  private final StructArrayPublisher<Pose2d> frontVisionPosePub =
+      NetworkTableInstance.getDefault()
+          .getStructArrayTopic("Vision/Front/RawPose", Pose2d.struct)
+          .publish();
+  private final StructArrayPublisher<Pose2d> sideVisionPosePub =
+      NetworkTableInstance.getDefault()
+          .getStructArrayTopic("Vision/Side/RawPose", Pose2d.struct)
+          .publish();
 
   public Odometry() {
     this.drive = SwerveSubsystem.getInstance();
@@ -114,10 +126,10 @@ public class Odometry extends SubsystemBase {
 
     // Publish raw vision pose for debugging regardless of acceptance
     if (estimate != null && estimate.tagCount > 0) {
-      // SmartDashboard.putNumber(telemetryPrefix + "/RawX", estimate.pose.getX());
-      // SmartDashboard.putNumber(telemetryPrefix + "/RawY", estimate.pose.getY());
-      // SmartDashboard.putNumber(telemetryPrefix + "/TagCount", estimate.tagCount);
-      // SmartDashboard.putNumber(telemetryPrefix + "/AvgTagDist", estimate.avgTagDist);
+      SmartDashboard.putNumber(telemetryPrefix + "/RawX", estimate.pose.getX());
+      SmartDashboard.putNumber(telemetryPrefix + "/RawY", estimate.pose.getY());
+      SmartDashboard.putNumber(telemetryPrefix + "/TagCount", estimate.tagCount);
+      SmartDashboard.putNumber(telemetryPrefix + "/AvgTagDist", estimate.avgTagDist);
     }
 
     if (!isValidEstimate(estimate)) return -1;
@@ -137,22 +149,37 @@ public class Odometry extends SubsystemBase {
     return (distance < LimelightConstants.POSE_STABLE_EPSILON_METERS) ? 1 : 0;
   }
 
+  /** Logs the raw Limelight pose, or an empty array when no tags are seen (avoids stale poses). */
+  private void publishRawVisionPose(
+      StructArrayPublisher<Pose2d> publisher, LimelightHelpers.PoseEstimate estimate) {
+    if (isValidEstimate(estimate)) {
+      publisher.set(new Pose2d[] {estimate.pose});
+    } else {
+      publisher.set(new Pose2d[] {});
+    }
+  }
+
   @Override
   public void periodic() {
+    LimelightHelpers.PoseEstimate frontEstimate = limelights.getBotPoseFront();
+    LimelightHelpers.PoseEstimate sideEstimate = limelights.getBotPoseSide();
+
+    // Log what the cameras see before any rejection, so rejected poses show up too
+    publishRawVisionPose(frontVisionPosePub, frontEstimate);
+    publishRawVisionPose(sideVisionPosePub, sideEstimate);
+
     if (isRotatingTooFast()) {
       SmartDashboard.putBoolean("Odometry/VisionRejected", true);
     } else {
       SmartDashboard.putBoolean("Odometry/VisionRejected", false);
 
       int frontResult =
-          applyVisionEstimate(
-              limelights.getBotPoseFront(), LimelightConstants.FRONT_STD_DEVS, "Vision/Front");
+          applyVisionEstimate(frontEstimate, LimelightConstants.FRONT_STD_DEVS, "Vision/Front");
       if (frontResult == 1) frontStableCount++;
       else if (frontResult == 0) frontStableCount = 0;
 
       int sideResult =
-          applyVisionEstimate(
-              limelights.getBotPoseSide(), LimelightConstants.SIDE_STD_DEVS, "Vision/Side");
+          applyVisionEstimate(sideEstimate, LimelightConstants.SIDE_STD_DEVS, "Vision/Side");
       if (sideResult == 1) sideStableCount++;
       else if (sideResult == 0) sideStableCount = 0;
     }
