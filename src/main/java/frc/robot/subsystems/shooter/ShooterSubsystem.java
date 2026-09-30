@@ -79,8 +79,7 @@ public class ShooterSubsystem extends SubsystemBase {
         "Shooter/FlywheelError", targetRPS - flywheelMotor.getVelocity().getValueAsDouble());
     Logger.recordOutput(
         "Shooter/FlywheelCurrent", flywheelMotor.getStatorCurrent().getValueAsDouble());
-    Logger.recordOutput(
-        "Shooter/FollowCurrent", followMotor.getStatorCurrent().getValueAsDouble());
+    Logger.recordOutput("Shooter/FollowCurrent", followMotor.getStatorCurrent().getValueAsDouble());
     Logger.recordOutput("Shooter/DistanceFromHubCM", getRobotDistanceFromHub());
     Logger.recordOutput("Shooter/CanShoot", canShoot());
     Logger.recordOutput("Shooter/CalculatedSpeed", calculateShooterSpeed());

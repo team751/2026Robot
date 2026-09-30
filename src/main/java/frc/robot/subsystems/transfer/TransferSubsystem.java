@@ -49,8 +49,7 @@ public class TransferSubsystem extends SubsystemBase {
     Logger.recordOutput("Transfer/State", state);
     Logger.recordOutput("Transfer/TopVelocity", topMotor.getVelocity().getValueAsDouble());
     Logger.recordOutput("Transfer/BottomVelocity", bottomMotor.getVelocity().getValueAsDouble());
-    Logger.recordOutput(
-        "Transfer/TopCurrent", topMotor.getStatorCurrent().getValueAsDouble());
+    Logger.recordOutput("Transfer/TopCurrent", topMotor.getStatorCurrent().getValueAsDouble());
     Logger.recordOutput(
         "Transfer/BottomCurrent", bottomMotor.getStatorCurrent().getValueAsDouble());
   }

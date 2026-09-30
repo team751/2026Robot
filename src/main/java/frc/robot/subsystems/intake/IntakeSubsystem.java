@@ -56,8 +56,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
     Logger.recordOutput("Intake/State", state);
     Logger.recordOutput("Intake/Velocity", intakeMotor.getVelocity().getValueAsDouble());
-    Logger.recordOutput(
-        "Intake/AppliedVolts", intakeMotor.getMotorVoltage().getValueAsDouble());
+    Logger.recordOutput("Intake/AppliedVolts", intakeMotor.getMotorVoltage().getValueAsDouble());
     Logger.recordOutput(
         "Intake/StatorCurrentAmps", intakeMotor.getStatorCurrent().getValueAsDouble());
   }
