@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.subsystems.drive.generated.TunerConstants;
 import frc.robot.subsystems.drive.generated.TunerConstants.TunerSwerveDrivetrain;
 import frc.robot.subsystems.simulation.MapleSimSwerveDrivetrain;
+import frc.robot.subsystems.vision.PhotonVisionSim;
 import java.util.function.Supplier;
 
 public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem {
@@ -182,9 +183,29 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
     SmartDashboard.putNumber("Swerve/Pose x", pose.getX());
     SmartDashboard.putNumber("Swerve/Pose y", pose.getY());
     SmartDashboard.putNumber("Swerve/Rotation", pose.getRotation().getDegrees());
+
+    // How far odometry + vision has drifted from where the robot really is (sim only)
+    if (simDrivetrain != null) {
+      SmartDashboard.putNumber(
+          "Sim/PoseErrorMeters",
+          getState().Pose.getTranslation().getDistance(getGroundTruthPose().getTranslation()));
+    }
   }
 
+  /**
+   * Sim only. true: getPose() returns the CTRE pose estimator (wheel odometry + vision), exactly
+   * like the real robot, so sim actually tests vision fusion. false: getPose() returns MapleSim's
+   * perfect ground-truth pose, handy for testing mechanisms without any pose error.
+   */
+  private static final boolean SIM_USE_ESTIMATED_POSE = true;
+
   public Pose2d getPose() {
+    if (simDrivetrain == null || SIM_USE_ESTIMATED_POSE) return getState().Pose;
+    return getGroundTruthPose();
+  }
+
+  /** Where the robot REALLY is in sim (MapleSim). On the real robot, same as getPose(). */
+  public Pose2d getGroundTruthPose() {
     return simDrivetrain == null
         ? getState().Pose
         : simDrivetrain.mapleSimDrive.getSimulatedDriveTrainPose();
@@ -222,13 +243,31 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
     return getPitchStable() && getRollStable() && linearSpeed < SPEED_STABLE_MPS;
   }
 
+  // FPGA time of the last pose reset. Vision frames captured before this describe where the robot
+  // was before the reset, so Odometry throws them away.
+  private double lastResetFpgaTime = Double.NEGATIVE_INFINITY;
+
+  public double getLastResetFpgaTime() {
+    return lastResetFpgaTime;
+  }
+
   @Override
   public void resetPose(Pose2d pose) {
-    if (simDrivetrain != null) {
-      simDrivetrain.mapleSimDrive.setSimulationWorldPose(pose);
-      Timer.delay(0.05); // Wait for simulation to update
-    }
+    if (simDrivetrain != null) teleportSimRobot(pose);
+    resetEstimator(pose);
+  }
+
+  /** Resets only CTRE's pose estimate (never moves the sim robot). */
+  private void resetEstimator(Pose2d pose) {
     super.resetPose(pose);
+    lastResetFpgaTime = Timer.getFPGATimestamp();
+  }
+
+  /** Sim only: physically moves the MapleSim robot, and what the fake cameras see, to pose. */
+  private void teleportSimRobot(Pose2d pose) {
+    simDrivetrain.mapleSimDrive.setSimulationWorldPose(pose);
+    PhotonVisionSim.onTeleport(pose);
+    Timer.delay(0.05); // Wait for simulation to update
   }
 
   public void setRobotRotationByAlliance() {
@@ -263,13 +302,20 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
     double delta = newRad - oldRad;
     Rotation2d deltaRot = new Rotation2d(delta);
 
-    Pose2d currentPose = getPose();
-    Pose2d adjusted =
-        new Pose2d(currentPose.getTranslation(), currentPose.getRotation().rotateBy(deltaRot));
+    // Rotate the pose estimate in place. In sim, rotate the MapleSim robot in place too —
+    // separately, because the estimate and the true pose can differ, and resetPose() would
+    // teleport the true pose onto the estimate. Truth goes first: the sim Pigeon copies MapleSim's
+    // heading, so CTRE has to be reset after the Pigeon has caught up.
+    Pose2d estimate = getState().Pose;
+    if (simDrivetrain != null) {
+      Pose2d truth = getGroundTruthPose();
+      teleportSimRobot(new Pose2d(truth.getTranslation(), truth.getRotation().rotateBy(deltaRot)));
+    }
 
     // Apply the operator perspective and reset odometry to the adjusted pose
     setOperatorPerspectiveForward(newRot);
-    resetPose(adjusted);
+    resetEstimator(
+        new Pose2d(estimate.getTranslation(), estimate.getRotation().rotateBy(deltaRot)));
 
     m_operatorPerspectiveRotation = newRot;
     m_hasAppliedOperatorPerspective = true;

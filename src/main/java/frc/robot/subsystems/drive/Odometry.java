@@ -3,35 +3,33 @@ package frc.robot.subsystems.drive;
 import com.ctre.phoenix6.Utils;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.vision.LimelightConstants;
-import frc.robot.subsystems.vision.LimelightSubsystem;
 import frc.robot.subsystems.vision.PhotonVisionConstants;
 import frc.robot.subsystems.vision.PhotonVisionSubsystem;
-import frc.robot.util.LimelightHelpers;
+import frc.robot.subsystems.vision.PhotonVisionSubsystem.VisionObservation;
+import frc.robot.util.FieldConstants;
 import java.util.List;
-import org.photonvision.EstimatedRobotPose;
-import org.photonvision.targeting.PhotonTrackedTarget;
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 /* Rough overview of what Odometry.java does and how it works.
  * Odometry tells the driver where the robot is at all times.
  * It's also VERY VERY useful for auton since during that period
  * the robot must know where it is to properly drive to each place
  *
- * The robot can tell where it is using 2 ways: Limelights/Vision and Dead-Reckoning (using Motor Encoders)
+ * The robot can tell where it is using 2 ways: Vision (PhotonVision cameras) and Dead-Reckoning
+ * (using Motor Encoders)
  *
- * Vision involves using Limelights to read AprilTags (glorified QR codes) to determine
- * where the robot is. It does a whole bunch of math internally (that we dont care about)
+ * Vision involves using cameras to read AprilTags (glorified QR codes) to determine
+ * where the robot is. PhotonVision does a whole bunch of math (that we dont care about)
  * and then tells us where it thinks the robot is. Unfortunately, we cant always see
- * an AprilTag at all times.
+ * an AprilTag at all times, and sometimes a camera is confidently wrong.
  *
  * Dead-Reckoning, uses the Motor Encoders to determine where the robot is.
  * It measures every rotation of the wheels and the velocity to tell where it is
@@ -40,43 +38,53 @@ import org.photonvision.targeting.PhotonTrackedTarget;
  * off and no longer accurate.
  *
  * Luckily, we can add these two together to be very very accurate (more or less) as
- * to where the robot is at all times! Whenever we see an AprilTag, we set our
- * robot postition there. When we no longer see an AprilTag, our last known position is
- * saved and SwerveDrive takes over with Dead-Reckoning to determine where we are until
- * we see another AprilTag!
+ * to where the robot is at all times! Every vision estimate first goes through a set of
+ * sanity checks (getRejectReason). The ones that pass get blended into the pose, weighted by how
+ * much we trust them (computeStdDevs): many close tags = lots of trust, one far tag = very little.
+ * When we no longer see an AprilTag, SwerveDrive keeps going with Dead-Reckoning until we
+ * see another AprilTag!
  */
 
 public class Odometry extends SubsystemBase {
   private static Odometry instance;
   private final SwerveSubsystem drive;
-  private final LimelightSubsystem limelights;
   private final PhotonVisionSubsystem photon;
   private Field2d field = new Field2d();
   public Pose2d robotPose;
 
-  // Per-camera stability counters
-  private int frontStableCount = 0;
-  private int sideStableCount = 0;
+  /** Per-camera bookkeeping, for the dashboard only. */
+  private static class CameraStats {
+    private final String prefix;
+    private int stableCount = 0;
+    private int acceptedCount = 0;
+    private int rejectedCount = 0;
+    private double lastAcceptedTime = Double.NEGATIVE_INFINITY;
 
-  // Raw Limelight poses (what each camera sees, before fusion) for AdvantageScope / logs
-  private final StructArrayPublisher<Pose2d> frontVisionPosePub =
-      NetworkTableInstance.getDefault()
-          .getStructArrayTopic("Vision/Front/RawPose", Pose2d.struct)
-          .publish();
-  private final StructArrayPublisher<Pose2d> sideVisionPosePub =
-      NetworkTableInstance.getDefault()
-          .getStructArrayTopic("Vision/Side/RawPose", Pose2d.struct)
-          .publish();
+    CameraStats(String prefix) {
+      this.prefix = prefix;
+    }
 
-  public Odometry() {
+    boolean isStable() {
+      return stableCount >= PhotonVisionConstants.POSE_STABLE_THRESHOLD;
+    }
+  }
+
+  private final CameraStats front = new CameraStats("Vision/Front");
+  private final CameraStats side = new CameraStats("Vision/Side");
+
+  private Odometry() {
     this.drive = SwerveSubsystem.getInstance();
-    this.limelights = LimelightSubsystem.getInstance();
     this.photon = PhotonVisionSubsystem.getInstance();
     this.robotPose = new Pose2d();
   }
 
   public static Odometry getInstance() {
-    if (instance == null) instance = new Odometry();
+    if (instance == null) {
+      // Created first on purpose: subsystems' periodic() run in the order they were created, so
+      // this way PhotonVision reads this loop's camera frames before Odometry fuses them.
+      PhotonVisionSubsystem.getInstance();
+      instance = new Odometry();
+    }
     return instance;
   }
 
@@ -97,151 +105,153 @@ public class Odometry extends SubsystemBase {
   }
 
   public boolean isFrontStable() {
-    return frontStableCount >= LimelightConstants.POSE_STABLE_THRESHOLD;
+    return front.isStable();
   }
 
   public boolean isSideStable() {
-    return sideStableCount >= LimelightConstants.POSE_STABLE_THRESHOLD;
-  }
-
-  private boolean isValidEstimate(LimelightHelpers.PoseEstimate estimate) {
-    if (estimate == null) return false;
-    if (estimate.tagCount == 0) return false;
-    if (estimate.pose.getX() == 0.0 && estimate.pose.getY() == 0.0) return false;
-    return true;
+    return side.isStable();
   }
 
   private boolean isRotatingTooFast() {
     double yawRate = Math.abs(drive.getPigeon2().getAngularVelocityZWorld().getValueAsDouble());
-    return yawRate > LimelightConstants.MAX_ANGULAR_VELOCITY_DPS;
-  }
-
-  private Matrix<N3, N1> computeStdDevs(
-      Matrix<N3, N1> baseStdDevs, LimelightHelpers.PoseEstimate estimate) {
-    Matrix<N3, N1> scaled = baseStdDevs.times(estimate.avgTagDist);
-    if (estimate.tagCount > 1) {
-      scaled = scaled.times(LimelightConstants.MULTI_TAG_STD_DEV_FACTOR);
-    }
-    return scaled;
+    return yawRate > PhotonVisionConstants.MAX_ANGULAR_VELOCITY_DPS;
   }
 
   /**
-   * @return the stability count delta: +1 if vision agrees with odometry, reset to 0 if not, or -1
-   *     if the estimate was rejected (caller should not update counter).
+   * @return why this estimate shouldn't be trusted, or null if it passes every check.
    */
-  private int applyVisionEstimate(
-      LimelightHelpers.PoseEstimate estimate, Matrix<N3, N1> baseStdDevs, String telemetryPrefix) {
+  private String getRejectReason(VisionObservation observation) {
+    Pose3d pose = observation.estimate().estimatedPose;
+    double timestamp = observation.estimate().timestampSeconds;
 
-    // Publish raw vision pose for debugging regardless of acceptance
-    if (estimate != null && estimate.tagCount > 0) {
-      SmartDashboard.putNumber(telemetryPrefix + "/RawX", estimate.pose.getX());
-      SmartDashboard.putNumber(telemetryPrefix + "/RawY", estimate.pose.getY());
-      SmartDashboard.putNumber(telemetryPrefix + "/TagCount", estimate.tagCount);
-      SmartDashboard.putNumber(telemetryPrefix + "/AvgTagDist", estimate.avgTagDist);
+    // Every check below is "reject if value > limit", and any comparison with NaN is false, so
+    // a NaN would sail through all of them and then poison the pose for the rest of the match.
+    if (!Double.isFinite(pose.getX())
+        || !Double.isFinite(pose.getY())
+        || !Double.isFinite(pose.getZ())
+        || !Double.isFinite(timestamp)
+        || !Double.isFinite(observation.avgTagDistanceMeters())) {
+      return "non-finite";
     }
 
-    if (!isValidEstimate(estimate)) return -1;
+    double latency = Timer.getFPGATimestamp() - timestamp;
+    if (latency < 0 || latency > PhotonVisionConstants.MAX_LATENCY_S) return "latency";
 
-    Pose2d visionPose =
-        new Pose2d(estimate.pose.getX(), estimate.pose.getY(), drive.getPose().getRotation());
+    // Seen before the last pose reset: it describes where the robot was before the reset.
+    // (Checked after latency, so broken time sync shows up as "latency", not as this.)
+    if (timestamp < drive.getLastResetFpgaTime()) return "before reset";
 
-    // Use CTRE clock (same domain as odometry buffer) minus pipeline latency.
-    // estimate.timestampSeconds is FPGA time, but CTRE uses JVM nanoTime internally —
-    // different clocks cause measurements to fall outside the odometry buffer.
-    double visionTimestamp = Utils.getCurrentTimeSeconds() - (estimate.latency / 1000.0);
+    if (Math.abs(pose.getZ()) > PhotonVisionConstants.MAX_Z_ERROR_M) return "not on floor";
 
-    drive.addVisionMeasurement(visionPose, visionTimestamp, computeStdDevs(baseStdDevs, estimate));
+    double margin = PhotonVisionConstants.FIELD_BORDER_MARGIN_M;
+    if (pose.getX() < -margin
+        || pose.getX() > FieldConstants.FIELD_LENGTH + margin
+        || pose.getY() < -margin
+        || pose.getY() > FieldConstants.FIELD_WIDTH + margin) {
+      return "off field";
+    }
 
-    // Stability tracking
-    double distance = drive.getPose().getTranslation().getDistance(estimate.pose.getTranslation());
-    return (distance < LimelightConstants.POSE_STABLE_EPSILON_METERS) ? 1 : 0;
+    // A single tag can "flip" (two poses that look almost identical to the camera).
+    if (observation.estimate().strategy == PoseStrategy.LOWEST_AMBIGUITY) {
+      if (!Double.isFinite(observation.ambiguity())
+          || observation.ambiguity() > PhotonVisionConstants.MAX_AMBIGUITY) {
+        return "ambiguous";
+      }
+      if (observation.avgTagDistanceMeters() > PhotonVisionConstants.MAX_SINGLE_TAG_DIST_M) {
+        return "single tag too far";
+      }
+    }
+
+    return null;
   }
 
-  private double avgTargetDistanceMeters(List<PhotonTrackedTarget> targets) {
-    double sum = 0.0;
-    for (PhotonTrackedTarget target : targets) {
-      sum += target.getBestCameraToTarget().getTranslation().getNorm();
-    }
-    return sum / targets.size();
+  /** Less trust (bigger std devs) for single tags and for far-away tags. */
+  private Matrix<N3, N1> computeStdDevs(VisionObservation observation) {
+    double distance = observation.avgTagDistanceMeters();
+
+    // Decided by strategy, not tag count alone: the single-tag fallback can run on a frame that
+    // has several tags in view (e.g. multi-tag switched off in the PV UI). And a far-away pair of
+    // tags is nearly one flat target, so it only gets single-tag trust.
+    boolean isMultiTag =
+        observation.estimate().strategy == PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR;
+    boolean isFarTagPair =
+        observation.tagCount() <= 2 && distance > PhotonVisionConstants.FAR_TAG_PAIR_DIST_M;
+    Matrix<N3, N1> base =
+        (isMultiTag && !isFarTagPair)
+            ? PhotonVisionConstants.MULTI_TAG_STD_DEVS
+            : PhotonVisionConstants.SINGLE_TAG_STD_DEVS;
+
+    return base.times(1 + (distance * distance) / PhotonVisionConstants.STD_DEV_DISTANCE_DIVISOR);
   }
 
-  /**
-   * Applies a PhotonVision estimate the same way applyVisionEstimate() applies a Limelight one.
-   * Kept separate (rather than sharing one method) because the two libraries hand us different
-   * result types with no common interface, and an EstimatedRobotPose only reaches here when it's
-   * already valid — there's no null/zero-tag case left to guard against like there is for
-   * LimelightHelpers.PoseEstimate.
-   */
-  private void applyPhotonEstimate(EstimatedRobotPose estimate, Matrix<N3, N1> baseStdDevs) {
-    Pose2d visionPose =
-        new Pose2d(
-            estimate.estimatedPose.getX(),
-            estimate.estimatedPose.getY(),
-            drive.getPose().getRotation());
+  /** Filters and fuses one camera's estimates from this loop. */
+  private void fuseCamera(List<VisionObservation> observations, CameraStats stats) {
+    for (VisionObservation observation : observations) {
+      String rejectReason = getRejectReason(observation);
+      if (rejectReason != null) {
+        // Only written on rejection, so the last reason stays on the dashboard instead of being
+        // instantly overwritten by the next good frame.
+        SmartDashboard.putString(stats.prefix + "/RejectReason", rejectReason);
+        stats.rejectedCount++;
+        continue;
+      }
 
-    // Same clock-domain problem as Limelight (see applyVisionEstimate): estimate.timestampSeconds
-    // is FPGA Timer time, but CTRE's addVisionMeasurement wants Utils.getCurrentTimeSeconds().
-    // Photon gives an absolute timestamp instead of a latency field, so compute the elapsed
-    // capture latency ourselves and apply it to the CTRE clock.
-    double captureLatencySeconds = Timer.getFPGATimestamp() - estimate.timestampSeconds;
-    double visionTimestamp = Utils.getCurrentTimeSeconds() - captureLatencySeconds;
+      // Heading always comes from the gyro (theta std dev is 99999 anyway).
+      Pose2d visionPose =
+          new Pose2d(
+              observation.estimate().estimatedPose.getX(),
+              observation.estimate().estimatedPose.getY(),
+              drive.getPose().getRotation());
 
-    Matrix<N3, N1> stdDevs = baseStdDevs.times(avgTargetDistanceMeters(estimate.targetsUsed));
-    if (estimate.targetsUsed.size() > 1) {
-      stdDevs = stdDevs.times(PhotonVisionConstants.MULTI_TAG_STD_DEV_FACTOR);
+      // estimate.timestampSeconds is FPGA time (PhotonVision time-syncs with the RIO), but CTRE's
+      // addVisionMeasurement wants the Utils.getCurrentTimeSeconds() timebase. fpgaToCurrentTime
+      // converts between the two clocks.
+      double timestamp = Utils.fpgaToCurrentTime(observation.estimate().timestampSeconds);
+
+      // Stability: does vision agree with where odometry thought the robot was when the frame
+      // was CAPTURED? (Not now: at full speed the robot moves ~0.2 m during camera latency.)
+      // Sampled before fusing so this frame's own correction can't make it agree with itself.
+      Pose2d poseAtCapture = drive.samplePoseAt(timestamp).orElse(drive.getPose());
+      double error = poseAtCapture.getTranslation().getDistance(visionPose.getTranslation());
+      stats.stableCount =
+          (error < PhotonVisionConstants.POSE_STABLE_EPSILON_METERS) ? stats.stableCount + 1 : 0;
+
+      drive.addVisionMeasurement(visionPose, timestamp, computeStdDevs(observation));
+      stats.acceptedCount++;
+      stats.lastAcceptedTime = Timer.getFPGATimestamp();
     }
-
-    drive.addVisionMeasurement(visionPose, visionTimestamp, stdDevs);
   }
 
-  /** Logs the raw Limelight pose, or an empty array when no tags are seen (avoids stale poses). */
-  private void publishRawVisionPose(
-      StructArrayPublisher<Pose2d> publisher, LimelightHelpers.PoseEstimate estimate) {
-    if (isValidEstimate(estimate)) {
-      publisher.set(new Pose2d[] {estimate.pose});
-    } else {
-      publisher.set(new Pose2d[] {});
+  private void publishStats(CameraStats stats) {
+    // No vision for a while (lost the tags, or nothing passing the filters): stop claiming stable.
+    if (Timer.getFPGATimestamp() - stats.lastAcceptedTime
+        > PhotonVisionConstants.POSE_STABLE_TIMEOUT_S) {
+      stats.stableCount = 0;
     }
+    SmartDashboard.putNumber(stats.prefix + "/AcceptedCount", stats.acceptedCount);
+    SmartDashboard.putNumber(stats.prefix + "/RejectedCount", stats.rejectedCount);
   }
 
   @Override
   public void periodic() {
-    LimelightHelpers.PoseEstimate frontEstimate = limelights.getBotPoseFront();
-    LimelightHelpers.PoseEstimate sideEstimate = limelights.getBotPoseSide();
-
-    // Log what the cameras see before any rejection, so rejected poses show up too
-    publishRawVisionPose(frontVisionPosePub, frontEstimate);
-    publishRawVisionPose(sideVisionPosePub, sideEstimate);
-
+    // PhotonVisionSubsystem.periodic() already drained this loop's frames, so reading them here
+    // is free. Frames captured mid-spin are simply dropped instead of piling up for later.
     if (isRotatingTooFast()) {
       SmartDashboard.putBoolean("Odometry/VisionRejected", true);
     } else {
       SmartDashboard.putBoolean("Odometry/VisionRejected", false);
-
-      int frontResult =
-          applyVisionEstimate(frontEstimate, LimelightConstants.FRONT_STD_DEVS, "Vision/Front");
-      if (frontResult == 1) frontStableCount++;
-      else if (frontResult == 0) frontStableCount = 0;
-
-      int sideResult =
-          applyVisionEstimate(sideEstimate, LimelightConstants.SIDE_STD_DEVS, "Vision/Side");
-      if (sideResult == 1) sideStableCount++;
-      else if (sideResult == 0) sideStableCount = 0;
-
-      for (EstimatedRobotPose estimate : photon.getFrontEstimates()) {
-        applyPhotonEstimate(estimate, PhotonVisionConstants.FRONT_STD_DEVS);
-      }
-      for (EstimatedRobotPose estimate : photon.getSideEstimates()) {
-        applyPhotonEstimate(estimate, PhotonVisionConstants.SIDE_STD_DEVS);
-      }
+      fuseCamera(photon.getFrontObservations(), front);
+      fuseCamera(photon.getSideObservations(), side);
     }
+    publishStats(front);
+    publishStats(side);
 
     robotPose = drive.getPose();
     field.setRobotPose(robotPose.getX(), robotPose.getY(), robotPose.getRotation());
 
     SmartDashboard.putBoolean("Odometry/PoseStable", isPoseStable());
     SmartDashboard.putBoolean("Odometry/FrontStable", isFrontStable());
-    // SmartDashboard.putBoolean("Odometry/SideStable", isSideStable());
+    SmartDashboard.putBoolean("Odometry/SideStable", isSideStable());
     SmartDashboard.putData(field);
   }
 }

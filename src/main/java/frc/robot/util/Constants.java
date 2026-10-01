@@ -68,8 +68,6 @@ public class Constants {
      */
     public static final int leftTransferMotorID = 45;
 
-    // MegaTag switching is now dynamic — see LimelightConstants.MT_SWITCH_DISTANCE_METERS
-
     // /** Use {@link frc.robot.Robot#drivebus} instead */
     // @SuppressWarnings("DeprecatedIsStillUsed")
     // @Deprecated

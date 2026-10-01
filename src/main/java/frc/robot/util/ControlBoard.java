@@ -140,16 +140,6 @@ public class ControlBoard {
             ExtenderSubsystem.getInstance(),
             TransferSubsystem.getInstance()));
 
-    // controller.squareButton.onTrue(
-    // new InstantCommand(() -> {
-    //     if (LimelightConstants.MT_SWITCH_DISTANCE_METERS == 1.5) {
-    //         LimelightConstants.MT_SWITCH_DISTANCE_METERS = 300.0;
-    //     } else {
-    //         LimelightConstants.MT_SWITCH_DISTANCE_METERS = 1.5;
-    //     }
-    // })
-    // );
-
     controller.dUp.whileTrue(
         new InstantCommand(() -> ExtenderSubsystem.getInstance().requestExtend()));
 
@@ -226,15 +216,6 @@ public class ControlBoard {
             ExtenderSubsystem.getInstance(),
             TransferSubsystem.getInstance()));
 
-    // controller.squareButton.onTrue(
-    // new InstantCommand(() -> {
-    //     if (LimelightConstants.MT_SWITCH_DISTANCE_METERS == 1.5) {
-    //         LimelightConstants.MT_SWITCH_DISTANCE_METERS = 300.0;
-    //     } else {
-    //         LimelightConstants.MT_SWITCH_DISTANCE_METERS = 1.5;
-    //     }
-    // }));
-
     /* Climber */
     // TODO: Make left trigger shoot(peter requested)
     // controller.leftTrigger.whileTrue(
@@ -294,8 +275,6 @@ public class ControlBoard {
     // SmartDashboard.putBoolean("ControlBoard/AutoAim", autoAim);
     // SmartDashboard.putBoolean("ControlBoard/AxisAlign", axisAlign);
     // SmartDashboard.putNumber("ControlBoard/OperatorOffset", operatorOffset);
-    // SmartDashboard.putNumber("ControlBoard/limelightdist",
-    // LimelightConstants.MT_SWITCH_DISTANCE_METERS);
 
     return driveRequest
         .withVelocityX(SwerveConstants.maxSpeed * x * scale)

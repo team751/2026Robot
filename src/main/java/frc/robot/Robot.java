@@ -4,6 +4,7 @@ import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -13,9 +14,8 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.drive.Odometry;
 import frc.robot.subsystems.drive.SwerveSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
-import frc.robot.subsystems.vision.LimelightSubsystem;
+import frc.robot.subsystems.vision.PhotonVisionConstants;
 import frc.robot.subsystems.vision.PhotonVisionSim;
-// import frc.robot.subsystems.vision.LimelightSubsystem;
 import frc.robot.util.ControlBoard;
 
 public class Robot extends TimedRobot {
@@ -40,7 +40,6 @@ public class Robot extends TimedRobot {
     DataLogManager.start();
     DriverStation.startDataLog(DataLogManager.getLog());
 
-    // Odometry.getInstance();
     scheduler = CommandScheduler.getInstance();
     swerve = SwerveSubsystem.getInstance();
 
@@ -57,18 +56,18 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     // System.out.println("Robot.robotInit() start");
-    // for (int port = 5800; port <= 5809; port++) {
-    //   PortForwarder.add(port, "limelight.local", port);
-    // }
-    // Stream
-    // PortForwarder.add(5800, "10.7.51.71",5800);
-    // PortForwarder.add(5800, "10.7.51.75",5800);
+    // PhotonVision web UI at http://roborio-751-frc.local:5800 when tethered over USB.
+    // (Only the UI: camera preview streams use other ports, so calibrate over the radio/Ethernet.)
+    if (isReal()) {
+      PortForwarder.add(5800, PhotonVisionConstants.COPROCESSOR_IP, 5800);
+    }
 
-    // Dashboard
-    // PortForwarder.add(5801, "10.7.51.71",5801);
-    // PortForwarder.add(5801, "10.7.51.75",5801);
     robotContainer = new RobotContainer();
-    LimelightSubsystem.getInstance().initLimsplz();
+
+    // Vision has to exist BEFORE the first scheduler loop so it fuses while disabled and in auto
+    // (resetOdom:false autos depend on vision seeding the pose pre-match). Odometry.getInstance()
+    // also creates PhotonVisionSubsystem, first, so cameras are read before Odometry fuses them.
+    Odometry.getInstance();
     if (Utils.isSimulation()) {
       PhotonVisionSim.getInstance();
     }
@@ -127,12 +126,10 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    Odometry.getInstance();
     ShooterSubsystem.getInstance().isAuto = false;
     controlBoard.isBlue =
         !DriverStation.getAlliance().isPresent()
             || DriverStation.getAlliance().get() != Alliance.Red;
-    // LimelightSubsystem.getInstance();
     // ClimberSubsystem.getInstance().zeroClimber();
 
     var rot = Rotation2d.kZero;
