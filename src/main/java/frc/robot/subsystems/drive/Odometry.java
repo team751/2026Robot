@@ -104,19 +104,27 @@ public class Odometry extends SubsystemBase {
   }
 
   /**
+   * Logs the raw Limelight pose, or an empty array when no tags are seen. Logging an empty array
+   * (rather than skipping the log entirely) means AdvantageScope's displayed pose actually clears
+   * once tags are lost, instead of showing the last pose seen indefinitely.
+   */
+  private void logRawVisionPose(String telemetryPrefix, LimelightHelpers.PoseEstimate estimate) {
+    if (isValidEstimate(estimate)) {
+      Logger.recordOutput(telemetryPrefix + "/RawPose", new Pose2d[] {estimate.pose});
+      Logger.recordOutput(telemetryPrefix + "/TagCount", estimate.tagCount);
+      Logger.recordOutput(telemetryPrefix + "/AvgTagDist", estimate.avgTagDist);
+      Logger.recordOutput(telemetryPrefix + "/Latency", estimate.latency);
+    } else {
+      Logger.recordOutput(telemetryPrefix + "/RawPose", new Pose2d[] {});
+    }
+  }
+
+  /**
    * @return the stability count delta: +1 if vision agrees with odometry, reset to 0 if not, or -1
    *     if the estimate was rejected (caller should not update counter).
    */
   private int applyVisionEstimate(
       LimelightHelpers.PoseEstimate estimate, Matrix<N3, N1> baseStdDevs, String telemetryPrefix) {
-
-    // Publish raw vision pose for debugging regardless of acceptance
-    if (estimate != null && estimate.tagCount > 0) {
-      Logger.recordOutput(telemetryPrefix + "/RawPose", estimate.pose);
-      Logger.recordOutput(telemetryPrefix + "/TagCount", estimate.tagCount);
-      Logger.recordOutput(telemetryPrefix + "/AvgTagDist", estimate.avgTagDist);
-      Logger.recordOutput(telemetryPrefix + "/Latency", estimate.latency);
-    }
 
     if (!isValidEstimate(estimate)) return -1;
 
@@ -137,19 +145,26 @@ public class Odometry extends SubsystemBase {
 
   @Override
   public void periodic() {
+    // Read each camera once per cycle and reuse the result, rather than querying NT twice
+    // (once for logging, once for fusion) and risking the two reads disagreeing.
+    LimelightHelpers.PoseEstimate frontEstimate = limelights.getBotPoseFront();
+    LimelightHelpers.PoseEstimate sideEstimate = limelights.getBotPoseSide();
+
+    // Log what the cameras see before any rejection, so rejected poses show up too
+    logRawVisionPose("Vision/Front", frontEstimate);
+    logRawVisionPose("Vision/Side", sideEstimate);
+
     boolean rejected = isRotatingTooFast();
     Logger.recordOutput("Odometry/VisionRejected", rejected);
 
     if (!rejected) {
       int frontResult =
-          applyVisionEstimate(
-              limelights.getBotPoseFront(), LimelightConstants.FRONT_STD_DEVS, "Vision/Front");
+          applyVisionEstimate(frontEstimate, LimelightConstants.FRONT_STD_DEVS, "Vision/Front");
       if (frontResult == 1) frontStableCount++;
       else if (frontResult == 0) frontStableCount = 0;
 
       int sideResult =
-          applyVisionEstimate(
-              limelights.getBotPoseSide(), LimelightConstants.SIDE_STD_DEVS, "Vision/Side");
+          applyVisionEstimate(sideEstimate, LimelightConstants.SIDE_STD_DEVS, "Vision/Side");
       if (sideResult == 1) sideStableCount++;
       else if (sideResult == 0) sideStableCount = 0;
     }

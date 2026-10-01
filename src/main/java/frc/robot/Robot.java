@@ -42,7 +42,7 @@ public class Robot extends LoggedRobot {
     Logger.recordMetadata("RuntimeType", getRuntimeType().toString());
 
     if (isReal()) {
-      Logger.addDataReceiver(new WPILOGWriter("/U/logs")); // USB stick, /U/logs
+      Logger.addDataReceiver(new WPILOGWriter()); // USB stick when present; falls back to RIO flash
       Logger.addDataReceiver(new NT4Publisher()); // live AdvantageScope view
     } else {
       Logger.addDataReceiver(new NT4Publisher()); // sim: live only, no replay mode
