@@ -2,6 +2,7 @@ package frc.robot.subsystems.drive;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
+import com.ctre.phoenix6.configs.GyroTrimConfigs;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModule;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
@@ -25,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.lib.CTREUtil;
 import frc.robot.subsystems.drive.generated.TunerConstants;
 import frc.robot.subsystems.drive.generated.TunerConstants.TunerSwerveDrivetrain;
 import frc.robot.subsystems.simulation.MapleSimSwerveDrivetrain;
@@ -80,6 +82,15 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
     super(
         drivetrainConstants,
         MapleSimSwerveDrivetrain.regulateModuleConstantsForSimulation(modules));
+
+    // super() applies TunerConstants' full Pigeon2Configuration, which resets GyroScalarZ to 0.
+    // Re-apply only the GyroTrim group afterward so the calibrated scalar sticks.
+    CTREUtil.tryUntilOK(
+        () ->
+            getPigeon2()
+                .getConfigurator()
+                .apply(new GyroTrimConfigs().withGyroScalarZ(SwerveConstants.kGyroScalarZ)),
+        getPigeon2().getDeviceID());
 
     CommandScheduler.getInstance().registerSubsystem(this);
 
