@@ -243,8 +243,9 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
     return getPitchStable() && getRollStable() && linearSpeed < SPEED_STABLE_MPS;
   }
 
-  // FPGA time of the last pose reset. Vision frames captured before this describe where the robot
-  // was before the reset, so Odometry throws them away.
+  // Sim only: FPGA time of the last pose reset. In sim a reset teleports the robot, so vision
+  // frames captured before it show a spot the robot is no longer at, and Odometry drops them.
+  // Never set on the real robot (it can't teleport), so there that check never fires.
   private double lastResetFpgaTime = Double.NEGATIVE_INFINITY;
 
   public double getLastResetFpgaTime() {
@@ -253,12 +254,18 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
 
   @Override
   public void resetPose(Pose2d pose) {
-    if (simDrivetrain != null) teleportSimRobot(pose);
-    resetEstimator(pose);
+    if (simDrivetrain == null) {
+      // Real robot: unchanged from before PhotonVision.
+      super.resetPose(pose);
+      return;
+    }
+
+    teleportSimRobot(pose);
+    resetSimEstimator(pose);
   }
 
-  /** Resets only CTRE's pose estimate (never moves the sim robot). */
-  private void resetEstimator(Pose2d pose) {
+  /** Sim only: resets CTRE's pose estimate (without moving the sim robot) and records when. */
+  private void resetSimEstimator(Pose2d pose) {
     super.resetPose(pose);
     lastResetFpgaTime = Timer.getFPGATimestamp();
   }
@@ -302,20 +309,27 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
     double delta = newRad - oldRad;
     Rotation2d deltaRot = new Rotation2d(delta);
 
-    // Rotate the pose estimate in place. In sim, rotate the MapleSim robot in place too —
-    // separately, because the estimate and the true pose can differ, and resetPose() would
-    // teleport the true pose onto the estimate. Truth goes first: the sim Pigeon copies MapleSim's
-    // heading, so CTRE has to be reset after the Pigeon has caught up.
-    Pose2d estimate = getState().Pose;
-    if (simDrivetrain != null) {
+    if (simDrivetrain == null) {
+      // Real robot: unchanged from before PhotonVision.
+      Pose2d currentPose = getPose();
+      Pose2d adjusted =
+          new Pose2d(currentPose.getTranslation(), currentPose.getRotation().rotateBy(deltaRot));
+
+      // Apply the operator perspective and reset odometry to the adjusted pose
+      setOperatorPerspectiveForward(newRot);
+      resetPose(adjusted);
+    } else {
+      // Sim: rotate the true pose and the estimate each in place, separately. They can differ, and
+      // resetPose() would teleport the true pose onto the estimate. Truth goes first: the sim
+      // Pigeon copies MapleSim's heading, so CTRE has to be reset after the Pigeon has caught up.
+      Pose2d estimate = getState().Pose;
       Pose2d truth = getGroundTruthPose();
       teleportSimRobot(new Pose2d(truth.getTranslation(), truth.getRotation().rotateBy(deltaRot)));
-    }
 
-    // Apply the operator perspective and reset odometry to the adjusted pose
-    setOperatorPerspectiveForward(newRot);
-    resetEstimator(
-        new Pose2d(estimate.getTranslation(), estimate.getRotation().rotateBy(deltaRot)));
+      setOperatorPerspectiveForward(newRot);
+      resetSimEstimator(
+          new Pose2d(estimate.getTranslation(), estimate.getRotation().rotateBy(deltaRot)));
+    }
 
     m_operatorPerspectiveRotation = newRot;
     m_hasAppliedOperatorPerspective = true;

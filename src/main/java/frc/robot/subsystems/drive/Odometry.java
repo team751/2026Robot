@@ -137,7 +137,8 @@ public class Odometry extends SubsystemBase {
     double latency = Timer.getFPGATimestamp() - timestamp;
     if (latency < 0 || latency > PhotonVisionConstants.MAX_LATENCY_S) return "latency";
 
-    // Seen before the last pose reset: it describes where the robot was before the reset.
+    // Sim only (never fires on the real robot): in sim a pose reset teleports the robot, so a frame
+    // seen before the last reset shows a spot it's no longer at.
     // (Checked after latency, so broken time sync shows up as "latency", not as this.)
     if (timestamp < drive.getLastResetFpgaTime()) return "before reset";
 
