@@ -34,7 +34,7 @@ public class IntakeConstants {
     intakeMotorConfig
         .withName("Intake Motor")
         .withCanID(IDConstants.intakeMotorID)
-        .withBus(Robot.riobus);
+        .withBus(Robot.gamepiecebus);
 
     TalonFXConfiguration intakeConfig = intakeMotorConfig.config;
     intakeConfig.Slot0.kP = 0; // Increase until speed oscillates
@@ -60,7 +60,7 @@ public class IntakeConstants {
     extenderMotorConfig
         .withName("Extender Motor")
         .withCanID(IDConstants.extenderMotorID)
-        .withBus(Robot.riobus);
+        .withBus(Robot.gamepiecebus);
 
     TalonFXConfiguration extenderConfig = extenderMotorConfig.config;
     extenderConfig.Slot0.kP = 0; // Increase until speed oscillates

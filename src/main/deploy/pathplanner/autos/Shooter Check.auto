@@ -5,12 +5,6 @@
     "data": {
       "commands": [
         {
-          "type": "path",
-          "data": {
-            "pathName": "red left bottom"
-          }
-        },
-        {
           "type": "race",
           "data": {
             "commands": [
@@ -23,22 +17,22 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 5.0
+                  "waitTime": 10.0
                 }
               }
             ]
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "Copy of Copy of red left bottom"
+            "name": "StopShoot"
           }
         }
       ]
     }
   },
-  "resetOdom": false,
-  "folder": "Comp Autos",
+  "resetOdom": true,
+  "folder": null,
   "choreoAuto": false
 }

@@ -35,7 +35,7 @@ public class ShooterConstants {
     flywheelMotorConfig
         .withName("Main Flywheel")
         .withCanID(IDConstants.flywheelMotorID)
-        .withBus(Robot.riobus);
+        .withBus(Robot.gamepiecebus);
 
     TalonFXConfiguration flywheelConfig = flywheelMotorConfig.config;
     flywheelConfig.Slot0.kP = 0.1; // Increase until speed oscillates
@@ -60,7 +60,7 @@ public class ShooterConstants {
     followMotorConfig
         .withName("Follow Flywheel")
         .withCanID(IDConstants.followMotorID)
-        .withBus(Robot.riobus);
+        .withBus(Robot.gamepiecebus);
 
     TalonFXConfiguration followConfig = followMotorConfig.config;
 
@@ -83,7 +83,7 @@ public class ShooterConstants {
     transferMotorConfig
         .withName("Shooter Transfer")
         .withCanID(IDConstants.shooterTransferMotorID)
-        .withBus(Robot.riobus);
+        .withBus(Robot.gamepiecebus);
 
     TalonFXConfiguration shooterTransferConfig = transferMotorConfig.config;
 

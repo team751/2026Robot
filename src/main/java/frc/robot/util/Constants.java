@@ -77,4 +77,8 @@ public class Constants {
 
     public static final boolean disableHAL = !HAL.initialize(500, 0);
   }
+
+  public static class VisionConstants {
+    public static final String[] photonNames = {"photon-front", "photon-side"};
+  }
 }
