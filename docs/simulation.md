@@ -22,9 +22,10 @@ This starts:
 
 ### Using the Simulation GUI
 
-1. **Select robot mode**: Drag "Teleoperated" or "Autonomous" to enable those modes
-2. **Connect a controller**: Plug in a gamepad to drive the robot in teleop
-3. **View in AdvantageScope**: Open AdvantageScope and connect to `localhost` to visualize
+1. **Select an alliance** before enabling teleop. `Robot.teleopInit()` calls `DriverStation.getAlliance().get()` without checking it's present.
+2. **Select robot mode**: Drag "Teleoperated" or "Autonomous" to enable those modes
+3. **Connect a controller**: Plug in a gamepad to drive the robot in teleop
+4. **View in AdvantageScope**: Open AdvantageScope and connect to `localhost` to visualize
 
 ### Visualization with AdvantageScope
 
@@ -46,6 +47,8 @@ This starts:
 - `DriveState/OdometryFrequency` - Odometry update frequency
 - `Field/robotPose` - Robot pose as double array [x, y, deg]
 - `FieldSimulation/Fuel` - Game piece positions (Pose3d array)
+- `Vision/Front/*`, `Vision/Side/*` - Simulated PhotonVision raw poses and tags (see [Vision & Odometry](vision-and-odometry.md#telemetry-advantagescope))
+- `SmartDashboard/Sim/PoseErrorMeters` - Distance between the fused pose and MapleSim ground truth
 
 ## Architecture
 
@@ -124,6 +127,24 @@ Publishes simulation telemetry to NetworkTables for AdvantageScope visualization
 - SignalLogger data for CTRE's signal logging
 
 Only active in simulation (registered in `ControlBoard.tryInit()` when `Utils.isSimulation()` is true).
+
+#### PhotonVisionSim (Robot Code)
+
+**File**: `frc/robot/subsystems/vision/PhotonVisionSim.java`
+
+Simulates both PhotonVision cameras with photonlib's `VisionSystemSim`. It is created in `Robot.robotInit()` only when `Utils.isSimulation()`, after `Odometry.getInstance()` (which creates `PhotonVisionSubsystem` and `Odometry`).
+- Loads `PhotonVisionConstants.FIELD_LAYOUT` and adds the `front` and `side` cameras at `FRONT_CAMERA_OFFSET` / `SIDE_CAMERA_OFFSET`. Each `PhotonCameraSim` also gets `FIELD_LAYOUT` (3-arg constructor), otherwise the simulated multi-tag solve quietly uses WPILib's default field. Both use the `PI4_LIFECAM_640_480` profile, a placeholder until the real camera model and calibration exist.
+- Each loop, it renders what the cameras would see from MapleSim's **ground-truth** pose (`SwerveSubsystem.getGroundTruthPose()`), not the estimated pose. Otherwise vision could never correct drift.
+- It publishes NT data shaped exactly like a real coprocessor's, so `PhotonVisionSubsystem` and `Odometry` run unchanged in sim.
+- Static `onTeleport(Pose2d)` resets the vision sim's pose history. The fake cameras render each frame from a pose interpolated over the last ~1.5 s, so without it they'd draw frames from partway along a teleport. Does nothing if vision sim isn't running.
+
+**Pose resets in sim**:
+- `SwerveSubsystem.resetPose()` teleports the MapleSim robot (`setSimulationWorldPose`), calls `PhotonVisionSim.onTeleport()`, waits 50 ms, then resets the CTRE estimator and stamps `getLastResetFpgaTime()` (Odometry drops vision frames captured before it).
+- `setOperatorPerspectiveAndAdjustPose()` (e.g. `teleopInit()` on red) rotates the ground truth in place first, then rotates the estimate in place, separately. It never teleports the truth onto the estimate, so existing pose error is kept.
+
+**`SwerveSubsystem.SIM_USE_ESTIMATED_POSE`** (default `true`): sim `getPose()` returns the CTRE pose estimator (wheel odometry + vision), exactly like the real robot, so sim actually exercises vision fusion. Set it to `false` to get MapleSim's perfect ground-truth pose for mechanism testing. Watch `Sim/PoseErrorMeters`. It should stay small while driving and shrink back after deliberate wheel slip (ram a wall).
+
+**Limitation**: Sim can't catch a wrong camera-transform sign. The same transform places the fake camera and solves the pose, so the transforms must be checked on the real robot (see [Vision & Odometry](vision-and-odometry.md#on-robot-validation)).
 
 #### ElevatorWristSim (Robot Code)
 
@@ -228,7 +249,8 @@ Pre-configured "Commercial Off-The-Shelf" hardware models:
 1. **Robot doesn't move in sim**: Make sure you're in "Teleoperated" or "Autonomous" mode in the Sim GUI
 2. **Robot spins wildly**: Steer PID might need simulation-specific tuning (handled by `regulateModuleConstantsForSimulation()`)
 3. **No game pieces visible**: Check AdvantageScope's 3D field tab and ensure `FieldSimulation/Fuel` is being published
-4. **Incorrect starting position**: The simulated robot starts at (3, 3) by default. Use `resetPose()` to change it.
+4. **Incorrect starting position**: The simulated robot always spawns at (2.5, 4, 0°) (`MapleSimSwerveDrivetrain`). `resetPose()` moves it (MapleSim, the vision sim, and the estimator together).
+5. **`NoSuchElementException` from `teleopInit()`**: No alliance selected in the Sim GUI. `teleopInit()` calls `DriverStation.getAlliance().get()` unguarded (pre-existing).
 
 ### Limitations
 
@@ -236,7 +258,8 @@ Pre-configured "Commercial Off-The-Shelf" hardware models:
 - Game piece scoring detection is simplified
 - Motor models are approximations of real motor behavior
 - CAN bus latency is not simulated
-- Vision simulation is not implemented (Limelight returns null poses in sim)
+- Vision sim uses a generic camera profile and can't validate camera-transform signs (see PhotonVisionSim above)
+- `resetOdom: false` autos can't be tested end to end. The robot always spawns at (2.5, 4, 0°), so running one from disabled only verifies that vision **seeds** the pose. The auto then drives from (2.5, 4) instead of its real start spot, so it says nothing about the path itself. Test those on the real robot ([Vision & Odometry](vision-and-odometry.md#on-robot-validation), step 6).
 
 ## External Resources
 
@@ -246,4 +269,5 @@ Pre-configured "Commercial Off-The-Shelf" hardware models:
 - [dyn4j Getting Started](https://dyn4j.org/pages/getting-started.html)
 - [AdvantageScope Documentation](https://docs.advantagescope.org/)
 - [AdvantageScope 3D Field](https://docs.advantagescope.org/tab-reference/3d-field/)
+- [PhotonVision Simulation (Java)](https://docs.photonvision.org/en/latest/docs/simulation/simulation-java.html)
 - [WPILib Simulation Guide](https://docs.wpilib.org/en/stable/docs/software/wpilib-tools/robot-simulation/introduction.html)

@@ -26,7 +26,7 @@ This guide walks you through setting up your development environment and getting
 
 - **AdvantageScope** - Data visualization and replay tool ([docs.advantagescope.org](https://docs.advantagescope.org/))
 - **Elastic Dashboard** - Alternative to SmartDashboard/Shuffleboard
-- **Limelight Web Interface** - Access at `http://10.7.51.71:5801` (front) or `http://10.7.51.75:5801` (back)
+- **PhotonVision Web UI** - `http://10.7.51.11:5800` on the robot network, or `http://roborio-751-frc.local:5800` when USB-tethered to the RIO (port-forwarded). See [Vision & Odometry](vision-and-odometry.md#coprocessor-bring-up-checklist).
 
 ## Cloning the Repository
 
@@ -128,10 +128,10 @@ See [Simulation Documentation](simulation.md) for details.
 - `frc.robot` - Main robot code (Robot, Main, Constants)
 - `frc.robot.subsystems` - All subsystems (Superstructure, drive, vision, etc.)
 - `frc.robot.subsystems.drive` - Swerve drive code
-- `frc.robot.subsystems.vision` - Limelight vision processing
+- `frc.robot.subsystems.vision` - PhotonVision AprilTag cameras
 - `frc.robot.subsystems.simulation` - Simulation-only code
 - `frc.robot.subsystems.shooter` - Shooter subsystem (currently commented out)
-- `frc.robot.util` - Utility classes (ControlBoard, FieldConstants, LimelightHelpers)
+- `frc.robot.util` - Utility classes (ControlBoard, FieldConstants)
 - `frc.lib` - Reusable library classes (PS5Controller, TunableParameter, CTRE utilities)
 - `org.ironmaple.simulation` - MapleSim physics engine (bundled in-tree)
 
@@ -140,7 +140,7 @@ See [Simulation Documentation](simulation.md) for details.
 1. **Singleton Pattern** - All subsystems use `getInstance()`. Never call `new SubsystemName()`.
 2. **Command-Based** - Uses WPILib's command-based framework. Subsystems define capabilities, commands compose behavior.
 3. **Request-Based State Machines** - Subsystems like Superstructure use `requestState()` methods to transition between states.
-4. **Separation of Constants** - Each subsystem has its own constants file (e.g., `SwerveConstants.java`, `LimelightConstants.java`).
+4. **Separation of Constants** - Each subsystem has its own constants file (e.g., `SwerveConstants.java`, `PhotonVisionConstants.java`).
 
 ## Common Development Tasks
 

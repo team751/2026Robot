@@ -8,7 +8,7 @@ This document provides a detailed reference for every subsystem in the robot cod
 |-----------|---------|--------|-----------|
 | [SwerveSubsystem](#swervesubsystem) | `frc.robot.subsystems.drive` | Active | Yes |
 | [Odometry](#odometry) | `frc.robot.subsystems.drive` | Active | Yes |
-| [LimelightSubsystem](#limelightsubsystem) | `frc.robot.subsystems.vision` | Active | Yes |
+| [PhotonVisionSubsystem](#photonvisionsubsystem) | `frc.robot.subsystems.vision` | Active | Yes |
 | [Superstructure](#superstructure) | `frc.robot.subsystems` | Active (skeleton) | Yes |
 | [ShooterSubsystem](#shootersubsystem) | `frc.robot.subsystems.shooter` | Commented out | Yes |
 
@@ -36,20 +36,22 @@ The swerve drive subsystem controls the robot's 4-module swerve drivetrain. It:
 |--------|---------|-------------|
 | `getInstance()` | `SwerveSubsystem` | Singleton access |
 | `applyRequest(Supplier<SwerveRequest>)` | `Command` | Command that continuously applies a swerve request |
-| `getPose()` | `Pose2d` | Current robot pose (sim-aware) |
+| `getPose()` | `Pose2d` | Current fused robot pose. In sim: the CTRE estimator when `SIM_USE_ESTIMATED_POSE` (default), otherwise MapleSim ground truth |
+| `getGroundTruthPose()` | `Pose2d` | Sim: MapleSim's true pose (drives `PhotonVisionSim`). Real robot: same as `getPose()` |
 | `getChassisSpeeds()` | `ChassisSpeeds` | Current chassis speeds from state |
 | `getRobotRelativeSpeeds()` | `ChassisSpeeds` | Speeds from kinematics calculation |
-| `resetPose(Pose2d)` | void | Reset odometry to specified pose (sim-aware) |
-| `bigResetPose()` | void | Reset odometry to origin (0,0,0) |
-| `setOperatorPerspectiveAndAdjustPose(Rotation2d)` | void | Set operator forward direction with pose correction |
+| `resetPose(Pose2d)` | void | Real robot: resets the pose estimate (unchanged from before PhotonVision). Sim: teleports MapleSim and the vision sim (`PhotonVisionSim.onTeleport`), waits 50 ms, resets the estimate and stamps `lastResetFpgaTime` |
+| `getLastResetFpgaTime()` | `double` | Sim only: FPGA time of the last pose reset. Odometry rejects vision frames captured before it (`before reset`). Always −∞ on the real robot |
+| `setRobotRotationByAlliance()` | void | Circle button: `resetPose((0, 0, alliance heading))` + operator perspective |
+| `setOperatorPerspectiveAndAdjustPose(Rotation2d)` | void | Set operator forward direction and rotate the pose by the same delta. Real robot: unchanged from before PhotonVision. Sim: rotates ground truth in place first, then the estimate, separately (never teleports truth onto the estimate) |
 | `sysIdQuasistatic(Direction)` | `Command` | SysId quasistatic test |
 | `sysIdDynamic(Direction)` | `Command` | SysId dynamic test |
 
 ### Periodic Behavior
 
 Every 20ms:
-1. Checks if operator perspective needs updating (while disabled or on first enable)
-2. Publishes pose (X, Y, rotation) to SmartDashboard
+1. Publishes pose (X, Y, rotation) to SmartDashboard
+2. Sim only: publishes `Sim/PoseErrorMeters` (fused pose vs MapleSim ground truth)
 
 ---
 
@@ -62,77 +64,87 @@ See [Vision & Odometry Documentation](vision-and-odometry.md) for full details.
 
 ### Summary
 
-Fuses Limelight vision measurements with swerve wheel odometry to provide accurate robot positioning. Publishes telemetry to SmartDashboard.
+Filters PhotonVision pose estimates and fuses the good ones into the swerve drive's CTRE pose estimator. Only translation is fused. Heading always comes from the Pigeon 2. Created by `Odometry.getInstance()` in `Robot.robotInit()`, so it fuses from the first loop (disabled and auto included). The constructor is private: `getInstance()` creates `PhotonVisionSubsystem` first, so PV's `periodic()` drains frames before Odometry's runs.
 
 ### Methods
 
 | Method | Returns | Description |
 |--------|---------|-------------|
-| `getInstance()` | `Odometry` | Singleton access |
+| `getInstance()` | `Odometry` | Singleton access (creates `PhotonVisionSubsystem` first) |
 | `getPose()` | `Pose2d` | Current fused robot pose |
+| `getYaw()` | `Rotation2d` | Heading from the drivetrain (Pigeon) |
 | `resetPose(Pose2d)` | void | Delegates to `SwerveSubsystem.resetPose()` |
+| `isPoseStable()` | `boolean` | Both cameras have 10+ consecutive accepted estimates within 0.10 m of the pose odometry had at capture time, the latest within the last 0.5 s (dashboard only) |
+| `isFrontStable()` / `isSideStable()` | `boolean` | Same, per camera |
 
 ### Periodic Behavior
 
 Every 20ms:
-1. Publishes `Odometry/X`, `Odometry/Y`, `Odometry/Rotation` to SmartDashboard
-2. Feeds front camera vision measurement to swerve (if available)
-3. Feeds back camera vision measurement to swerve (if available)
-4. Gets fused pose from swerve drive
-5. Updates `Field2d` visualization
-6. Publishes Pigeon IMU yaw/pitch/roll
-7. Publishes `Interpolating?` boolean
+1. If the Pigeon yaw rate is above `MAX_ANGULAR_VELOCITY_DPS` (720°/s), skips fusing this loop (`Odometry/VisionRejected` = true)
+2. Otherwise, for each cached `VisionObservation` from the front and side cameras:
+   - `getRejectReason()`, in order: `non-finite`, `latency`, `before reset`, `not on floor`, `off field`, then single-tag only `ambiguous` and `single tag too far`. On rejection only, the reason goes to `Vision/<Cam>/RejectReason` (so it sticks) and `RejectedCount` goes up.
+   - Stability: compares the vision x/y with `drive.samplePoseAt(capture time)` **before** fusing. Within 0.10 m adds 1, otherwise resets to 0.
+   - `computeStdDevs()`: multi-tag base if the strategy is multi-tag, unless it's ≤ 2 tags past `FAR_TAG_PAIR_DIST_M` (5 m); otherwise single-tag base. Then × `1 + d²/30`.
+   - `drive.addVisionMeasurement(Pose2d(x, y, gyro heading), Utils.fpgaToCurrentTime(ts), stdDevs)`, then `AcceptedCount` goes up
+3. Per camera: resets the stability count if nothing was accepted for `POSE_STABLE_TIMEOUT_S` (0.5 s), and publishes `Vision/<Cam>/AcceptedCount` / `RejectedCount`
+4. Reads the fused pose from `SwerveSubsystem.getPose()` and updates the `Field2d`
+5. Publishes `Odometry/PoseStable`, `Odometry/FrontStable`, `Odometry/SideStable`
 
 ### Dependencies
 
-- `SwerveSubsystem` - for pose estimation and vision measurement injection
-- `LimelightSubsystem` - for AprilTag-derived robot poses
+- `SwerveSubsystem` - pose estimator, vision measurement injection, Pigeon yaw rate
+- `PhotonVisionSubsystem` - cached `VisionObservation` lists
 
 ---
 
-## LimelightSubsystem
+## PhotonVisionSubsystem
 
-**File**: `frc/robot/subsystems/vision/LimelightSubsystem.java`
-**Constants**: `LimelightConstants.java`
+**File**: `frc/robot/subsystems/vision/PhotonVisionSubsystem.java`
+**Constants**: `PhotonVisionConstants.java`
 **Extends**: `SubsystemBase`
 
-See [Vision & Odometry Documentation](vision-and-odometry.md) for full details.
+See [Vision & Odometry Documentation](vision-and-odometry.md) for full details, the coprocessor bring-up checklist, and on-robot validation.
 
 ### Summary
 
-Manages two Limelight cameras for AprilTag-based robot localization. Provides robot pose estimates in WPILib Blue-origin field coordinates.
+Reads the two PhotonVision cameras (`front` and `side`) on the coprocessor at `10.7.51.11`. In `periodic()`, it drains each camera's `getAllUnreadResults()` exactly once per loop, inside a `try/catch`, so a PV version mismatch (different message format) can't crash the scheduler. Each frame becomes a pose estimate: coprocessor multi-tag first, lowest-ambiguity single tag as the fallback. The estimates are cached as `VisionObservation`s for Odometry, and raw telemetry is published under `Vision/Front` and `Vision/Side` when frames arrive. A camera that is disconnected, or whose drain threw, has its telemetry cleared (empty structs, numbers → NaN) every loop.
 
 ### Methods
 
 | Method | Returns | Description |
 |--------|---------|-------------|
-| `getInstance()` | `LimelightSubsystem` | Singleton access |
-| `getBotPoseFront()` | `Pose2d` or `null` | Robot pose from front camera |
-| `getBotPoseBack()` | `Pose2d` or `null` | Robot pose from back camera |
-| `getBotPoseInterpolated()` | `Pose2d` | Average of both cameras (50% interpolation) |
-| `hasTarget()` | `boolean` | True if **both** cameras see AprilTags |
-| `getAprilTagId()` | `int` | ID of primary tag (front camera) |
-| `robotInit()` | void | Starts camera streams for SmartDashboard |
+| `getInstance()` | `PhotonVisionSubsystem` | Singleton access |
+| `getFrontObservations()` | `List<VisionObservation>` | Front camera estimates from this loop's frames (no side effects) |
+| `getSideObservations()` | `List<VisionObservation>` | Side camera estimates from this loop's frames (no side effects) |
 
-### Constants (LimelightConstants.java)
+`VisionObservation` is a record: `(EstimatedRobotPose estimate, List<Integer> tagIds, double avgTagDistanceMeters, double ambiguity, double reprojErrPx)`, with `tagCount()` = `tagIds.size()`. These are worked out from the frame, because photonlib's `targetsUsed` lists every target in view:
+- `tagIds`: multi-tag uses the result's `fiducialIDsUsed`. Single-tag uses the target photonlib's fallback picked (same rule: lowest ambiguity below 10, skipping -1).
+- `avgTagDistanceMeters`: averaged over just those tags. `+Infinity` if none of them are in the frame (Odometry rejects it as `non-finite`).
+- `ambiguity`: single-tag pose ambiguity. Always 0 for multi-tag.
+- `reprojErrPx`: multi-tag reprojection error in pixels. NaN for single-tag.
+
+`Vision/<Cam>/TagsUsed` draws only `tagIds`, not every tag in view.
+
+### Constants (PhotonVisionConstants.java)
 
 ```java
-// Front Camera (Limelight 3G)
-LimelightFront.name = "limelight-front"
-LimelightFront.streamIp = "http://10.7.51.71:5800"
-LimelightFront.dashboardIp = "http://10.7.51.71:5801"
-LimelightFront.xOffset = 0.225m   // forward
-LimelightFront.yOffset = 0.025m   // left
-LimelightFront.zOffset = 0.235m   // up
+FRONT_CAMERA_NAME = "front"            // must match the PV UI nickname exactly
+SIDE_CAMERA_NAME  = "side"
+COPROCESSOR_IP    = "10.7.51.11"
+FIELD_LAYOUT      = k2026RebuiltWelded // must match the layout selected in the PV UI
 
-// Back Camera (Limelight 2)
-LimelightBack.name = "limelight-back"
-LimelightBack.streamIp = "http://10.7.51.75:5800"
-LimelightBack.dashboardIp = "http://10.7.51.75:5801"
-LimelightBack.xOffset = -0.01m    // slightly backward
-LimelightBack.yOffset = -0.29m    // right
-LimelightBack.zOffset = 0.285m    // up
-LimelightBack.rotationOffset = 90 degrees yaw
+// WPILib convention: +X fwd, +Y LEFT, +Z up, +pitch = nose DOWN, +yaw = LEFT
+// TODO(measure): placeholders copied from the old Limelight mounts; Y may be mirrored on BOTH
+FRONT_CAMERA_OFFSET = (0.0416, -0.1453, 0.4128) m, pitch -30 deg (tilted up)
+SIDE_CAMERA_OFFSET  = (-0.2539, 0.1119, 0.2906) m, yaw -90 deg (sign unverified)
+
+SINGLE_TAG_STD_DEVS = (4.0, 4.0, 99999)    // scaled by 1 + d^2 / STD_DEV_DISTANCE_DIVISOR (30)
+MULTI_TAG_STD_DEVS  = (0.5, 0.5, 99999)
+FAR_TAG_PAIR_DIST_M = 5.0                  // multi-tag with <= 2 tags past this gets single-tag trust
+MAX_AMBIGUITY = 0.2, MAX_SINGLE_TAG_DIST_M = 4.0           // single-tag only
+MAX_Z_ERROR_M = 0.25, MAX_LATENCY_S = 0.5, FIELD_BORDER_MARGIN_M = 0.5
+MAX_ANGULAR_VELOCITY_DPS = 720
+POSE_STABLE_EPSILON_METERS = 0.10, POSE_STABLE_THRESHOLD = 10, POSE_STABLE_TIMEOUT_S = 0.5
 ```
 
 ---

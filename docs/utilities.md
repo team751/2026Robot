@@ -117,7 +117,7 @@ A custom wrapper around WPILib's `Joystick` class that provides named fields for
 PS5Controller driver = new PS5Controller(0);  // Port 0
 
 // Button bindings
-driver.circleButton.onTrue(new InstantCommand(() -> drive.bigResetPose()));
+driver.circleButton.onTrue(new InstantCommand(() -> drive.setRobotRotationByAlliance()));
 driver.rightBumper.whileTrue(new StartEndCommand(
     () -> preciseControl = true,
     () -> preciseControl = false
@@ -264,7 +264,7 @@ This handles the case where the Driver Station hasn't connected yet when the rob
 | Left stick | Translation (forward/backward, left/right) |
 | Right stick X | Rotation |
 | Right bumper (hold) | Precise control mode (25% speed, 50% rotation) |
-| Circle | Reset odometry to (0,0,0) |
+| Circle | Reset pose to (0, 0, alliance heading) via `SwerveSubsystem.setRobotRotationByAlliance()` |
 
 #### Drive Request Configuration
 
@@ -325,13 +325,3 @@ public static final boolean disableHAL = !HAL.initialize(500, 0);
 ```
 
 `disableHAL` is used by `FieldConstants` to determine file paths for AprilTag layouts (deploy directory vs. source directory).
-
----
-
-### LimelightHelpers
-
-**File**: `frc/robot/util/LimelightHelpers.java`
-
-The official Limelight helper library (v1.14). This is a large file provided by Limelight that wraps NetworkTables communication.
-
-See [Vision & Odometry Documentation](vision-and-odometry.md) for usage details.

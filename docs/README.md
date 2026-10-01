@@ -9,7 +9,7 @@ Welcome to the documentation for FRC Team 751's 2026 REBUILT season robot code.
 | [Getting Started](getting-started.md) | Setup guide for new developers: tools, environment, building, deploying |
 | [Architecture Overview](architecture.md) | High-level system design, control flow, and design patterns |
 | [Swerve Drive](swerve-drive.md) | Swerve drivetrain: hardware, CTRE Phoenix 6 API, tuning, operator controls |
-| [Vision & Odometry](vision-and-odometry.md) | Limelight cameras, AprilTag localization, pose estimation, sensor fusion |
+| [Vision & Odometry](vision-and-odometry.md) | PhotonVision cameras, AprilTag localization, sensor fusion, coprocessor bring-up and validation |
 | [Autonomous](autonomous.md) | PathPlanner setup, auto routines, path creation, trajectory following |
 | [Simulation](simulation.md) | MapleSim physics simulation, AdvantageScope visualization, running in sim |
 | [Subsystems Reference](subsystems.md) | Detailed reference for every subsystem: Superstructure, Shooter, etc. |
@@ -68,13 +68,13 @@ src/main/java/
           MapleSimSwerveDrivetrain.java  # CTRE↔MapleSim bridge
           MapSimSwerveTelemetry.java     # Sim telemetry publisher
         vision/
-          LimelightConstants.java # Camera IPs, offsets, names
-          LimelightSubsystem.java # Dual Limelight AprilTag subsystem
+          PhotonVisionConstants.java # Camera names, coprocessor IP, offsets, filters
+          PhotonVisionSubsystem.java # Drains both PV cameras → VisionObservations
+          PhotonVisionSim.java       # Sim-only fake cameras (VisionSystemSim)
       util/
         Constants.java            # Deprecated CAN bus strings
         ControlBoard.java         # Controller bindings, drive request
         FieldConstants.java       # 2026 field geometry from AprilTags
-        LimelightHelpers.java     # Limelight NetworkTables helper (v1.14)
   org/ironmaple/                  # MapleSim physics sim (bundled in-tree)
     simulation/
       SimulatedArena.java         # Central physics world

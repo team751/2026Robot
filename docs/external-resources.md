@@ -106,27 +106,27 @@ Comprehensive links to all vendor documentation, APIs, learning resources, and t
 
 ## Vision
 
-### Limelight
+### PhotonVision
 
-**YALL Version in project: 2026.1.12**
+**photonlib version in project: v2026.3.4** (the coprocessor must run exactly this version)
 
 | Resource | URL |
 |----------|-----|
-| Official Limelight Documentation | https://docs.limelightvision.io/ |
-| Getting Started | https://docs.limelightvision.io/docs/docs-limelight/getting-started/summary |
-| Limelight Lib API | https://docs.limelightvision.io/docs/docs-limelight/apis/limelight-lib |
-| FRC Networking Setup | https://docs.limelightvision.io/docs/docs-limelight/getting-started/FRC/networking |
-| Downloads | https://docs.limelightvision.io/docs/resources/downloads |
-| Software Changelog | https://docs.limelightvision.io/docs/docs-limelight/software-change-log |
-| Main Website | https://limelightvision.io/ |
-| GitHub (Limelight) | https://github.com/LimelightVision |
-| GitHub (LimelightDocs) | https://github.com/LimelightVision/LimelightDocs |
+| Official Documentation | https://docs.photonvision.org/en/latest/ |
+| Coprocessor Networking | https://docs.photonvision.org/en/latest/docs/quick-start/networking.html |
+| Camera Matching (USB ports) | https://docs.photonvision.org/en/latest/docs/quick-start/camera-matching.html |
+| Selecting Hardware | https://docs.photonvision.org/en/latest/docs/hardware/selecting-hardware.html |
+| Camera Calibration | https://docs.photonvision.org/en/latest/docs/calibration/calibration.html |
+| MultiTag Localization | https://docs.photonvision.org/en/latest/docs/apriltag-pipelines/multitag.html |
+| PhotonLib Overview | https://docs.photonvision.org/en/latest/docs/programming/photonlib/index.html |
+| Robot Pose Estimator | https://docs.photonvision.org/en/latest/docs/programming/photonlib/robot-pose-estimator.html |
+| Simulation (Java) | https://docs.photonvision.org/en/latest/docs/simulation/simulation-java.html |
+| Common Errors | https://docs.photonvision.org/en/latest/docs/troubleshooting/common-errors.html |
+| Java API Reference (Javadoc) | https://javadocs.photonvision.org/release/ |
+| GitHub Repository | https://github.com/PhotonVision/photonvision |
+| Releases (coprocessor images) | https://github.com/PhotonVision/photonvision/releases |
 
-**YALL (Yet Another Limelight Library):**
-| Resource | URL |
-|----------|-----|
-| GitHub | https://github.com/Yet-Another-Software-Suite/YALL |
-| Vendordep JSON | https://Yet-Another-Software-Suite.github.io/YALL/yall.json |
+The Limelights and the YALL / `LimelightHelpers` libraries were removed in the PhotonVision cutover.
 
 ---
 
@@ -219,7 +219,7 @@ In REBUILT, two alliances score **fuel** (game pieces) into alternating **hubs**
 | CTRE Phoenix 6 | 26.1.1 | `vendordeps/Phoenix6-26.1.1.json` |
 | PathPlannerLib | 2026.1.2 | `vendordeps/PathplannerLib-2026.1.2.json` |
 | REVLib | 2026.0.1 | `vendordeps/REVLib.json` |
-| YALL (Limelight) | 2026.1.12 | `vendordeps/yall.json` |
+| photonlib (PhotonVision) | v2026.3.4 | `vendordeps/photonlib.json` |
 | MapleSim | 0.4.0-beta | `vendordeps/maple-sim.json` |
 | WPILibNewCommands | 2026 | `vendordeps/WPILibNewCommands.json` |
 | Lombok | 1.18.30 | `build.gradle` |

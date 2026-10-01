@@ -10,8 +10,9 @@ Main.java
        ├─ CommandScheduler (runs all subsystem periodic + commands)
        │    ├─ SwerveSubsystem (drive control, PathPlanner AutoBuilder)
        │    │    └─ [sim] MapleSimSwerveDrivetrain (200Hz physics)
-       │    ├─ Odometry (vision + wheel fusion, Field2d)
-       │    │    └─ LimelightSubsystem (dual camera AprilTag poses)
+       │    ├─ PhotonVisionSubsystem (drains front/side PhotonVision cameras once per loop)
+       │    ├─ Odometry (filters + fuses vision into the swerve pose estimator, Field2d)
+       │    ├─ [sim] PhotonVisionSim (fake cameras driven by MapleSim ground truth)
        │    ├─ Superstructure (state machine coordinator)
        │    └─ [future subsystems...]
        ├─ ControlBoard (PS5 controller bindings → SwerveRequests)
@@ -27,16 +28,22 @@ The robot program follows WPILib's `TimedRobot` lifecycle. The main loop runs at
 ```
 1. JVM starts → Main.main() → RobotBase.startRobot(Robot::new)
 2. Robot() constructor:
-   a. Odometry.getInstance()         ← creates Odometry → SwerveSubsystem → LimelightSubsystem
+   a. DataLogManager.start()         ← records all NT data to a .wpilog
    b. CommandScheduler.getInstance() ← gets the singleton scheduler
-   c. SwerveSubsystem.getInstance() ← already created by Odometry
+   c. SwerveSubsystem.getInstance()  ← creates the drivetrain (and MapleSim in sim)
    d. ControlBoard.getInstance()     ← creates controllers (wrapped in try/catch)
 3. robotInit():
-   a. Port forwarding for Limelight cameras (5800-5809)
-   b. AutoBuilder.buildAutoChooser() → SmartDashboard "Auto Chooser"
+   a. [real robot only] PortForwarder 5800 → PhotonVision coprocessor (10.7.51.11), PV UI only over USB tether
+   b. new RobotContainer()           ← named commands, AutoBuilder.buildAutoChooser() → SmartDashboard "Auto Chooser"
+   c. Odometry.getInstance()         ← creates PhotonVisionSubsystem first, then Odometry (private constructor)
+   d. [sim] PhotonVisionSim.getInstance()
 ```
 
-**Important**: The initialization order matters. `Odometry` creates `SwerveSubsystem` and `LimelightSubsystem` as dependencies. The `ControlBoard` depends on `SwerveSubsystem` being initialized.
+**Important**: The initialization order matters.
+- `PhotonVisionSubsystem` and `Odometry` are created in `robotInit()`, **before the first scheduler loop**, so vision fuses while disabled and in auto. `resetOdom: false` autos rely on vision having seeded the pose before the match.
+- `PhotonVisionSubsystem` must be created **before** `Odometry`. Subsystem `periodic()` methods run in registration order, so PhotonVision drains this loop's camera frames before `Odometry.periodic()` reads them. `Odometry.getInstance()` handles this itself, so `robotInit()` only calls `Odometry.getInstance()`.
+- The PortForwarder only carries the PV web UI. Camera preview streams use other ports, so calibrate cameras over the radio or Ethernet.
+- The `ControlBoard` depends on `SwerveSubsystem` being initialized.
 
 ### Periodic Loop (50Hz)
 
@@ -46,9 +53,11 @@ Every 20ms, WPILib calls:
 robotPeriodic():
   1. TunableParameter.updateAll()    ← polls SmartDashboard for changed values
   2. CommandScheduler.run()          ← runs all registered subsystem periodic() + scheduled commands
-     ├─ SwerveSubsystem.periodic()  ← operator perspective, publishes pose
-     ├─ Odometry.periodic()         ← vision fusion, Field2d update
-     ├─ Superstructure.periodic()   ← state machine transitions
+     ├─ SwerveSubsystem.periodic()  ← publishes pose (+ Sim/PoseErrorMeters in sim)
+     ├─ Superstructure.periodic()   ← state machine transitions (created earlier, by ControlBoard)
+     ├─ PhotonVisionSubsystem.periodic() ← drains camera frames → VisionObservations
+     ├─ Odometry.periodic()         ← filters + fuses vision, accept/reject counts, Field2d update
+     ├─ [sim] PhotonVisionSim.periodic() ← renders fake camera frames from ground truth (read next loop)
      └─ [active commands execute]
   3. ControlBoard.displayUI()        ← (currently empty, reserved for dashboard updates)
 ```
@@ -60,7 +69,7 @@ robotPeriodic():
 | DS connects | `driverStationConnected()` | `ControlBoard.tryInit()` — binds controllers if not already done |
 | Auto starts | `autonomousInit()` | Schedules selected auto from `autoChooser` |
 | Auto ends | `autonomousExit()` | Cancels running auto command |
-| Teleop starts | `teleopInit()` | Initializes `LimelightSubsystem`, sets alliance perspective |
+| Teleop starts | `teleopInit()` | Sets alliance perspective (rotates the pose estimate in place if it changed). Needs an alliance: `getAlliance().get()` is unguarded, so select one in the Sim GUI. |
 | Disabled | `disabledInit()` | Stops `SignalLogger` |
 
 ## Design Patterns
@@ -194,8 +203,9 @@ subsystems/
     generated/
       TunerConstants.java     # Auto-generated, do not edit
   vision/
-    LimelightSubsystem.java
-    LimelightConstants.java
+    PhotonVisionSubsystem.java
+    PhotonVisionConstants.java
+    PhotonVisionSim.java      # Sim only
   shooter/
     ShooterSubsystem.java
     ShooterConstants.java
@@ -218,9 +228,9 @@ Subsystems → SmartDashboard/NetworkTables → Dashboard (Elastic/Shuffleboard/
 
 Key telemetry published:
 - `Swerve/Pose x`, `Swerve/Pose y`, `Swerve/Rotation` — robot pose from SwerveSubsystem
-- `Odometry/X`, `Odometry/Y`, `Odometry/Rotation` — robot pose from Odometry
-- `Pigeon Yaw/Pitch/Roll` — IMU readings
-- `Interpolating?` — whether both Limelights have AprilTag targets
+- `Vision/Front/*`, `Vision/Side/*` — raw PhotonVision poses, tags used, strategy, reprojection error, last reject reason, and accepted/rejected counts (see [Vision & Odometry](vision-and-odometry.md#telemetry-advantagescope))
+- `Odometry/VisionRejected`, `Odometry/FrontStable`, `Odometry/SideStable`, `Odometry/PoseStable` — spin gate and vision/odometry agreement
+- `Sim/PoseErrorMeters` — fused pose vs MapleSim ground truth (simulation only)
 - `Superstructure/loopCycleTime` — state machine timing
 - `Field` — Field2d visualization data
 - `DriveState/*` — full swerve module states (simulation telemetry)
