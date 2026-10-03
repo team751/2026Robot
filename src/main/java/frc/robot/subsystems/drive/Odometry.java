@@ -6,6 +6,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.vision.LimelightConstants;
 import frc.robot.subsystems.vision.LimelightSubsystem;
@@ -41,6 +43,7 @@ public class Odometry extends SubsystemBase {
   private static Odometry instance;
   private final SwerveSubsystem drive;
   private final LimelightSubsystem limelights;
+  private Field2d field = new Field2d();
   public Pose2d robotPose;
 
   // Per-camera stability counters
@@ -114,6 +117,12 @@ public class Odometry extends SubsystemBase {
       Logger.recordOutput(telemetryPrefix + "/TagCount", estimate.tagCount);
       Logger.recordOutput(telemetryPrefix + "/AvgTagDist", estimate.avgTagDist);
       Logger.recordOutput(telemetryPrefix + "/Latency", estimate.latency);
+
+      // Also on SmartDashboard for the Elastic layout
+      SmartDashboard.putNumber(telemetryPrefix + "/RawX", estimate.pose.getX());
+      SmartDashboard.putNumber(telemetryPrefix + "/RawY", estimate.pose.getY());
+      SmartDashboard.putNumber(telemetryPrefix + "/TagCount", estimate.tagCount);
+      SmartDashboard.putNumber(telemetryPrefix + "/AvgTagDist", estimate.avgTagDist);
     } else {
       Logger.recordOutput(telemetryPrefix + "/RawPose", new Pose2d[] {});
     }
@@ -156,6 +165,7 @@ public class Odometry extends SubsystemBase {
 
     boolean rejected = isRotatingTooFast();
     Logger.recordOutput("Odometry/VisionRejected", rejected);
+    SmartDashboard.putBoolean("Odometry/VisionRejected", rejected);
 
     if (!rejected) {
       int frontResult =
@@ -177,5 +187,11 @@ public class Odometry extends SubsystemBase {
     Logger.recordOutput("Odometry/SideStable", isSideStable());
     Logger.recordOutput("Odometry/FrontStableCount", frontStableCount);
     Logger.recordOutput("Odometry/SideStableCount", sideStableCount);
+
+    // Also on SmartDashboard for the Elastic layout
+    field.setRobotPose(robotPose);
+    SmartDashboard.putBoolean("Odometry/PoseStable", isPoseStable());
+    SmartDashboard.putBoolean("Odometry/FrontStable", isFrontStable());
+    SmartDashboard.putData(field);
   }
 }
