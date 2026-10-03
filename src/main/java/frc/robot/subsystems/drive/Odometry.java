@@ -118,7 +118,6 @@ public class Odometry extends SubsystemBase {
       Logger.recordOutput(telemetryPrefix + "/AvgTagDist", estimate.avgTagDist);
       Logger.recordOutput(telemetryPrefix + "/Latency", estimate.latency);
 
-      // Also on SmartDashboard for the Elastic layout
       SmartDashboard.putNumber(telemetryPrefix + "/RawX", estimate.pose.getX());
       SmartDashboard.putNumber(telemetryPrefix + "/RawY", estimate.pose.getY());
       SmartDashboard.putNumber(telemetryPrefix + "/TagCount", estimate.tagCount);
@@ -188,7 +187,6 @@ public class Odometry extends SubsystemBase {
     Logger.recordOutput("Odometry/FrontStableCount", frontStableCount);
     Logger.recordOutput("Odometry/SideStableCount", sideStableCount);
 
-    // Also on SmartDashboard for the Elastic layout
     field.setRobotPose(robotPose);
     SmartDashboard.putBoolean("Odometry/PoseStable", isPoseStable());
     SmartDashboard.putBoolean("Odometry/FrontStable", isFrontStable());

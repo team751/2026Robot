@@ -105,6 +105,7 @@ public class ShooterSubsystem extends SubsystemBase {
   /** Runs both the main shooter motor and transfer motor */
   private void setShooterSpeed(double flywheelVelocity, double transferVoltage) {
     flywheelMotor.setControl(flywheelControl.withVelocity(flywheelVelocity));
+    targetRPS = flywheelVelocity;
     if (Math.abs(flywheelVelocity - flywheelMotor.getVelocity().getValueAsDouble())
             < flywheelVelocity * (5.0 / 100.0)
         || isAuto) {
