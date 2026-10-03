@@ -15,6 +15,7 @@ import frc.robot.subsystems.drive.SwerveSubsystem;
 import frc.robot.util.FieldConstants;
 import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.seasonspecific.rebuilt2026.RebuiltFuelOnFly;
+import org.littletonrobotics.junction.Logger;
 
 public class ShooterSubsystem extends SubsystemBase {
   private static ShooterSubsystem instance;
@@ -74,6 +75,19 @@ public class ShooterSubsystem extends SubsystemBase {
       case REVERSE -> setTransferMotor(ShooterConstants.transferSpitVoltage);
       case SHOOT -> setShooterSpeed(calculateShooterSpeed(), ShooterConstants.transferVoltage);
     }
+
+    Logger.recordOutput("Shooter/State", state);
+    Logger.recordOutput("Shooter/TargetRPS", targetRPS);
+    Logger.recordOutput("Shooter/ActualRPS", flywheelMotor.getVelocity().getValueAsDouble());
+    Logger.recordOutput(
+        "Shooter/FlywheelError", targetRPS - flywheelMotor.getVelocity().getValueAsDouble());
+    Logger.recordOutput(
+        "Shooter/FlywheelCurrent", flywheelMotor.getStatorCurrent().getValueAsDouble());
+    Logger.recordOutput("Shooter/FollowCurrent", followMotor.getStatorCurrent().getValueAsDouble());
+    Logger.recordOutput("Shooter/DistanceFromHubCM", getRobotDistanceFromHub());
+    Logger.recordOutput("Shooter/CanShoot", canShoot());
+    Logger.recordOutput("Shooter/CalculatedSpeed", calculateShooterSpeed());
+    Logger.recordOutput("Shooter/IsAuto", isAuto);
   }
 
   /** Runs just the main flywheel motor */
@@ -91,6 +105,7 @@ public class ShooterSubsystem extends SubsystemBase {
   /** Runs both the main shooter motor and transfer motor */
   private void setShooterSpeed(double flywheelVelocity, double transferVoltage) {
     flywheelMotor.setControl(flywheelControl.withVelocity(flywheelVelocity));
+    targetRPS = flywheelVelocity;
     if (Math.abs(flywheelVelocity - flywheelMotor.getVelocity().getValueAsDouble())
             < flywheelVelocity * (5.0 / 100.0)
         || isAuto) {
