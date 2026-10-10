@@ -139,6 +139,7 @@ public class ControlBoard {
             IntakeSubsystem.getInstance(),
             ExtenderSubsystem.getInstance(),
             TransferSubsystem.getInstance()));
+    controller.crossButton.whileTrue(controller.rumble(0.5));
 
     // controller.squareButton.onTrue(
     // new InstantCommand(() -> {
@@ -217,6 +218,7 @@ public class ControlBoard {
             IntakeSubsystem.getInstance(),
             ExtenderSubsystem.getInstance(),
             TransferSubsystem.getInstance()));
+    controller.crossButton.whileTrue(controller.rumble(0.5));
     controller.leftTrigger.whileTrue(
         new IntakeCommand(IntakeSubsystem.getInstance(), ExtenderSubsystem.getInstance()));
 
