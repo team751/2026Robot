@@ -7,7 +7,6 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.lib.PS5Controller;
@@ -199,8 +198,11 @@ public class ControlBoard {
         new StartEndCommand(() -> preciseControl = true, () -> preciseControl = false)
             .withName("Precise Control Toggle")); // Fight me owen
 
-    controller.touchpadButton.onTrue(
-        new InstantCommand(() -> Logger.recordOutput("Timestamp", Timer.getTimestamp())));
+    controller.touchpadButton.whileTrue(
+        new StartEndCommand(
+                () -> Logger.recordOutput("Timestamp", true),
+                () -> Logger.recordOutput("Timestamp", false))
+            .ignoringDisable(true));
   }
 
   /* Operator bindings */
