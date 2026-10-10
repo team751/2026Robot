@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.lib.PS5Controller;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.JiggleCommand;
@@ -198,6 +199,11 @@ public class ControlBoard {
     controller.rightBumper.whileTrue(
         new StartEndCommand(() -> preciseControl = true, () -> preciseControl = false)
             .withName("Precise Control Toggle")); // Fight me owen
+
+    /* Haptics */
+    new Trigger(drive::hasCollided)
+        .and(DriverStation::isTeleopEnabled)
+        .onTrue(controller.rumble(1.0).withTimeout(0.3));
   }
 
   /* Operator bindings */

@@ -182,6 +182,34 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
     SmartDashboard.putNumber("Swerve/Pose x", pose.getX());
     SmartDashboard.putNumber("Swerve/Pose y", pose.getY());
     SmartDashboard.putNumber("Swerve/Rotation", pose.getRotation().getDegrees());
+
+    updateCollisionDetection();
+  }
+
+  /* Collision detection */
+  // Change in horizontal acceleration (g) between loops that counts as a hit. Tune on the robot.
+  private static final double COLLISION_JERK_THRESHOLD_G = 1.0;
+
+  private double lastAccelX = 0.0;
+  private double lastAccelY = 0.0;
+  private boolean collided = false;
+
+  private void updateCollisionDetection() {
+    double accelX = getPigeon2().getAccelerationX().getValueAsDouble();
+    double accelY = getPigeon2().getAccelerationY().getValueAsDouble();
+
+    double jerk = Math.hypot(accelX - lastAccelX, accelY - lastAccelY);
+    collided = jerk > COLLISION_JERK_THRESHOLD_G;
+
+    lastAccelX = accelX;
+    lastAccelY = accelY;
+
+    SmartDashboard.putNumber("Swerve/Collision Jerk", jerk);
+  }
+
+  /** True for the loop in which the robot hit something hard (wall, robot, etc.). */
+  public boolean hasCollided() {
+    return collided;
   }
 
   public Pose2d getPose() {
