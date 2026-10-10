@@ -3,10 +3,8 @@ package frc.robot;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.SignalLogger;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.drive.Odometry;
@@ -15,8 +13,12 @@ import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.vision.LimelightSubsystem;
 // import frc.robot.subsystems.vision.LimelightSubsystem;
 import frc.robot.util.ControlBoard;
+import org.littletonrobotics.junction.LoggedRobot;
+import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.networktables.NT4Publisher;
+import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
-public class Robot extends TimedRobot {
+public class Robot extends LoggedRobot {
   /** CANBus only used for climber */
   public static final CANBus riobus = new CANBus("rio");
 
@@ -34,13 +36,27 @@ public class Robot extends TimedRobot {
   private Command autonomousCommand;
 
   public Robot() {
-    // Record all NetworkTables data (+ DS/joystick data) to a .wpilog on the RIO
-    DataLogManager.start();
-    DriverStation.startDataLog(DataLogManager.getLog());
+    // ===== AdvantageKit logger setup — MUST run before any subsystem is constructed =====
+    Logger.recordMetadata("ProjectName", "2026Robot");
+    Logger.recordMetadata("TeamNumber", "751");
+    Logger.recordMetadata("RuntimeType", getRuntimeType().toString());
+
+    if (isReal()) {
+      // No-arg WPILOGWriter() only writes to a USB stick (/U/logs) and has no fallback, so with
+      // no stick it fails to open and logs nothing. Write to the RIO's internal storage instead.
+      Logger.addDataReceiver(new WPILOGWriter("/home/lvuser/logs"));
+      Logger.addDataReceiver(new NT4Publisher()); // live AdvantageScope view
+    } else {
+      Logger.addDataReceiver(new NT4Publisher()); // sim: live only, no replay mode
+    }
+
+    Logger.start();
+    // ===== End logger setup =====
 
     // Odometry.getInstance();
     scheduler = CommandScheduler.getInstance();
     swerve = SwerveSubsystem.getInstance();
+    Odometry.getInstance(); // moved up from teleopInit() so vision logs from robot boot
 
     ControlBoard tmpControlBoard = null;
     try {
@@ -122,7 +138,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    Odometry.getInstance();
     ShooterSubsystem.getInstance().isAuto = false;
     controlBoard.isBlue =
         !DriverStation.getAlliance().isPresent()
@@ -131,7 +146,8 @@ public class Robot extends TimedRobot {
     // ClimberSubsystem.getInstance().zeroClimber();
 
     var rot = Rotation2d.kZero;
-    if (DriverStation.getAlliance().get() == Alliance.Red) {
+    if (DriverStation.getAlliance().isPresent()
+        && DriverStation.getAlliance().get() == Alliance.Red) {
       rot = Rotation2d.k180deg;
     }
     swerve.setOperatorPerspectiveAndAdjustPose(rot);
