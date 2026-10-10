@@ -8,6 +8,7 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -51,6 +52,9 @@ public class Odometry extends SubsystemBase {
   private int frontStableCount = 0;
   private int sideStableCount = 0;
 
+  // Last time either camera had a valid estimate, for the "vision lost" timer
+  private double lastVisionTime = Timer.getFPGATimestamp();
+
   // Raw Limelight poses (what each camera sees, before fusion) for AdvantageScope / logs
   private final StructArrayPublisher<Pose2d> frontVisionPosePub =
       NetworkTableInstance.getDefault()
@@ -70,6 +74,11 @@ public class Odometry extends SubsystemBase {
   public static Odometry getInstance() {
     if (instance == null) instance = new Odometry();
     return instance;
+  }
+
+  /** Seconds since either camera last had a valid estimate. ~0 while vision is working. */
+  public double getSecondsWithoutVision() {
+    return Timer.getFPGATimestamp() - lastVisionTime;
   }
 
   public Pose2d getPose() {
@@ -167,6 +176,11 @@ public class Odometry extends SubsystemBase {
     // Log what the cameras see before any rejection, so rejected poses show up too
     publishRawVisionPose(frontVisionPosePub, frontEstimate);
     publishRawVisionPose(sideVisionPosePub, sideEstimate);
+
+    if (isValidEstimate(frontEstimate) || isValidEstimate(sideEstimate)) {
+      lastVisionTime = Timer.getFPGATimestamp();
+    }
+    SmartDashboard.putNumber("Vision/Seconds Lost", getSecondsWithoutVision());
 
     if (isRotatingTooFast()) {
       SmartDashboard.putBoolean("Odometry/VisionRejected", true);

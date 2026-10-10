@@ -7,6 +7,9 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -17,6 +20,7 @@ import frc.robot.commands.ShootCommand;
 import frc.robot.commands.SimpleUnstuck;
 import frc.robot.commands.SpitCommand;
 import frc.robot.subsystems.Superstructure;
+import frc.robot.subsystems.drive.Odometry;
 import frc.robot.subsystems.drive.SwerveConstants;
 import frc.robot.subsystems.drive.SwerveSubsystem;
 import frc.robot.subsystems.intake.ExtenderSubsystem;
@@ -51,6 +55,10 @@ public class ControlBoard {
   private double operatorOffset = 0;
 
   public boolean isBlue = false;
+
+  /* Haptics */
+  private static final double HUB_WARNING_SECONDS = 5.0;
+  private static final double VISION_LOST_BUZZ_SECONDS = 6.0;
 
   private PIDController autoAimController = new PIDController(0.4, 0.0, 0.01);
   private PIDController axisAlignController =
@@ -107,7 +115,13 @@ public class ControlBoard {
     }
   }
 
-  public void displayUI() {}
+  public void displayUI() {
+    SmartDashboard.putBoolean("Hub/Active", HubShift.isOurHubActive());
+    SmartDashboard.putBoolean("Hub/Shifts Known", HubShift.isKnown());
+    SmartDashboard.putNumber("Hub/Seconds Until Active", HubShift.getSecondsUntilActive());
+    SmartDashboard.putNumber("Hub/Active Seconds Left", HubShift.getSecondsLeftActive());
+    SmartDashboard.putNumber("Hub/Endgame Seconds Left", HubShift.getEndgameSecondsLeft());
+  }
 
   public static ControlBoard getInstance() {
     if (instance == null) instance = new ControlBoard();
@@ -204,12 +218,42 @@ public class ControlBoard {
     new Trigger(drive::hasCollided)
         .and(DriverStation::isTeleopEnabled)
         .onTrue(controller.rumble(drive::collisionType).withTimeout(0.3));
+
+    new Trigger(() -> Odometry.getInstance().getSecondsWithoutVision() > VISION_LOST_BUZZ_SECONDS)
+        .and(DriverStation::isTeleopEnabled)
+        .onTrue(controller.rumble(1.0).withTimeout(0.6));
+
+    configureSharedHaptics(controller);
+  }
+
+  /* Haptics used by both driver and operator */
+  private void configureSharedHaptics(PS5Controller controller) {
+    // Short tap when the flywheel reaches speed while shooting
+    controller
+        .rightTrigger
+        .and(ShooterSubsystem.getInstance()::isAtSpeed)
+        .onTrue(controller.rumble(0.4).withTimeout(0.15));
+
+    // Repeating pulses in the last few seconds before our hub becomes active
+    new Trigger(this::isHubAboutToActivate).whileTrue(hubWarningPulses(controller));
+  }
+
+  private boolean isHubAboutToActivate() {
+    return DriverStation.isTeleopEnabled()
+        && !HubShift.isOurHubActive()
+        && HubShift.getSecondsUntilActive() <= HUB_WARNING_SECONDS;
+  }
+
+  private Command hubWarningPulses(PS5Controller controller) {
+    return Commands.sequence(controller.rumble(0.6).withTimeout(0.2), Commands.waitSeconds(0.3))
+        .repeatedly();
   }
 
   /* Operator bindings */
   private void configureOperatorBindings(PS5Controller controller) {
     controller.rightTrigger.whileTrue(
         new ShootCommand(ShooterSubsystem.getInstance(), TransferSubsystem.getInstance(), true));
+    configureSharedHaptics(controller);
 
     controller.dUp.whileTrue(
         new InstantCommand(() -> ExtenderSubsystem.getInstance().requestExtend()));
@@ -219,6 +263,9 @@ public class ControlBoard {
 
     controller.dRight.whileTrue(new InstantCommand(() -> operatorOffset += isBlue ? -5.0 : 5.0));
     controller.dLeft.whileTrue(new InstantCommand(() -> operatorOffset += isBlue ? 5.0 : -5.0));
+    // Light tick so the operator can feel each offset step
+    controller.dRight.onTrue(controller.rumble(0.3).withTimeout(0.1));
+    controller.dLeft.onTrue(controller.rumble(0.3).withTimeout(0.1));
 
     controller.crossButton.whileTrue(
         new JiggleCommand(
