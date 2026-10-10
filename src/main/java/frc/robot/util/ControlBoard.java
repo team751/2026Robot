@@ -203,7 +203,7 @@ public class ControlBoard {
     /* Haptics */
     new Trigger(drive::hasCollided)
         .and(DriverStation::isTeleopEnabled)
-        .onTrue(controller.rumble(1.0).withTimeout(0.3));
+        .onTrue(controller.rumble(drive::collisionType).withTimeout(0.3));
   }
 
   /* Operator bindings */

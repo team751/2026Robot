@@ -83,8 +83,18 @@ public class PS5Controller {
    * @param strength 0.0 to 1.0
    */
   public Command rumble(double strength) {
+    return rumble(() -> strength);
+  }
+
+  /**
+   * Rumbles the controller while the returned command is running, then stops it on end. The
+   * strength is read when the command starts, not when it is created.
+   *
+   * @param strength 0.0 to 1.0
+   */
+  public Command rumble(DoubleSupplier strength) {
     return Commands.startEnd(
-            () -> joystick.setRumble(RumbleType.kBothRumble, strength),
+            () -> joystick.setRumble(RumbleType.kBothRumble, strength.getAsDouble()),
             () -> joystick.setRumble(RumbleType.kBothRumble, 0.0))
         .ignoringDisable(true)
         .withName("Rumble");
