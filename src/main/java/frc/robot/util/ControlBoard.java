@@ -192,7 +192,8 @@ public class ControlBoard {
         new StartEndCommand(() -> axisAlign = true, () -> axisAlign = false)
             .withName("Axis Align Toggle"));
 
-    controller.circleButton.onTrue(new InstantCommand(() -> drive.setRobotRotationByAlliance()) .ignoringDisable(true));
+    controller.circleButton.onTrue(
+        new InstantCommand(() -> drive.setRobotRotationByAlliance()).ignoringDisable(true));
 
     controller.rightBumper.whileTrue(
         new StartEndCommand(() -> preciseControl = true, () -> preciseControl = false)
