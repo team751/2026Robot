@@ -233,6 +233,12 @@ public class ControlBoard {
             ExtenderSubsystem.getInstance(),
             TransferSubsystem.getInstance()));
 
+    controller.touchpadButton.whileTrue(
+        new StartEndCommand(
+                () -> Logger.recordOutput("Timestamp", true),
+                () -> Logger.recordOutput("Timestamp", false))
+            .ignoringDisable(true));
+
     // controller.squareButton.onTrue(
     // new InstantCommand(() -> {
     //     if (LimelightConstants.MT_SWITCH_DISTANCE_METERS == 1.5) {
