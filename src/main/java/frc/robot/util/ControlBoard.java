@@ -28,6 +28,7 @@ import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.simulation.MapSimSwerveTelemetry;
 import frc.robot.subsystems.transfer.TransferSubsystem;
+import org.littletonrobotics.junction.Logger;
 
 // import frc.robot.subsystems.climber.ClimberSubsystem;
 
@@ -247,6 +248,12 @@ public class ControlBoard {
   private Command hubWarningPulses(PS5Controller controller) {
     return Commands.sequence(controller.rumble(0.6).withTimeout(0.2), Commands.waitSeconds(0.3))
         .repeatedly();
+
+    controller.touchpadButton.whileTrue(
+        new StartEndCommand(
+                () -> Logger.recordOutput("Timestamp", true),
+                () -> Logger.recordOutput("Timestamp", false))
+            .ignoringDisable(true));
   }
 
   /* Operator bindings */
@@ -281,6 +288,12 @@ public class ControlBoard {
             IntakeSubsystem.getInstance(),
             ExtenderSubsystem.getInstance(),
             TransferSubsystem.getInstance()));
+
+    controller.touchpadButton.whileTrue(
+        new StartEndCommand(
+                () -> Logger.recordOutput("Timestamp", true),
+                () -> Logger.recordOutput("Timestamp", false))
+            .ignoringDisable(true));
 
     // controller.squareButton.onTrue(
     // new InstantCommand(() -> {

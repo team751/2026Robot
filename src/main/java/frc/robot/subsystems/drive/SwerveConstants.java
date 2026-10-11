@@ -13,6 +13,9 @@ public class SwerveConstants {
   public static final double maxAngularSpeed =
       Units.RotationsPerSecond.of(1.1).in(Units.RadiansPerSecond);
 
+  // Pigeon 2 yaw drift correction (degrees per rotation), measured via spin calibration
+  public static final double kGyroScalarZ = -5.69;
+
   public static class AutoConstants {
     public static double kMaxSpeedMetersPerSecond = 7; // 3
     public static double kMaxAccelerationMetersPerSecondSquared = 5.5; // 3

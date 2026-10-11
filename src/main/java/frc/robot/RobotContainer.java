@@ -7,8 +7,6 @@ package frc.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -19,9 +17,10 @@ import frc.robot.subsystems.intake.ExtenderSubsystem;
 import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.transfer.TransferSubsystem;
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 public class RobotContainer {
-  private final SendableChooser<Command> autoChooser;
+  private final LoggedDashboardChooser<Command> autoChooser;
 
   public RobotContainer() {
     // COMMANDS FOR NAMED COMMANDS
@@ -111,8 +110,9 @@ public class RobotContainer {
     NamedCommands.registerCommand("Transfer", transfer);
     NamedCommands.registerCommand("StopTransfer", stopTransfer);
 
-    autoChooser = AutoBuilder.buildAutoChooser();
-    SmartDashboard.putData("Auto Chooser", autoChooser);
+    // LoggedDashboardChooser wraps the normal SendableChooser: it still shows up on the
+    // dashboard exactly the same, but the selected auto name is now recorded to the log too.
+    autoChooser = new LoggedDashboardChooser<>("Auto Chooser", AutoBuilder.buildAutoChooser());
 
     configureBindings();
     DriverStation.silenceJoystickConnectionWarning(true);
@@ -121,6 +121,6 @@ public class RobotContainer {
   private void configureBindings() {}
 
   public Command getAutonomousCommand() {
-    return autoChooser.getSelected();
+    return autoChooser.get();
   }
 }
