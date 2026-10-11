@@ -6,14 +6,13 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.vision.LimelightConstants;
 import frc.robot.subsystems.vision.LimelightSubsystem;
 import frc.robot.util.LimelightHelpers;
+import org.littletonrobotics.junction.Logger;
 
 /* Rough overview of what Odometry.java does and how it works.
  * Odometry tells the driver where the robot is at all times.
@@ -50,16 +49,6 @@ public class Odometry extends SubsystemBase {
   // Per-camera stability counters
   private int frontStableCount = 0;
   private int sideStableCount = 0;
-
-  // Raw Limelight poses (what each camera sees, before fusion) for AdvantageScope / logs
-  private final StructArrayPublisher<Pose2d> frontVisionPosePub =
-      NetworkTableInstance.getDefault()
-          .getStructArrayTopic("Vision/Front/RawPose", Pose2d.struct)
-          .publish();
-  private final StructArrayPublisher<Pose2d> sideVisionPosePub =
-      NetworkTableInstance.getDefault()
-          .getStructArrayTopic("Vision/Side/RawPose", Pose2d.struct)
-          .publish();
 
   public Odometry() {
     this.drive = SwerveSubsystem.getInstance();
@@ -118,19 +107,32 @@ public class Odometry extends SubsystemBase {
   }
 
   /**
+   * Logs the raw Limelight pose, or an empty array when no tags are seen. Logging an empty array
+   * (rather than skipping the log entirely) means AdvantageScope's displayed pose actually clears
+   * once tags are lost, instead of showing the last pose seen indefinitely.
+   */
+  private void logRawVisionPose(String telemetryPrefix, LimelightHelpers.PoseEstimate estimate) {
+    if (isValidEstimate(estimate)) {
+      Logger.recordOutput(telemetryPrefix + "/RawPose", new Pose2d[] {estimate.pose});
+      Logger.recordOutput(telemetryPrefix + "/TagCount", estimate.tagCount);
+      Logger.recordOutput(telemetryPrefix + "/AvgTagDist", estimate.avgTagDist);
+      Logger.recordOutput(telemetryPrefix + "/Latency", estimate.latency);
+
+      SmartDashboard.putNumber(telemetryPrefix + "/RawX", estimate.pose.getX());
+      SmartDashboard.putNumber(telemetryPrefix + "/RawY", estimate.pose.getY());
+      SmartDashboard.putNumber(telemetryPrefix + "/TagCount", estimate.tagCount);
+      SmartDashboard.putNumber(telemetryPrefix + "/AvgTagDist", estimate.avgTagDist);
+    } else {
+      Logger.recordOutput(telemetryPrefix + "/RawPose", new Pose2d[] {});
+    }
+  }
+
+  /**
    * @return the stability count delta: +1 if vision agrees with odometry, reset to 0 if not, or -1
    *     if the estimate was rejected (caller should not update counter).
    */
   private int applyVisionEstimate(
       LimelightHelpers.PoseEstimate estimate, Matrix<N3, N1> baseStdDevs, String telemetryPrefix) {
-
-    // Publish raw vision pose for debugging regardless of acceptance
-    if (estimate != null && estimate.tagCount > 0) {
-      SmartDashboard.putNumber(telemetryPrefix + "/RawX", estimate.pose.getX());
-      SmartDashboard.putNumber(telemetryPrefix + "/RawY", estimate.pose.getY());
-      SmartDashboard.putNumber(telemetryPrefix + "/TagCount", estimate.tagCount);
-      SmartDashboard.putNumber(telemetryPrefix + "/AvgTagDist", estimate.avgTagDist);
-    }
 
     if (!isValidEstimate(estimate)) return -1;
 
@@ -149,30 +151,22 @@ public class Odometry extends SubsystemBase {
     return (distance < LimelightConstants.POSE_STABLE_EPSILON_METERS) ? 1 : 0;
   }
 
-  /** Logs the raw Limelight pose, or an empty array when no tags are seen (avoids stale poses). */
-  private void publishRawVisionPose(
-      StructArrayPublisher<Pose2d> publisher, LimelightHelpers.PoseEstimate estimate) {
-    if (isValidEstimate(estimate)) {
-      publisher.set(new Pose2d[] {estimate.pose});
-    } else {
-      publisher.set(new Pose2d[] {});
-    }
-  }
-
   @Override
   public void periodic() {
+    // Read each camera once per cycle and reuse the result, rather than querying NT twice
+    // (once for logging, once for fusion) and risking the two reads disagreeing.
     LimelightHelpers.PoseEstimate frontEstimate = limelights.getBotPoseFront();
     LimelightHelpers.PoseEstimate sideEstimate = limelights.getBotPoseSide();
 
     // Log what the cameras see before any rejection, so rejected poses show up too
-    publishRawVisionPose(frontVisionPosePub, frontEstimate);
-    publishRawVisionPose(sideVisionPosePub, sideEstimate);
+    logRawVisionPose("Vision/Front", frontEstimate);
+    logRawVisionPose("Vision/Side", sideEstimate);
 
-    if (isRotatingTooFast()) {
-      SmartDashboard.putBoolean("Odometry/VisionRejected", true);
-    } else {
-      SmartDashboard.putBoolean("Odometry/VisionRejected", false);
+    boolean rejected = isRotatingTooFast();
+    Logger.recordOutput("Odometry/VisionRejected", rejected);
+    SmartDashboard.putBoolean("Odometry/VisionRejected", rejected);
 
+    if (!rejected) {
       int frontResult =
           applyVisionEstimate(frontEstimate, LimelightConstants.FRONT_STD_DEVS, "Vision/Front");
       if (frontResult == 1) frontStableCount++;
@@ -185,11 +179,17 @@ public class Odometry extends SubsystemBase {
     }
 
     robotPose = drive.getPose();
-    field.setRobotPose(robotPose.getX(), robotPose.getY(), robotPose.getRotation());
 
+    Logger.recordOutput("Odometry/Robot", robotPose);
+    Logger.recordOutput("Odometry/PoseStable", isPoseStable());
+    Logger.recordOutput("Odometry/FrontStable", isFrontStable());
+    Logger.recordOutput("Odometry/SideStable", isSideStable());
+    Logger.recordOutput("Odometry/FrontStableCount", frontStableCount);
+    Logger.recordOutput("Odometry/SideStableCount", sideStableCount);
+
+    field.setRobotPose(robotPose);
     SmartDashboard.putBoolean("Odometry/PoseStable", isPoseStable());
     SmartDashboard.putBoolean("Odometry/FrontStable", isFrontStable());
-    // SmartDashboard.putBoolean("Odometry/SideStable", isSideStable());
     SmartDashboard.putData(field);
   }
 }
