@@ -1,16 +1,26 @@
 package frc.lib;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PS5Controller.Axis;
 import edu.wpi.first.wpilibj.PS5Controller.Button;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import java.util.function.DoubleSupplier;
 
+/**
+ * PS5 DualSense wrapper that works both when the Driver Station sees the controller directly and
+ * when DS4Windows presents it as an Xbox 360 (XInput) controller. The Driver Station can only
+ * rumble XInput controllers, so DS4Windows is needed for haptics, but it renumbers every button
+ * and axis. The mapping is picked on every read from what the Driver Station currently reports.
+ */
 public class PS5Controller {
+  /** How far an XInput trigger must be pulled to count as pressed (WPILib's default). */
+  private static final double XINPUT_TRIGGER_THRESHOLD = 0.5;
+
   /* Axes */
   public final DoubleSupplier leftVerticalJoystick;
   public final DoubleSupplier leftHorizontalJoystick;
@@ -21,22 +31,22 @@ public class PS5Controller {
   public final Joystick joystick;
 
   /* Triggers */
-  public final JoystickButton leftTrigger;
-  public final JoystickButton rightTrigger;
+  public final Trigger leftTrigger;
+  public final Trigger rightTrigger;
 
   /* Joystick Buttons */
-  public final JoystickButton leftJoystickButton;
-  public final JoystickButton rightJoystickButton;
+  public final Trigger leftJoystickButton;
+  public final Trigger rightJoystickButton;
 
   /* Bumpers */
-  public final JoystickButton leftBumper;
-  public final JoystickButton rightBumper;
+  public final Trigger leftBumper;
+  public final Trigger rightBumper;
 
   /* Buttons */
-  public final JoystickButton triangleButton;
-  public final JoystickButton circleButton;
-  public final JoystickButton squareButton;
-  public final JoystickButton crossButton;
+  public final Trigger triangleButton;
+  public final Trigger circleButton;
+  public final Trigger squareButton;
+  public final Trigger crossButton;
 
   /* D-Pad */
   public final Trigger dUp;
@@ -44,41 +54,65 @@ public class PS5Controller {
   public final Trigger dDown;
   public final Trigger dLeft;
 
-  /* Touchpad */
-  public JoystickButton touchpadButton;
+  /* Touchpad (not available through XInput) */
+  public final Trigger touchpadButton;
 
   public PS5Controller(int port) {
     joystick = new Joystick(port);
 
-    leftVerticalJoystick = () -> -joystick.getRawAxis(Axis.kLeftY.value);
-    leftHorizontalJoystick = () -> -joystick.getRawAxis(Axis.kLeftX.value);
-    rightHorizontalJoystick = () -> -joystick.getRawAxis(Axis.kRightX.value);
-    rightVerticalJoystick = () -> -joystick.getRawAxis(Axis.kRightY.value);
+    leftVerticalJoystick = () -> -axis(Axis.kLeftY.value, XboxController.Axis.kLeftY.value);
+    leftHorizontalJoystick = () -> -axis(Axis.kLeftX.value, XboxController.Axis.kLeftX.value);
+    rightHorizontalJoystick = () -> -axis(Axis.kRightX.value, XboxController.Axis.kRightX.value);
+    rightVerticalJoystick = () -> -axis(Axis.kRightY.value, XboxController.Axis.kRightY.value);
 
-    leftTrigger = new JoystickButton(joystick, Button.kL2.value);
-    rightTrigger = new JoystickButton(joystick, Button.kR2.value);
+    leftTrigger = trigger(Button.kL2.value, XboxController.Axis.kLeftTrigger.value);
+    rightTrigger = trigger(Button.kR2.value, XboxController.Axis.kRightTrigger.value);
 
-    leftBumper = new JoystickButton(joystick, Button.kL1.value);
-    rightBumper = new JoystickButton(joystick, Button.kR1.value);
+    leftBumper = button(Button.kL1.value, XboxController.Button.kLeftBumper.value);
+    rightBumper = button(Button.kR1.value, XboxController.Button.kRightBumper.value);
 
-    leftJoystickButton = new JoystickButton(joystick, Button.kL3.value);
-    rightJoystickButton = new JoystickButton(joystick, Button.kR3.value);
+    leftJoystickButton = button(Button.kL3.value, XboxController.Button.kLeftStick.value);
+    rightJoystickButton = button(Button.kR3.value, XboxController.Button.kRightStick.value);
 
-    triangleButton = new JoystickButton(joystick, Button.kTriangle.value);
-    circleButton = new JoystickButton(joystick, Button.kCircle.value);
-    squareButton = new JoystickButton(joystick, Button.kSquare.value);
-    crossButton = new JoystickButton(joystick, Button.kCross.value);
+    triangleButton = button(Button.kTriangle.value, XboxController.Button.kY.value);
+    circleButton = button(Button.kCircle.value, XboxController.Button.kB.value);
+    squareButton = button(Button.kSquare.value, XboxController.Button.kX.value);
+    crossButton = button(Button.kCross.value, XboxController.Button.kA.value);
 
     dUp = new Trigger(() -> joystick.getPOV() == 0.0);
     dRight = new Trigger(() -> joystick.getPOV() == 90.0);
     dDown = new Trigger(() -> joystick.getPOV() == 180.0);
     dLeft = new Trigger(() -> joystick.getPOV() == 270.0);
 
-    touchpadButton = new JoystickButton(joystick, Button.kTouchpad.value);
+    touchpadButton =
+        new Trigger(() -> !isXInput() && joystick.getRawButton(Button.kTouchpad.value));
+  }
+
+  /** True when the Driver Station sees this controller as XInput (e.g. through DS4Windows). */
+  public boolean isXInput() {
+    return DriverStation.getJoystickIsXbox(joystick.getPort());
+  }
+
+  private double axis(int ps5Axis, int xinputAxis) {
+    return joystick.getRawAxis(isXInput() ? xinputAxis : ps5Axis);
+  }
+
+  private Trigger button(int ps5Button, int xinputButton) {
+    return new Trigger(() -> joystick.getRawButton(isXInput() ? xinputButton : ps5Button));
+  }
+
+  /** PS5 reports L2/R2 as buttons; XInput only reports them as 0 to 1 axes. */
+  private Trigger trigger(int ps5Button, int xinputAxis) {
+    return new Trigger(
+        () ->
+            isXInput()
+                ? joystick.getRawAxis(xinputAxis) > XINPUT_TRIGGER_THRESHOLD
+                : joystick.getRawButton(ps5Button));
   }
 
   /**
-   * Rumbles the controller while the returned command is running, then stops it on end.
+   * Rumbles the controller while the returned command is running, then stops it on end. Only works
+   * when the controller is seen as XInput (see {@link #isXInput()}).
    *
    * @param strength 0.0 to 1.0
    */
