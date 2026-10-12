@@ -215,6 +215,12 @@ public class ControlBoard {
         new StartEndCommand(() -> preciseControl = true, () -> preciseControl = false)
             .withName("Precise Control Toggle")); // Fight me owen
 
+    controller.touchpadButton.whileTrue(
+        new StartEndCommand(
+                () -> Logger.recordOutput("Timestamp", true),
+                () -> Logger.recordOutput("Timestamp", false))
+            .ignoringDisable(true));
+
     /* Haptics */
     new Trigger(drive::hasCollided)
         .and(DriverStation::isTeleopEnabled)
@@ -248,12 +254,6 @@ public class ControlBoard {
   private Command hubWarningPulses(PS5Controller controller) {
     return Commands.sequence(controller.rumble(0.6).withTimeout(0.2), Commands.waitSeconds(0.3))
         .repeatedly();
-
-    controller.touchpadButton.whileTrue(
-        new StartEndCommand(
-                () -> Logger.recordOutput("Timestamp", true),
-                () -> Logger.recordOutput("Timestamp", false))
-            .ignoringDisable(true));
   }
 
   /* Operator bindings */
