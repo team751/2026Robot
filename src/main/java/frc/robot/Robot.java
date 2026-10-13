@@ -42,9 +42,11 @@ public class Robot extends LoggedRobot {
     Logger.recordMetadata("RuntimeType", getRuntimeType().toString());
 
     if (isReal()) {
-      // No-arg WPILOGWriter() only writes to a USB stick (/U/logs) and has no fallback, so with
-      // no stick it fails to open and logs nothing. Write to the RIO's internal storage instead.
-      Logger.addDataReceiver(new WPILOGWriter("/home/lvuser/logs"));
+      // Logs to the USB stick (/U/logs). Never log to the RIO's internal storage: AdvantageKit
+      // never deletes old logs, so they can fill the flash and corrupt the RIO image.
+      // A USB stick MUST be plugged in, or nothing is logged. Pull logs over the network with
+      // AdvantageScope "Download Logs" (path /U/logs) or scp; no need to remove the stick.
+      Logger.addDataReceiver(new WPILOGWriter());
       Logger.addDataReceiver(new NT4Publisher()); // live AdvantageScope view
     } else {
       Logger.addDataReceiver(new NT4Publisher()); // sim: live only, no replay mode
