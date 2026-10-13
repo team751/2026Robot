@@ -23,7 +23,6 @@ import frc.robot.subsystems.intake.IntakeSubsystem;
 import frc.robot.subsystems.shooter.ShooterSubsystem;
 import frc.robot.subsystems.simulation.MapSimSwerveTelemetry;
 import frc.robot.subsystems.transfer.TransferSubsystem;
-import org.littletonrobotics.junction.Logger;
 
 // import frc.robot.subsystems.climber.ClimberSubsystem;
 
@@ -198,12 +197,6 @@ public class ControlBoard {
     controller.rightBumper.whileTrue(
         new StartEndCommand(() -> preciseControl = true, () -> preciseControl = false)
             .withName("Precise Control Toggle")); // Fight me owen
-
-    controller.touchpadButton.whileTrue(
-        new StartEndCommand(
-                () -> Logger.recordOutput("Timestamp", true),
-                () -> Logger.recordOutput("Timestamp", false))
-            .ignoringDisable(true));
   }
 
   /* Operator bindings */
@@ -233,12 +226,6 @@ public class ControlBoard {
             IntakeSubsystem.getInstance(),
             ExtenderSubsystem.getInstance(),
             TransferSubsystem.getInstance()));
-
-    controller.touchpadButton.whileTrue(
-        new StartEndCommand(
-                () -> Logger.recordOutput("Timestamp", true),
-                () -> Logger.recordOutput("Timestamp", false))
-            .ignoringDisable(true));
 
     // controller.squareButton.onTrue(
     // new InstantCommand(() -> {

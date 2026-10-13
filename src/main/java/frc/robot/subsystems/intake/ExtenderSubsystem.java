@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.simulation.DIOSim;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.drive.SwerveSubsystem;
-import org.littletonrobotics.junction.Logger;
 
 public class ExtenderSubsystem extends SubsystemBase {
   private static ExtenderSubsystem instance;
@@ -91,15 +90,7 @@ public class ExtenderSubsystem extends SubsystemBase {
       state = ExtenderState.RETRACTED;
     }
 
-    Logger.recordOutput("Extender/State", state);
-    Logger.recordOutput("Extender/EstimatedExtension", estimatedExtension);
-    Logger.recordOutput("Extender/MotorOutput", motorOutput);
-    Logger.recordOutput("Extender/Velocity", extenderMotor.getVelocity().getValueAsDouble());
-    Logger.recordOutput("Extender/Position", extenderMotor.getPosition().getValueAsDouble());
-    Logger.recordOutput("Extender/LimitFrontLeft", frontLeftLimit.get());
-    Logger.recordOutput("Extender/LimitBackLeft", backLeftLimit.get());
-    Logger.recordOutput("Extender/LimitFrontRight", frontRightLimit.get());
-    Logger.recordOutput("Extender/LimitBackRight", backRightLimit.get());
+    // SmartDashboard.putNumber("Extender/Extension", estimatedExtension);
   }
 
   /**
@@ -113,6 +104,7 @@ public class ExtenderSubsystem extends SubsystemBase {
 
   private double calculateMotorControl(double target) {
     double pidOutput = extenderPID.calculate(estimatedExtension, target);
+    // SmartDashboard.putNumber("Extender/PIDThing", pidOutput);
     return pidOutput;
   }
 
