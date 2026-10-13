@@ -7,6 +7,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.lib.PS5Controller;
@@ -106,7 +107,13 @@ public class ControlBoard {
     }
   }
 
-  public void displayUI() {}
+  public void displayUI() {
+    SmartDashboard.putBoolean("Hub/Active", HubShift.isOurHubActive());
+    SmartDashboard.putBoolean("Hub/Shifts Known", HubShift.isKnown());
+    SmartDashboard.putNumber("Hub/Seconds Until Active", HubShift.getSecondsUntilActive());
+    SmartDashboard.putNumber("Hub/Active Seconds Left", HubShift.getSecondsLeftActive());
+    SmartDashboard.putNumber("Hub/Endgame Seconds Left", HubShift.getEndgameSecondsLeft());
+  }
 
   public static ControlBoard getInstance() {
     if (instance == null) instance = new ControlBoard();
