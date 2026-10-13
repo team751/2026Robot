@@ -137,19 +137,6 @@ public class ShooterSubsystem extends SubsystemBase {
         - 1.7;
   }
 
-  /** True when the shooter is shooting and the flywheel is within 5% of its target speed. */
-  public boolean isAtSpeed() {
-    double target;
-    switch (state) {
-      case SHOOT -> target = calculateShooterSpeed();
-      case AASHOOT -> target = ShooterConstants.flywheelSpeed;
-      default -> {
-        return false;
-      }
-    }
-    return Math.abs(target - flywheelMotor.getVelocity().getValueAsDouble()) < target * 0.05;
-  }
-
   public void requestIdle() {
     state = ShooterState.IDLE;
   }
