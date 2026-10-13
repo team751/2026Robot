@@ -215,7 +215,7 @@ public class ControlBoard {
         new StartEndCommand(() -> preciseControl = true, () -> preciseControl = false)
             .withName("Precise Control Toggle")); // Fight me owen
 
-    controller.touchpadButton.whileTrue(
+    controller.createButton.whileTrue(
         new StartEndCommand(
                 () -> Logger.recordOutput("Timestamp", true),
                 () -> Logger.recordOutput("Timestamp", false))
@@ -289,7 +289,7 @@ public class ControlBoard {
             ExtenderSubsystem.getInstance(),
             TransferSubsystem.getInstance()));
 
-    controller.touchpadButton.whileTrue(
+    controller.createButton.whileTrue(
         new StartEndCommand(
                 () -> Logger.recordOutput("Timestamp", true),
                 () -> Logger.recordOutput("Timestamp", false))

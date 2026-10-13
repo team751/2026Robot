@@ -2,15 +2,23 @@ package frc.lib;
 
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.PS5Controller.Axis;
-import edu.wpi.first.wpilibj.PS5Controller.Button;
+import edu.wpi.first.wpilibj.XboxController.Axis;
+import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import java.util.function.DoubleSupplier;
 
+/**
+ * PS5 controller running through DS4Windows as an emulated Xbox 360 controller (so the Driver
+ * Station can send rumble). Fields keep PlayStation names for the physical buttons, but read the
+ * Xbox (XInput) indices that the Driver Station actually sees.
+ */
 public class PS5Controller {
+  /* How far a trigger has to be pressed to count as held */
+  private static final double TRIGGER_THRESHOLD = 0.5;
+
   /* Axes */
   public final DoubleSupplier leftVerticalJoystick;
   public final DoubleSupplier leftHorizontalJoystick;
@@ -21,8 +29,8 @@ public class PS5Controller {
   public final Joystick joystick;
 
   /* Triggers */
-  public final JoystickButton leftTrigger;
-  public final JoystickButton rightTrigger;
+  public final Trigger leftTrigger;
+  public final Trigger rightTrigger;
 
   /* Joystick Buttons */
   public final JoystickButton leftJoystickButton;
@@ -44,8 +52,9 @@ public class PS5Controller {
   public final Trigger dDown;
   public final Trigger dLeft;
 
-  /* Touchpad */
-  public JoystickButton touchpadButton;
+  /* Center buttons (DS4Windows: Create -> Back, Options -> Start) */
+  public final JoystickButton createButton;
+  public final JoystickButton optionsButton;
 
   public PS5Controller(int port) {
     joystick = new Joystick(port);
@@ -55,26 +64,31 @@ public class PS5Controller {
     rightHorizontalJoystick = () -> -joystick.getRawAxis(Axis.kRightX.value);
     rightVerticalJoystick = () -> -joystick.getRawAxis(Axis.kRightY.value);
 
-    leftTrigger = new JoystickButton(joystick, Button.kL2.value);
-    rightTrigger = new JoystickButton(joystick, Button.kR2.value);
+    // Xbox triggers are analog axes (0 to 1), not buttons
+    leftTrigger =
+        new Trigger(() -> joystick.getRawAxis(Axis.kLeftTrigger.value) > TRIGGER_THRESHOLD);
+    rightTrigger =
+        new Trigger(() -> joystick.getRawAxis(Axis.kRightTrigger.value) > TRIGGER_THRESHOLD);
 
-    leftBumper = new JoystickButton(joystick, Button.kL1.value);
-    rightBumper = new JoystickButton(joystick, Button.kR1.value);
+    leftBumper = new JoystickButton(joystick, Button.kLeftBumper.value);
+    rightBumper = new JoystickButton(joystick, Button.kRightBumper.value);
 
-    leftJoystickButton = new JoystickButton(joystick, Button.kL3.value);
-    rightJoystickButton = new JoystickButton(joystick, Button.kR3.value);
+    leftJoystickButton = new JoystickButton(joystick, Button.kLeftStick.value);
+    rightJoystickButton = new JoystickButton(joystick, Button.kRightStick.value);
 
-    triangleButton = new JoystickButton(joystick, Button.kTriangle.value);
-    circleButton = new JoystickButton(joystick, Button.kCircle.value);
-    squareButton = new JoystickButton(joystick, Button.kSquare.value);
-    crossButton = new JoystickButton(joystick, Button.kCross.value);
+    // DS4Windows maps by position: Cross -> A, Circle -> B, Square -> X, Triangle -> Y
+    triangleButton = new JoystickButton(joystick, Button.kY.value);
+    circleButton = new JoystickButton(joystick, Button.kB.value);
+    squareButton = new JoystickButton(joystick, Button.kX.value);
+    crossButton = new JoystickButton(joystick, Button.kA.value);
 
     dUp = new Trigger(() -> joystick.getPOV() == 0.0);
     dRight = new Trigger(() -> joystick.getPOV() == 90.0);
     dDown = new Trigger(() -> joystick.getPOV() == 180.0);
     dLeft = new Trigger(() -> joystick.getPOV() == 270.0);
 
-    touchpadButton = new JoystickButton(joystick, Button.kTouchpad.value);
+    createButton = new JoystickButton(joystick, Button.kBack.value);
+    optionsButton = new JoystickButton(joystick, Button.kStart.value);
   }
 
   /**
