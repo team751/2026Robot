@@ -34,7 +34,9 @@ public class Robot extends TimedRobot {
   private Command autonomousCommand;
 
   public Robot() {
-    // Record all NetworkTables data (+ DS/joystick data) to a .wpilog on the RIO
+    // Record DS/joystick data to a .wpilog on the RIO. NetworkTables logging is off because
+    // recording every Limelight topic may be causing loop overruns (suspected lag cause).
+    DataLogManager.logNetworkTables(false);
     DataLogManager.start();
     DriverStation.startDataLog(DataLogManager.getLog());
 
