@@ -118,8 +118,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     double distanceCM = getRobotDistanceFromHub();
     return ((distanceCM - ShooterConstants.shooterDistanceCurveYIntercept)
-            / ShooterConstants.shooterDistanceCurveSlope)
-        - 1.7;
+        / ShooterConstants.shooterDistanceCurveSlope);
   }
 
   public void requestIdle() {
