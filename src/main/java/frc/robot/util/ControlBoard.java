@@ -58,7 +58,7 @@ public class ControlBoard {
   public boolean isBlue = false;
 
   /* Haptics */
-  private static final double HUB_WARNING_SECONDS = 5.0;
+  private static final double HUB_WARNING_SECONDS = 7.0;
   private static final double VISION_LOST_BUZZ_SECONDS = 6.0;
 
   private PIDController autoAimController = new PIDController(0.4, 0.0, 0.01);
