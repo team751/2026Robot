@@ -8,22 +8,29 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ./gradlew build              # Full build (compile + tests)
 ./gradlew deploy             # Deploy to RoboRIO (must be connected via USB/Wi-Fi/Ethernet)
 ./gradlew simulateJava       # Run simulation with MapleSim physics + Sim GUI
-./gradlew test               # Run JUnit 5 tests (no tests written yet)
-./gradlew spotlessApply      # Auto-format code
+./gradlew test               # Run JUnit 5 tests (no tests written yet; src/test doesn't exist)
+./gradlew spotlessApply      # Auto-format code (googleJavaFormat; CI has a spotless.yml workflow)
+./gradlew replayWatch        # AdvantageKit log replay (custom JavaExec task in build.gradle)
 ```
+
+CI (`.github/workflows/build.yml`) runs `./gradlew build` on Java 17 for every push/PR.
+
+### Branch status: `wpilib-2027-upgrade`
+
+This branch holds an **uncompiled, untested** WPILib 2027 alpha 7 framework (Systemcore only). `build.gradle` still targets 2026.2.1 / Java 17 on purpose — the 2027 importer regenerates it. Read `UPGRADE_2027.md` before touching build files or WPILib imports, and `grep -rn "TODO(2027)" src` for guesses. Don't "fix" `edu.wpi.first` imports or vendordeps by hand.
 
 ## Architecture Overview
 
-FRC Team 751's 2026 REBUILT season robot. Java 17, WPILib 2026.2.1, CTRE Phoenix 6 swerve drive.
+FRC Team 751's 2026 REBUILT season robot. Java 17, WPILib 2026.2.1, CTRE Phoenix 6 swerve drive, AdvantageKit logging (`Robot extends LoggedRobot`).
 
 ### System Diagram
 
 ```
-Robot.java (TimedRobot, 50Hz)
+Robot.java (LoggedRobot / AdvantageKit, 50Hz)
   ├─ CommandScheduler
   │    ├─ SwerveSubsystem (swerve drive, PathPlanner AutoBuilder)
   │    │    └─ [sim] MapleSimSwerveDrivetrain (200Hz physics)
-  │    ├─ Odometry (vision + wheel fusion, init deferred to driverStationConnected)
+  │    ├─ Odometry (vision + wheel fusion, created in Robot() constructor)
   │    │    └─ LimelightSubsystem (dual AprilTag cameras)
   │    ├─ Superstructure (state machine coordinator)
   │    │    ├─ ShooterSubsystem
@@ -37,10 +44,13 @@ Robot.java (TimedRobot, 50Hz)
 
 ### Initialization Order (Matters!)
 
-1. `Robot()` constructor — creates `SwerveSubsystem` and `ControlBoard` (wrapped in try/catch)
-2. End of the `Robot()` constructor (was `robotInit()` before WPILib 2027, which removed it) — creates `RobotContainer` (which registers named commands + auto chooser)
-3. `driverStationConnected()` — creates `Odometry` (which creates `LimelightSubsystem`), calls `ControlBoard.tryInit()`
-4. `teleopInit()` — sets operator perspective based on alliance color
+1. `Robot()` constructor start — AdvantageKit `Logger` setup (**must precede any subsystem construction**). On a real robot it logs to a USB stick (`/U/logs`) — never the RIO flash; no stick = no logs.
+2. `Robot()` constructor — creates `SwerveSubsystem`, `Odometry` (moved up from `teleopInit()` so vision logs from boot), and `ControlBoard` (wrapped in try/catch)
+3. End of the `Robot()` constructor (was `robotInit()` before WPILib 2027, which removed it) — creates `RobotContainer` (named commands + auto chooser), `LimelightSubsystem.initLimsplz()`
+4. `driverStationConnected()` — calls `ControlBoard.tryInit()`
+5. `teleopInit()` — sets operator perspective based on alliance color
+
+`autonomousInit()` sets `ShooterSubsystem.isAuto = true`.
 
 ### Periodic Loop (50Hz)
 
@@ -51,6 +61,10 @@ robotPeriodic():
 ```
 
 *Note: `TunableParameter.updateAll()` exists but is currently commented out.*
+
+### Dashboard (`util/Dashboard.java`)
+
+All dashboard values go through `Dashboard` (never call `SmartDashboard.put*` directly — 2027 removes it). It publishes under the same `SmartDashboard/...` NT keys so Elastic tiles keep working. `putFieldRobotPose` replaces `Field2d`.
 
 ## Key Design Patterns
 
@@ -107,7 +121,7 @@ CTRE generated swerve (`TunerSwerveDrivetrain`) with Kraken X60 FOC motors. Max 
 
 ### Vision (`subsystems/vision/`)
 
-Dual Limelights: `limelight-front` (3G, 10.7.51.71) and `limelight-side` (2, 10.7.51.75). Only translation from vision is used — heading always comes from Pigeon 2 gyro. `hasTarget()` requires both cameras to have targets.
+Dual Limelights (`LimelightSubsystem`; `PhotonvisionConstants.java` exists for a planned PhotonVision cutover, not yet wired in): `limelight-front` (3G, 10.7.51.71) and `limelight-side` (2, 10.7.51.75). Only translation from vision is used — heading always comes from Pigeon 2 gyro. `hasTarget()` requires both cameras to have targets.
 
 ### Intake (`subsystems/intake/`)
 
