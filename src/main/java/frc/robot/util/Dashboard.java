@@ -17,12 +17,12 @@ import java.util.Map;
  * and Tunables APIs). Every former {@code SmartDashboard.putX(...)} call in the robot code now goes
  * through this class, so the 2027 change only has to be made here, not in every subsystem.
  *
- * <p>TODO(2027): This is a framework stand-in and has NOT been compiled or tested against
- * WPILib 2027. It publishes straight to NetworkTables under the same "SmartDashboard/..." keys the
- * Elastic layout already uses, so the tile names do not change. Once the exact Telemetry API
- * (see the "Migration from WPILib 2026" sections in allwpilib's telemetry.md and tunables.md) is
- * confirmed, swap the bodies below to Telemetry calls and keep the method signatures. The NT
- * import paths will be changed to org.wpilib.* by the 2027 project importer.
+ * <p>TODO(2027): This is a framework stand-in and has NOT been compiled or tested against WPILib
+ * 2027. It publishes straight to NetworkTables under the same "SmartDashboard/..." keys the Elastic
+ * layout already uses, so the tile names do not change. Once the exact Telemetry API (see the
+ * "Migration from WPILib 2026" sections in allwpilib's telemetry.md and tunables.md) is confirmed,
+ * swap the bodies below to Telemetry calls and keep the method signatures. The NT import paths will
+ * be changed to org.wpilib.* by the 2027 project importer.
  */
 public final class Dashboard {
   private Dashboard() {}
