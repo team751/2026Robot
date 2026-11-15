@@ -38,7 +38,7 @@ Robot.java (TimedRobot, 50Hz)
 ### Initialization Order (Matters!)
 
 1. `Robot()` constructor — creates `SwerveSubsystem` and `ControlBoard` (wrapped in try/catch)
-2. `robotInit()` — port forwarding for Limelights, creates `RobotContainer` (which registers named commands + auto chooser)
+2. End of the `Robot()` constructor (was `robotInit()` before WPILib 2027, which removed it) — creates `RobotContainer` (which registers named commands + auto chooser)
 3. `driverStationConnected()` — creates `Odometry` (which creates `LimelightSubsystem`), calls `ControlBoard.tryInit()`
 4. `teleopInit()` — sets operator perspective based on alliance color
 
@@ -175,7 +175,7 @@ WPILib Blue-origin coordinates: origin at bottom-right of Blue wall, +X toward R
 
 ## Autonomous
 
-PathPlanner-based. AutoBuilder configured in `SwerveSubsystem` constructor. `RobotContainer.java` registers named commands for use in PathPlanner autos: `Shoot`/`StopShoot`, `Intake`/`StopIntake`, `Spit`/`StopSpit`, `Retract`, `Transfer`/`StopTransfer`. Auto chooser built in `Robot.robotInit()` and scans `src/main/deploy/pathplanner/autos/*.auto` — no code changes needed for new autos.
+PathPlanner-based. AutoBuilder configured in `SwerveSubsystem` constructor. `RobotContainer.java` registers named commands for use in PathPlanner autos: `Shoot`/`StopShoot`, `Intake`/`StopIntake`, `Spit`/`StopSpit`, `Retract`, `Transfer`/`StopTransfer`. Auto chooser built in `RobotContainer` and scans `src/main/deploy/pathplanner/autos/*.auto` — no code changes needed for new autos.
 
 ### Mirroring Autos
 
