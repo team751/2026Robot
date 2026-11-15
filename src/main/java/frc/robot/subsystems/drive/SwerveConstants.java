@@ -27,6 +27,11 @@ public class SwerveConstants {
     public static double kPYController = 0.6;
     public static double kPThetaController = 4;
 
+    // Choreo trajectory feedback, added on top of Choreo's feedforward. Started from the
+    // PathPlanner gains; raise translation kP if the robot drifts off the path.
+    public static final double kChoreoTranslationP = 0.5; // (m/s) per m of error
+    public static final double kChoreoRotationP = 4.75; // (rad/s) per rad of error
+
     /* Constraint for the motion profiled robot angle controller */
     public static TrapezoidProfile.Constraints kThetaControllerConstraints =
         new TrapezoidProfile.Constraints(

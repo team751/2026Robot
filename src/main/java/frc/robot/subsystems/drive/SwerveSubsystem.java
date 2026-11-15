@@ -1,5 +1,6 @@
 package frc.robot.subsystems.drive;
 
+import choreo.trajectory.SwerveSample;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.configs.GyroTrimConfigs;
@@ -12,6 +13,7 @@ import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.controllers.PathFollowingController;
 import com.pathplanner.lib.util.DriveFeedforwards;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -58,6 +60,19 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
       new SwerveRequest.ApplyRobotSpeeds()
           .withSteerRequestType(SwerveModule.SteerRequestType.Position)
           .withDriveRequestType(SwerveModule.DriveRequestType.Velocity);
+
+  // Choreo following. Field-relative with CTRE's default BlueAlliance perspective, because
+  // Choreo samples are always in blue-origin field coordinates.
+  private final SwerveRequest.ApplyFieldSpeeds m_choreoApplyFieldSpeeds =
+      new SwerveRequest.ApplyFieldSpeeds()
+          .withSteerRequestType(SwerveModule.SteerRequestType.Position)
+          .withDriveRequestType(SwerveModule.DriveRequestType.Velocity);
+  private final PIDController m_choreoXController =
+      new PIDController(SwerveConstants.AutoConstants.kChoreoTranslationP, 0, 0);
+  private final PIDController m_choreoYController =
+      new PIDController(SwerveConstants.AutoConstants.kChoreoTranslationP, 0, 0);
+  private final PIDController m_choreoHeadingController =
+      new PIDController(SwerveConstants.AutoConstants.kChoreoRotationP, 0, 0);
 
   private final SysIdRoutine m_sysIdRoutineToApply = m_sysIdRoutineSteer;
 
@@ -118,6 +133,9 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
         },
         this);
 
+    // Treat -pi and pi as the same heading so the robot turns the short way.
+    m_choreoHeadingController.enableContinuousInput(-Math.PI, Math.PI);
+
     // System.out.println("Swerve Starting!");
 
     // Try to apply operator perspective as early as possible so a deploy (process restart)
@@ -146,6 +164,31 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
   // This method now accepts DriveFeedforwards as PathPlanner expects
   private void drive(ChassisSpeeds robotSpeeds, DriveFeedforwards feedForward) {
     this.setControl(m_pathApplyRobotSpeeds.withSpeeds(robotSpeeds));
+  }
+
+  /**
+   * Choreo calls this every loop while a trajectory runs, with the sample the robot should be at
+   * right now. Drives Choreo's planned speeds plus a PID correction toward the sample's pose.
+   */
+  public void followTrajectory(SwerveSample sample) {
+    // getPose() instead of getState().Pose so this also works in MapleSim.
+    Pose2d pose = getPose();
+
+    // Feedforward: the field-relative speeds Choreo planned for this instant.
+    ChassisSpeeds speeds = sample.getChassisSpeeds();
+
+    // Feedback: correct for drift between where we are and where the trajectory says we should be.
+    speeds.vxMetersPerSecond += m_choreoXController.calculate(pose.getX(), sample.x);
+    speeds.vyMetersPerSecond += m_choreoYController.calculate(pose.getY(), sample.y);
+    speeds.omegaRadiansPerSecond +=
+        m_choreoHeadingController.calculate(pose.getRotation().getRadians(), sample.heading);
+
+    // Module forces are field-relative newtons in FL, FR, BL, BR order, same as CTRE's modules.
+    setControl(
+        m_choreoApplyFieldSpeeds
+            .withSpeeds(speeds)
+            .withWheelForceFeedforwardsX(sample.moduleForcesX())
+            .withWheelForceFeedforwardsY(sample.moduleForcesY()));
   }
 
   public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {
