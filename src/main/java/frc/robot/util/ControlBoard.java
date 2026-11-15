@@ -7,7 +7,6 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -117,11 +116,11 @@ public class ControlBoard {
   }
 
   public void displayUI() {
-    SmartDashboard.putBoolean("Hub/Active", HubShift.isOurHubActive());
-    SmartDashboard.putBoolean("Hub/Shifts Known", HubShift.isKnown());
-    SmartDashboard.putNumber("Hub/Seconds Until Active", HubShift.getSecondsUntilActive());
-    SmartDashboard.putNumber("Hub/Active Seconds Left", HubShift.getSecondsLeftActive());
-    SmartDashboard.putNumber("Hub/Endgame Seconds Left", HubShift.getEndgameSecondsLeft());
+    Dashboard.putBoolean("Hub/Active", HubShift.isOurHubActive());
+    Dashboard.putBoolean("Hub/Shifts Known", HubShift.isKnown());
+    Dashboard.putNumber("Hub/Seconds Until Active", HubShift.getSecondsUntilActive());
+    Dashboard.putNumber("Hub/Active Seconds Left", HubShift.getSecondsLeftActive());
+    Dashboard.putNumber("Hub/Endgame Seconds Left", HubShift.getEndgameSecondsLeft());
   }
 
   public static ControlBoard getInstance() {

@@ -21,7 +21,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -30,6 +29,7 @@ import frc.lib.CTREUtil;
 import frc.robot.subsystems.drive.generated.TunerConstants;
 import frc.robot.subsystems.drive.generated.TunerConstants.TunerSwerveDrivetrain;
 import frc.robot.subsystems.simulation.MapleSimSwerveDrivetrain;
+import frc.robot.util.Dashboard;
 import java.util.function.Supplier;
 import org.littletonrobotics.junction.Logger;
 
@@ -198,9 +198,9 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
 
     // Also on SmartDashboard for the Elastic layout
     Pose2d pose = getPose();
-    SmartDashboard.putNumber("Swerve/Pose x", pose.getX());
-    SmartDashboard.putNumber("Swerve/Pose y", pose.getY());
-    SmartDashboard.putNumber("Swerve/Rotation", pose.getRotation().getDegrees());
+    Dashboard.putNumber("Swerve/Pose x", pose.getX());
+    Dashboard.putNumber("Swerve/Pose y", pose.getY());
+    Dashboard.putNumber("Swerve/Rotation", pose.getRotation().getDegrees());
 
     updateCollisionDetection();
   }
@@ -226,8 +226,8 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
     lastAccelX = accelX;
     lastAccelY = accelY;
 
-    SmartDashboard.putNumber("Robot G-FORCE", g);
-    SmartDashboard.putBoolean("Collision", collided);
+    Dashboard.putNumber("Robot G-FORCE", g);
+    Dashboard.putBoolean("Collision", collided);
   }
 
   /** True for the loop in which the robot hit something hard (wall, robot, etc.). */
@@ -336,7 +336,7 @@ public class SwerveSubsystem extends TunerSwerveDrivetrain implements Subsystem 
     m_hasAppliedOperatorPerspective = true;
 
     Logger.recordOutput("Swerve/OperatorPerspectiveDeg", newRot.getDegrees());
-    SmartDashboard.putNumber("OperatorPerspectiveDeg", newRot.getDegrees());
+    Dashboard.putNumber("OperatorPerspectiveDeg", newRot.getDegrees());
   }
 
   // Simulation support
