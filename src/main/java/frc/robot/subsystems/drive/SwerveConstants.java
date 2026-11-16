@@ -27,9 +27,10 @@ public class SwerveConstants {
     public static double kPYController = 0.6;
     public static double kPThetaController = 4;
 
-    // Choreo trajectory feedback, added on top of Choreo's feedforward. Started from the
-    // PathPlanner gains; raise translation kP if the robot drifts off the path.
-    public static final double kChoreoTranslationP = 0.5; // (m/s) per m of error
+    // Choreo trajectory feedback, added on top of Choreo's feedforward. Translation kP tuned in
+    // MapleSim (ChoreoAutosTest): 0.5 stopped 20 cm short, 3.0 stops ~1.5 cm short, 3.5+
+    // overshoots the end. Re-check on the real robot, where vision pose jumps favor lower gains.
+    public static final double kChoreoTranslationP = 3.0; // (m/s) per m of error
     public static final double kChoreoRotationP = 4.75; // (rad/s) per rad of error
 
     /* Constraint for the motion profiled robot angle controller */
