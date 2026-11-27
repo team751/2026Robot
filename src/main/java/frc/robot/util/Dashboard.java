@@ -18,11 +18,23 @@ import java.util.concurrent.ConcurrentHashMap;
  * through this class, so the 2027 change only has to be made here, not in every subsystem.
  *
  * <p>TODO(2027): This is a framework stand-in and has NOT been compiled or tested against WPILib
- * 2027. It publishes straight to NetworkTables under the same "SmartDashboard/..." keys the Elastic
- * layout already uses, so the tile names do not change. Once the exact Telemetry API (see the
- * "Migration from WPILib 2026" sections in allwpilib's telemetry.md and tunables.md) is confirmed,
- * swap the bodies below to Telemetry calls and keep the method signatures. The NT import paths will
- * be changed to org.wpilib.* by the 2027 project importer.
+ * 2027. For now it publishes straight to NetworkTables under the same "SmartDashboard/..." keys the
+ * Elastic layout already uses. Once the exact Telemetry API (see the "Migration from WPILib 2026"
+ * sections in allwpilib's telemetry.md and tunables.md) is confirmed, swap the bodies below to
+ * Telemetry calls and keep the method signatures. The NT import paths will be changed to
+ * org.wpilib.* by the 2027 project importer.
+ *
+ * <p>WARNING: the keys do NOT stay the same by default after the Telemetry swap. At alpha 7,
+ * RobotBase registers the default backend as {@code new NetworkTablesTelemetryBackend(inst,
+ * "/Telemetry")} for every path, so {@code Telemetry.log("Swerve/Pose x", ...)} lands at {@code
+ * /Telemetry/Swerve/Pose x} and every Elastic tile goes blank. Pick one: (a) re-point the Elastic
+ * layout to {@code /Telemetry/...}, or (b) keep the old keys by registering {@code
+ * TelemetryRegistry.registerBackend("/SmartDashboard", new
+ * NetworkTablesTelemetryBackend(NetworkTableInstance.getDefault(), ""))} in the Robot constructor
+ * and logging to {@code "SmartDashboard/" + key} here. The longest-prefix match picks that backend
+ * and it adds no prefix, so the NT key is {@code /SmartDashboard/<key>}. (b) was worked out from
+ * the alpha-7 source (TelemetryRegistry, NetworkTablesTelemetryBackend, PathUtil) and has not been
+ * run: check the real keys in OutlineViewer or AdvantageScope before relying on it.
  */
 public final class Dashboard {
   private Dashboard() {}

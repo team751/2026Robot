@@ -14,7 +14,8 @@ Commands v3 or other new features), and port the alliance-flip logic exactly as 
 
 | File | Change |
 |---|---|
-| `src/main/java/frc/robot/util/Dashboard.java` (new) | One place for all dashboard values. Replaces direct `SmartDashboard.putX` calls. Publishes to NetworkTables under the same `SmartDashboard/...` keys, so Elastic tile names do not change. Also has `putFieldRobotPose`, replacing `Field2d` + `putData`. |
+| `src/main/java/frc/robot/util/Dashboard.java` (new) | One place for all dashboard values. Replaces direct `SmartDashboard.putX` calls. For now it publishes to NetworkTables under the same `SmartDashboard/...` keys, so Elastic tile names do not change **yet**. The default keys change after the Telemetry swap (see "Still to do" item 1). Also has `putFieldRobotPose`, replacing `Field2d` + `putData`. Publisher caches are `ConcurrentHashMap`s because the sim thread calls it too. |
+| `org/ironmaple/simulation/SimulatedArena.java`, `.../motorsims/SimulatedBattery.java` | The copied maple-sim source called `SmartDashboard.putNumber` directly, which won't compile on 2027 (`SmartDashboard` is gone). These now go through `Dashboard`, with the same keys. They run on the 200Hz sim `Notifier` thread. |
 | `Robot.java` | `robotInit()` is removed in 2027, so its body now runs at the end of the constructor, in the same order as before. |
 | `Odometry.java`, `SwerveSubsystem.java`, `ControlBoard.java` | Live `SmartDashboard.put*` calls now go through `Dashboard`. `Odometry` no longer uses `Field2d`. Commented-out `SmartDashboard` lines were left alone. |
 | `RobotContainer.java` | TODO(2027) comment only. The chooser is **not converted to Selectable yet** (see below). |
@@ -48,6 +49,19 @@ regenerates the Gradle files, and guessing those by hand would put wrong names i
    are the "Migration from WPILib 2026" sections of `telemetry/doc/telemetry.md` and
    `tunables/doc/tunables.md` in wpilibsuite/allwpilib. Keep the method signatures so no
    subsystem has to change.
+   **The NT keys change by default.** At alpha 7, `RobotBase` (`org/wpilib/framework/RobotBase.java`
+   line 224) registers `TelemetryRegistry.registerBackend("", new NetworkTablesTelemetryBackend(inst,
+   "/Telemetry"))`. So `Telemetry.log("Swerve/Pose x", ...)` publishes to `/Telemetry/Swerve/Pose x`,
+   not `/SmartDashboard/Swerve/Pose x`, and every Elastic tile goes blank. Pick one:
+   - **(a) Re-point the Elastic layout** to `/Telemetry/...`. This is the WPILib default, with no extra
+     code to maintain.
+   - **(b) Keep the old keys.** In the `Robot()` constructor, register
+     `TelemetryRegistry.registerBackend("/SmartDashboard", new NetworkTablesTelemetryBackend(NetworkTableInstance.getDefault(), ""))`
+     and have `Dashboard` log to `"SmartDashboard/" + key`. The registry picks the backend by longest
+     prefix match and passes it the full normalized path. This backend adds no prefix, so the key
+     comes out as `/SmartDashboard/<key>`. This was worked out from the alpha-7 source
+     (`TelemetryRegistry`, `NetworkTablesTelemetryBackend`, `PathUtil`) and has **not been run**.
+     Check the real keys in OutlineViewer or AdvantageScope before relying on it.
 2. **Auto chooser (`RobotContainer.java`)**: convert to `Selectable`. Unverified: the exact
    Selectable API, and what PathPlanner's 2027 `AutoBuilder.buildAutoChooser()` returns. Also check
    whether AdvantageKit's 2027 `LoggedDashboardChooser` still wraps the old chooser.

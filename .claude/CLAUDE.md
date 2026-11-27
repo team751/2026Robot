@@ -64,7 +64,7 @@ robotPeriodic():
 
 ### Dashboard (`util/Dashboard.java`)
 
-All dashboard values go through `Dashboard` (never call `SmartDashboard.put*` directly — 2027 removes it). It publishes under the same `SmartDashboard/...` NT keys so Elastic tiles keep working. `putFieldRobotPose` replaces `Field2d`.
+All dashboard values go through `Dashboard` (never call `SmartDashboard.put*` directly — 2027 removes it). For now it publishes under the same `SmartDashboard/...` NT keys so Elastic tiles keep working. **After the swap to the 2027 Telemetry API the default keys move to `/Telemetry/...`** (RobotBase's default backend prefix), which breaks the Elastic layout unless the layout is re-pointed or a `/SmartDashboard` backend is registered. See the `Dashboard` Javadoc for both options. The maple-sim source copy (`org.ironmaple`) also goes through `Dashboard` and calls it from the 200Hz sim `Notifier` thread, so `Dashboard` must stay thread-safe. `putFieldRobotPose` replaces `Field2d`.
 
 ## Key Design Patterns
 
