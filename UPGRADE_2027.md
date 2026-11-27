@@ -62,12 +62,17 @@ regenerates the Gradle files, and guessing those by hand would put wrong names i
      comes out as `/SmartDashboard/<key>`. This was worked out from the alpha-7 source
      (`TelemetryRegistry`, `NetworkTablesTelemetryBackend`, `PathUtil`) and has **not been run**.
      Check the real keys in OutlineViewer or AdvantageScope before relying on it.
-2. **Auto chooser (`RobotContainer.java`)**: convert to `Selectable`. Unverified: the exact
-   Selectable API, and what PathPlanner's 2027 `AutoBuilder.buildAutoChooser()` returns. Also check
-   whether AdvantageKit's 2027 `LoggedDashboardChooser` still wraps the old chooser.
-3. **AdvantageKit**: confirm a build exists that pairs with WPILib alpha 7 (the newest AdvantageKit
-   2027 release found while preparing this was alpha-6; alpha 6 and earlier vendordeps do not work
-   with alpha 7). 2027 limitations to know about: alert logging disabled, `OpModeRobot` not
+2. **Auto chooser (`RobotContainer.java`)**: convert to `Selectable`. The API is known.
+   `org.wpilib.tunable.Selectable<V>` has `add`, `addDefault`, `remove`, `setDefault`, `clear`,
+   `getSelected` and `onChange(Consumer<V>)`, and is published with
+   `Tunables.publish("auto", chooser)` (`tunables/doc/tunables.md`, "Selectable\<V\>"). It is **not
+   thread-safe**, so use it only from the main robot thread. Still unverified: what PathPlanner's
+   2027 `AutoBuilder.buildAutoChooser()` returns, and whether AdvantageKit's 2027
+   `LoggedDashboardChooser` still wraps a chooser.
+3. **AdvantageKit**: a `v27.0.0-alpha-7` tag exists in `Mechanical-Advantage/AdvantageKit`, but its
+   release notes were not checked, so it is **not confirmed** that it pairs with WPILib alpha 7
+   (alpha 6 and earlier vendordeps do not work with alpha 7). 2027 limitations to know about: alert
+   logging disabled, `OpModeRobot` not
    supported (we use `LoggedRobot`, which is supported), console logging can lag, onboard IMU is not
    used in replay.
 4. **Log location**: `Robot.java` still has roboRIO-era comments about a USB stick at `/U/logs`.
@@ -81,10 +86,22 @@ regenerates the Gradle files, and guessing those by hand would put wrong names i
    `DriverStation.getAlliance()` in `Robot.java`, `SwerveSubsystem.java`, `HubShift.java` and
    `FieldConstants.java`.
 
+## Audited: no code change needed
+
+- **Wrapped angles.** `Rotation2d.getDegrees()/getRadians()/getRotations()` now return wrapped
+  angles (−180…180°). Every use outside logging was checked:
+  - **Auto-aim and axis-align** (`ControlBoard`) both feed `autoAimController`, which has
+    `enableContinuousInput(-180, 180)`, so wrapping makes no difference. `getAxisAlignAngle` also
+    wraps its input itself.
+  - **`FieldConstants.calculateAngleDifference`** goes through `minus()`, which was already wrapped
+    in 2026 because `rotateBy` rebuilds the angle from cos/sin.
+  - **`FieldConstants` offset math** only uses cos/sin, which ignore wrapping.
+  - **`SwerveSubsystem.setOperatorPerspectiveAndAdjustPose`** compares two values that both go
+    through the same wrapping, and turns the delta back into a `Rotation2d`.
+  - **Limelight yaw input** (`SetRobotOrientation`) accepts any angle.
+
 ## Known 2027 changes not audited yet (the team said not to worry about them for now)
 
-- `Rotation2d.getDegrees()/getRadians()/getRotations()` now return wrapped angles. Most uses here
-  are logging, but any control math that needs continuous angles would change.
 - Raw timestamps are nanoseconds, not microseconds (`RobotController.getTime`, NT timestamps).
   `Odometry.java` uses the CTRE clock (`Utils.getCurrentTimeSeconds()`), which is not affected by
   this, but this was not verified.
