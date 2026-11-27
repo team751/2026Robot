@@ -1,12 +1,12 @@
 package frc.robot.util;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.BooleanPublisher;
-import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StringPublisher;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -15,7 +15,8 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * <p>WPILib 2027 removes SmartDashboard, SendableChooser and Sendable (replaced by the Telemetry
  * and Tunables APIs). Every former {@code SmartDashboard.putX(...)} call in the robot code now goes
- * through this class, so the 2027 change only has to be made here, not in every subsystem.
+ * through this class, so the 2027 change only has to be made here, not in every subsystem. This is
+ * the one file allowed to call SmartDashboard directly ({@link #putField}).
  *
  * <p>TODO(2027): This is a framework stand-in and has NOT been compiled or tested against WPILib
  * 2027. For now it publishes straight to NetworkTables under the same "SmartDashboard/..." keys the
@@ -47,7 +48,6 @@ public final class Dashboard {
   private static final Map<String, DoublePublisher> doubles = new ConcurrentHashMap<>();
   private static final Map<String, BooleanPublisher> booleans = new ConcurrentHashMap<>();
   private static final Map<String, StringPublisher> strings = new ConcurrentHashMap<>();
-  private static final Map<String, DoubleArrayPublisher> fieldPoses = new ConcurrentHashMap<>();
 
   public static void putNumber(String key, double value) {
     doubles.computeIfAbsent(key, k -> table.getDoubleTopic(k).publish()).set(value);
@@ -62,21 +62,17 @@ public final class Dashboard {
   }
 
   /**
-   * Replacement for {@code SmartDashboard.putData(Field2d)} plus {@code field.setRobotPose(...)}.
-   * Publishes the same NetworkTables layout a Field2d widget reads (".type" = "Field2d" and a
-   * "Robot" array of x, y, degrees), the same manual approach MapSimSwerveTelemetry already uses.
+   * Publishes a {@link Field2d} under {@code SmartDashboard/<key>}. Safe to call every loop:
+   * putData does nothing if the same object is already stored under that key. Callers update the
+   * pose with {@code field.setRobotPose(...)}.
    *
-   * <p>TODO(2027): replace with the Telemetry field/pose API once confirmed.
+   * <p>Main robot loop only (SmartDashboard.putData is not called from the sim thread).
+   *
+   * <p>TODO(2027): Field2d still exists in 2027 (org.wpilib.smartdashboard.Field2d, now backed by
+   * Telemetry/Tunables). Per telemetry.md "Complex Sendable Values", replace the body with {@code
+   * Telemetry.log(key, field)}.
    */
-  public static void putFieldRobotPose(String fieldName, Pose2d pose) {
-    NetworkTable fieldTable = table.getSubTable(fieldName);
-    fieldPoses
-        .computeIfAbsent(
-            fieldName,
-            k -> {
-              fieldTable.getStringTopic(".type").publish().set("Field2d");
-              return fieldTable.getDoubleArrayTopic("Robot").publish();
-            })
-        .set(new double[] {pose.getX(), pose.getY(), pose.getRotation().getDegrees()});
+  public static void putField(String key, Field2d field) {
+    SmartDashboard.putData(key, field);
   }
 }

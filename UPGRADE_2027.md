@@ -14,10 +14,10 @@ Commands v3 or other new features), and port the alliance-flip logic exactly as 
 
 | File | Change |
 |---|---|
-| `src/main/java/frc/robot/util/Dashboard.java` (new) | One place for all dashboard values. Replaces direct `SmartDashboard.putX` calls. For now it publishes to NetworkTables under the same `SmartDashboard/...` keys, so Elastic tile names do not change **yet**. The default keys change after the Telemetry swap (see "Still to do" item 1). Also has `putFieldRobotPose`, replacing `Field2d` + `putData`. Publisher caches are `ConcurrentHashMap`s because the sim thread calls it too. |
+| `src/main/java/frc/robot/util/Dashboard.java` (new) | One place for all dashboard values. Replaces direct `SmartDashboard.putX` calls. For now it publishes to NetworkTables under the same `SmartDashboard/...` keys, so Elastic tile names do not change **yet**. The default keys change after the Telemetry swap (see "Still to do" item 1). `putField(key, Field2d)` wraps `SmartDashboard.putData` (the only direct SmartDashboard call left); it becomes `Telemetry.log(key, field)` in 2027. Publisher caches are `ConcurrentHashMap`s because the sim thread calls it too. |
 | `org/ironmaple/simulation/SimulatedArena.java`, `.../motorsims/SimulatedBattery.java` | The copied maple-sim source called `SmartDashboard.putNumber` directly, which won't compile on 2027 (`SmartDashboard` is gone). These now go through `Dashboard`, with the same keys. They run on the 200Hz sim `Notifier` thread. |
 | `Robot.java` | `robotInit()` is removed in 2027, so its body now runs at the end of the constructor, in the same order as before. |
-| `Odometry.java`, `SwerveSubsystem.java`, `ControlBoard.java` | Live `SmartDashboard.put*` calls now go through `Dashboard`. `Odometry` no longer uses `Field2d`. Commented-out `SmartDashboard` lines were left alone. |
+| `Odometry.java`, `SwerveSubsystem.java`, `ControlBoard.java` | Live `SmartDashboard.put*` calls now go through `Dashboard`. `Odometry` keeps its `Field2d` and publishes it with `Dashboard.putField`. Commented-out `SmartDashboard` lines were left alone. |
 | `RobotContainer.java` | TODO(2027) comment only. The chooser is **not converted to Selectable yet** (see below). |
 | `.claude/CLAUDE.md` | Initialization order updated for the missing `robotInit()`. |
 

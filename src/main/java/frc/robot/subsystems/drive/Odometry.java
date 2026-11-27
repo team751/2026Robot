@@ -9,6 +9,7 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.vision.LimelightConstants;
 import frc.robot.subsystems.vision.LimelightSubsystem;
@@ -46,6 +47,9 @@ public class Odometry extends SubsystemBase {
   private final SwerveSubsystem drive;
   private final LimelightSubsystem limelights;
   public Pose2d robotPose;
+
+  // Field widget for Elastic/AdvantageScope. Field2d still exists in 2027 (Telemetry-backed).
+  private final Field2d field = new Field2d();
 
   // Per-camera stability counters
   private int frontStableCount = 0;
@@ -213,7 +217,7 @@ public class Odometry extends SubsystemBase {
 
     Dashboard.putBoolean("Odometry/PoseStable", isPoseStable());
     Dashboard.putBoolean("Odometry/FrontStable", isFrontStable());
-    // Replaces Field2d + SmartDashboard.putData(field); same "SmartDashboard/Field" key.
-    Dashboard.putFieldRobotPose("Field", robotPose);
+    field.setRobotPose(robotPose);
+    Dashboard.putField("Field", field);
   }
 }
