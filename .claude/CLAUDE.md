@@ -18,7 +18,7 @@ CI (`.github/workflows/build.yml`) runs `./gradlew build` on Java 17 for every p
 
 ### Branch status: `wpilib-2027-upgrade`
 
-This branch holds an **uncompiled, untested** WPILib 2027 alpha 7 framework (Systemcore only). `build.gradle` still targets 2026.2.1 / Java 17 on purpose — the 2027 importer regenerates it. Read `UPGRADE_2027.md` before touching build files or WPILib imports, and `grep -rn "TODO(2027)" src` for guesses. Don't "fix" `edu.wpi.first` imports or vendordeps by hand.
+This branch holds an **uncompiled, untested** WPILib 2027 alpha 8 framework (Systemcore only). `build.gradle` still targets 2026.2.1 / Java 17 on purpose — the 2027 importer regenerates it. Read `UPGRADE_2027.md` before touching build files or WPILib imports, and `grep -rn "TODO(2027)" src` for guesses. Don't "fix" `edu.wpi.first` imports or vendordeps by hand.
 
 ## Architecture Overview
 

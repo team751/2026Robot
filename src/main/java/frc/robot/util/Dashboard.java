@@ -25,7 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Telemetry calls and keep the method signatures. The NT import paths will be changed to
  * org.wpilib.* by the 2027 project importer.
  *
- * <p>WARNING: the keys do NOT stay the same by default after the Telemetry swap. At alpha 7,
+ * <p>WARNING: the keys do NOT stay the same by default after the Telemetry swap. At alpha 8,
  * RobotBase registers the default backend as {@code new NetworkTablesTelemetryBackend(inst,
  * "/Telemetry")} for every path, so {@code Telemetry.log("Swerve/Pose x", ...)} lands at {@code
  * /Telemetry/Swerve/Pose x} and every Elastic tile goes blank. Pick one: (a) re-point the Elastic
@@ -34,8 +34,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * NetworkTablesTelemetryBackend(NetworkTableInstance.getDefault(), ""))} in the Robot constructor
  * and logging to {@code "SmartDashboard/" + key} here. The longest-prefix match picks that backend
  * and it adds no prefix, so the NT key is {@code /SmartDashboard/<key>}. (b) was worked out from
- * the alpha-7 source (TelemetryRegistry, NetworkTablesTelemetryBackend, PathUtil) and has not been
- * run: check the real keys in OutlineViewer or AdvantageScope before relying on it.
+ * the alpha-8 source (TelemetryRegistry, NetworkTablesTelemetryBackend, PathUtil; identical to
+ * alpha 7) and has not been run: check the real keys in OutlineViewer or AdvantageScope before
+ * relying on it.
  */
 public final class Dashboard {
   private Dashboard() {}
