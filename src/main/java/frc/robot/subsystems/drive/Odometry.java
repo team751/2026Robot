@@ -10,10 +10,10 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.vision.LimelightConstants;
 import frc.robot.subsystems.vision.LimelightSubsystem;
+import frc.robot.util.Dashboard;
 import frc.robot.util.LimelightHelpers;
 import org.littletonrobotics.junction.Logger;
 
@@ -46,8 +46,10 @@ public class Odometry extends SubsystemBase {
   private static Odometry instance;
   private final SwerveSubsystem drive;
   private final LimelightSubsystem limelights;
-  private Field2d field = new Field2d();
   public Pose2d robotPose;
+
+  // Field widget for Elastic/AdvantageScope. Field2d still exists in 2027 (Telemetry-backed).
+  private final Field2d field = new Field2d();
 
   // Per-camera stability counters
   private int frontStableCount = 0;
@@ -139,10 +141,10 @@ public class Odometry extends SubsystemBase {
       Logger.recordOutput(telemetryPrefix + "/AvgTagDist", estimate.avgTagDist);
       Logger.recordOutput(telemetryPrefix + "/Latency", estimate.latency);
 
-      SmartDashboard.putNumber(telemetryPrefix + "/RawX", estimate.pose.getX());
-      SmartDashboard.putNumber(telemetryPrefix + "/RawY", estimate.pose.getY());
-      SmartDashboard.putNumber(telemetryPrefix + "/TagCount", estimate.tagCount);
-      SmartDashboard.putNumber(telemetryPrefix + "/AvgTagDist", estimate.avgTagDist);
+      Dashboard.putNumber(telemetryPrefix + "/RawX", estimate.pose.getX());
+      Dashboard.putNumber(telemetryPrefix + "/RawY", estimate.pose.getY());
+      Dashboard.putNumber(telemetryPrefix + "/TagCount", estimate.tagCount);
+      Dashboard.putNumber(telemetryPrefix + "/AvgTagDist", estimate.avgTagDist);
     } else {
       Logger.recordOutput(telemetryPrefix + "/RawPose", new Pose2d[] {});
     }
@@ -186,11 +188,11 @@ public class Odometry extends SubsystemBase {
     if (isValidEstimate(frontEstimate) || isValidEstimate(sideEstimate)) {
       lastVisionTime = Timer.getFPGATimestamp();
     }
-    SmartDashboard.putNumber("Vision/Seconds Lost", getSecondsWithoutVision());
+    Dashboard.putNumber("Vision/Seconds Lost", getSecondsWithoutVision());
 
     boolean rejected = isRotatingTooFast();
     Logger.recordOutput("Odometry/VisionRejected", rejected);
-    SmartDashboard.putBoolean("Odometry/VisionRejected", rejected);
+    Dashboard.putBoolean("Odometry/VisionRejected", rejected);
 
     if (!rejected) {
       int frontResult =
@@ -213,9 +215,9 @@ public class Odometry extends SubsystemBase {
     Logger.recordOutput("Odometry/FrontStableCount", frontStableCount);
     Logger.recordOutput("Odometry/SideStableCount", sideStableCount);
 
+    Dashboard.putBoolean("Odometry/PoseStable", isPoseStable());
+    Dashboard.putBoolean("Odometry/FrontStable", isFrontStable());
     field.setRobotPose(robotPose);
-    SmartDashboard.putBoolean("Odometry/PoseStable", isPoseStable());
-    SmartDashboard.putBoolean("Odometry/FrontStable", isFrontStable());
-    SmartDashboard.putData(field);
+    Dashboard.putField("Field", field);
   }
 }

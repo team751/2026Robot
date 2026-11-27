@@ -68,10 +68,9 @@ public class Robot extends LoggedRobot {
       // t.printStackTrace();
     }
     this.controlBoard = tmpControlBoard;
-  }
 
-  @Override
-  public void robotInit() {
+    // WPILib 2027 removed robotInit(); its body now runs at the end of the constructor, in the
+    // same order as before (constructor first, then what used to be robotInit()).
     // System.out.println("Robot.robotInit() start");
     // for (int port = 5800; port <= 5809; port++) {
     //   PortForwarder.add(port, "limelight.local", port);

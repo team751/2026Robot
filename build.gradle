@@ -58,10 +58,6 @@ dependencies {
     implementation wpi.java.deps.wpilib()
     implementation wpi.java.vendor.java()
 
-    // Lombok
-    compileOnly 'org.projectlombok:lombok:1.18.30'
-    annotationProcessor 'org.projectlombok:lombok:1.18.30'
-
     // AdvantageKit — reads the AdvantageKit.json vendordep to pin the matching
     // akit-autolog annotation-processor version, which generates the *AutoLogged
     // classes for any class annotated with @AutoLog.

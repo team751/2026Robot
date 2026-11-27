@@ -110,6 +110,10 @@ public class RobotContainer {
     NamedCommands.registerCommand("Transfer", transfer);
     NamedCommands.registerCommand("StopTransfer", stopTransfer);
 
+    // TODO(2027): SendableChooser is removed in WPILib 2027 and replaced by Selectable (team
+    // decision: use Selectable). Not converted yet because the exact Selectable API, and what
+    // PathPlanner's 2027 AutoBuilder.buildAutoChooser() returns, are unverified. Replace this
+    // chooser (and getAutonomousCommand below) once those are confirmed on the 2027 branches.
     // LoggedDashboardChooser wraps the normal SendableChooser: it still shows up on the
     // dashboard exactly the same, but the selected auto name is now recorded to the log too.
     autoChooser = new LoggedDashboardChooser<>("Auto Chooser", AutoBuilder.buildAutoChooser());

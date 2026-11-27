@@ -8,39 +8,49 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ./gradlew build              # Full build (compile + tests)
 ./gradlew deploy             # Deploy to RoboRIO (must be connected via USB/Wi-Fi/Ethernet)
 ./gradlew simulateJava       # Run simulation with MapleSim physics + Sim GUI
-./gradlew test               # Run JUnit 5 tests (no tests written yet)
-./gradlew spotlessApply      # Auto-format code
+./gradlew test               # Run JUnit 5 tests (src/test/java exists but is empty)
+./gradlew test --tests 'frc.robot.SomeTest'   # Run a single test class
+./gradlew spotlessApply      # Auto-format code (googleJavaFormat; CI has a spotless.yml workflow)
+./gradlew replayWatch        # AdvantageKit log replay (custom JavaExec task in build.gradle)
 ```
+
+CI (`.github/workflows/build.yml`) runs `./gradlew build` on Java 17 for every push/PR.
+
+### Branch status: `wpilib-2027-upgrade`
+
+This branch holds an **uncompiled, untested** WPILib 2027 alpha 8 framework (Systemcore only). `build.gradle` still targets 2026.2.1 / Java 17 on purpose — the 2027 importer regenerates it. Read `UPGRADE_2027.md` before touching build files or WPILib imports, and `grep -rn "TODO(2027)" src` for guesses. Don't "fix" `edu.wpi.first` imports or vendordeps by hand.
 
 ## Architecture Overview
 
-FRC Team 751's 2026 REBUILT season robot. Java 17, WPILib 2026.2.1, CTRE Phoenix 6 swerve drive.
+FRC Team 751's 2026 REBUILT season robot. Java 17, WPILib 2026.2.1, CTRE Phoenix 6 swerve drive, AdvantageKit logging (`Robot extends LoggedRobot`).
 
 ### System Diagram
 
 ```
-Robot.java (TimedRobot, 50Hz)
+Robot.java (LoggedRobot / AdvantageKit, 50Hz)
   ├─ CommandScheduler
   │    ├─ SwerveSubsystem (swerve drive, PathPlanner AutoBuilder)
   │    │    └─ [sim] MapleSimSwerveDrivetrain (200Hz physics)
-  │    ├─ Odometry (vision + wheel fusion, init deferred to driverStationConnected)
+  │    ├─ Odometry (vision + wheel fusion, created in Robot() constructor)
   │    │    └─ LimelightSubsystem (dual AprilTag cameras)
   │    ├─ Superstructure (state machine coordinator)
   │    │    ├─ ShooterSubsystem
   │    │    ├─ IntakeSubsystem
   │    │    ├─ ExtenderSubsystem
   │    │    └─ TransferSubsystem
-  │    └─ [disabled] ClimberSubsystem
   ├─ RobotContainer (named commands + auto chooser)
   └─ ControlBoard (PS5 controller bindings)
 ```
 
 ### Initialization Order (Matters!)
 
-1. `Robot()` constructor — creates `SwerveSubsystem` and `ControlBoard` (wrapped in try/catch)
-2. `robotInit()` — port forwarding for Limelights, creates `RobotContainer` (which registers named commands + auto chooser)
-3. `driverStationConnected()` — creates `Odometry` (which creates `LimelightSubsystem`), calls `ControlBoard.tryInit()`
-4. `teleopInit()` — sets operator perspective based on alliance color
+1. `Robot()` constructor start — AdvantageKit `Logger` setup (**must precede any subsystem construction**). On a real robot it logs to a USB stick (`/U/logs`) — never the RIO flash; no stick = no logs.
+2. `Robot()` constructor — creates `SwerveSubsystem`, `Odometry` (moved up from `teleopInit()` so vision logs from boot), and `ControlBoard` (wrapped in try/catch)
+3. End of the `Robot()` constructor (was `robotInit()` before WPILib 2027, which removed it) — creates `RobotContainer` (named commands + auto chooser), `LimelightSubsystem.initLimsplz()`
+4. `driverStationConnected()` — calls `ControlBoard.tryInit()`
+5. `teleopInit()` — sets operator perspective based on alliance color
+
+`autonomousInit()` sets `ShooterSubsystem.isAuto = true`.
 
 ### Periodic Loop (50Hz)
 
@@ -51,6 +61,10 @@ robotPeriodic():
 ```
 
 *Note: `TunableParameter.updateAll()` exists but is currently commented out.*
+
+### Dashboard (`util/Dashboard.java`)
+
+All dashboard values go through `Dashboard` (never call `SmartDashboard.put*` directly — 2027 removes it). For now it publishes under the same `SmartDashboard/...` NT keys so Elastic tiles keep working. **After the swap to the 2027 Telemetry API the default keys move to `/Telemetry/...`** (RobotBase's default backend prefix), which breaks the Elastic layout unless the layout is re-pointed or a `/SmartDashboard` backend is registered. See the `Dashboard` Javadoc for both options. The maple-sim source copy (`org.ironmaple`) also goes through `Dashboard` and calls it from the 200Hz sim `Notifier` thread, so `Dashboard` must stay thread-safe. `Odometry` keeps a `Field2d` and publishes it through `Dashboard.putField(key, field)`; that is the only place `SmartDashboard` is still called directly (it becomes `Telemetry.log(key, field)` in 2027).
 
 ## Key Design Patterns
 
@@ -80,7 +94,7 @@ Not all subsystems implement this identically: IntakeSubsystem uses request flag
 
 ### Superstructure Coordinator
 
-`Superstructure.java` holds references to all mechanism subsystems and has a minimal PRE_HOME/IDLE state machine that currently does nothing (stub). Actual mechanism coordination is done directly via StartEndCommands in `ControlBoard.java`, not through Superstructure. ClimberSubsystem reference is commented out.
+`Superstructure.java` holds references to all mechanism subsystems and has a minimal PRE_HOME/IDLE state machine that currently does nothing (stub). Actual mechanism coordination is done directly via StartEndCommands in `ControlBoard.java`, not through Superstructure.
 
 ## CAN Bus Architecture
 
@@ -90,7 +104,7 @@ Three CAN buses (defined as static fields in `Robot.java`):
 |-----|----------|---------|
 | `drivebus` | `Robot.drivebus` | All swerve modules (drive/steer/CANcoder), Pigeon 2 IMU |
 | `gamepiecebus` | `Robot.gamepiecebus` | Shooter, intake, extender, transfer motors |
-| `rio` | `Robot.riobus` | Climber only (currently disabled) |
+| `rio` | `Robot.riobus` | Nothing (was climber, now removed) |
 
 CAN IDs are defined in `frc.robot.util.Constants` (not `frc.robot.Constants`, which is an empty WPILib stub). The ID scheme: swerve is 10–40 by corner (FL/FR/BL/BR); all other motors are numbered by proximity to the nearest swerve corner and height on the robot.
 
@@ -100,14 +114,14 @@ CAN IDs are defined in `frc.robot.util.Constants` (not `frc.robot.Constants`, wh
 
 CTRE generated swerve (`TunerSwerveDrivetrain`) with Kraken X60 FOC motors. Max speed 4.73 m/s.
 
-- `TunerConstants.java` — **Generated by Tuner X, DO NOT EDIT**. `OldTunerConstants.java` is a backup.
+- `generated/TunerConstants.java` — **Generated by Tuner X, DO NOT EDIT**. `OldTunerConstants.java` is a backup.
 - `SwerveSubsystem.java` — Extends TunerSwerveDrivetrain, configures PathPlanner AutoBuilder
 - `SwerveConstants.java` — Derived constants + PathPlanner RobotConfig
 - `Odometry.java` — Fuses vision translation (not heading) with wheel odometry
 
 ### Vision (`subsystems/vision/`)
 
-Dual Limelights: `limelight-front` (3G, 10.7.51.71) and `limelight-side` (2, 10.7.51.75). Only translation from vision is used — heading always comes from Pigeon 2 gyro. `hasTarget()` requires both cameras to have targets.
+Dual Limelights (`LimelightSubsystem`; `PhotonvisionConstants.java` exists for a planned PhotonVision cutover, not yet wired in): `limelight-front` (3G, 10.7.51.71) and `limelight-side` (2, 10.7.51.75). Only translation from vision is used — heading always comes from Pigeon 2 gyro. `hasTarget()` requires both cameras to have targets.
 
 ### Intake (`subsystems/intake/`)
 
@@ -115,9 +129,9 @@ Dual Limelights: `limelight-front` (3G, 10.7.51.71) and `limelight-side` (2, 10.
 - **ExtenderSubsystem**: Single TalonFX + 4 limit switches (DIO 2–5: frontLeft, backLeft, frontRight, backRight). States: IDLE/EXTENDING/EXTENDED/RETRACTING/RETRACTED/JIGGLE_IN. Extended when either back sensor triggers; retracted when either front sensor triggers.
 - Constants in `IntakeConstants.java` (speeds, motor configs for both).
 
-### Climber (`subsystems/climber/`) — CURRENTLY DISABLED
+### Climber — REMOVED
 
-Entirely commented out. `ClimberConstants.java` exists but all code is commented. CAN IDs for climber motors are also commented out in `Constants.java`. When re-enabled: dual TalonFX motors (left/right) + servo + limit switches on `riobus`.
+`subsystems/climber/` was deleted (commit b2ba3fd). Commented-out references remain in `ControlBoard`, `Superstructure`, `Robot.java`, and the CAN IDs in `Constants.java`; recover the old code from git history if it's ever needed. `Robot.riobus` is now unused.
 
 ### Shooter (`subsystems/shooter/`)
 
@@ -158,11 +172,15 @@ Dual TalonFX motors (top/bottom). States: IDLE/TRANSFER/REVERSE. VoltageOut cont
 | D-pad right (hold) | Increment aim angle offset by 5° |
 | Cross (hold) | JiggleCommand |
 
-*Note: Climber bindings are commented out. Square button spit binding is commented out on both controllers. `ControlBoardAlt.java` exists as an alternative config.*
+*Note: Climber bindings are commented out. Square button spit binding is commented out on both controllers.*
 
 ### Drive Request Config
 
 Field-centric with 5% translation deadband, 10% rotation deadband, OpenLoopVoltage drive, Position steer, DesaturateWheelSpeeds, OperatorPerspective.
+
+## Hub Shift Tracking (`util/HubShift.java`)
+
+Tracks whether our alliance's hub is active during teleop. It uses FMS game data (`'R'`/`'B'` names the alliance that goes inactive first) and match time for the TRANSITION → SHIFTS 1–4 → END GAME schedule. It only works with a real countdown (FMS or DS practice mode) and once game data has arrived; `isKnown()` reports whether both are true. `ControlBoard.displayUI()` publishes the results under `Hub/*`.
 
 ## Field Constants (`FieldConstants.java`)
 
@@ -175,7 +193,7 @@ WPILib Blue-origin coordinates: origin at bottom-right of Blue wall, +X toward R
 
 ## Autonomous
 
-PathPlanner-based. AutoBuilder configured in `SwerveSubsystem` constructor. `RobotContainer.java` registers named commands for use in PathPlanner autos: `Shoot`/`StopShoot`, `Intake`/`StopIntake`, `Spit`/`StopSpit`, `Retract`, `Transfer`/`StopTransfer`. Auto chooser built in `Robot.robotInit()` and scans `src/main/deploy/pathplanner/autos/*.auto` — no code changes needed for new autos.
+PathPlanner-based. AutoBuilder configured in `SwerveSubsystem` constructor. `RobotContainer.java` registers named commands for use in PathPlanner autos: `Shoot`/`StopShoot`, `Intake`/`StopIntake`, `Spit`/`StopSpit`, `Retract`, `Transfer`/`StopTransfer`. Auto chooser built in `RobotContainer` and scans `src/main/deploy/pathplanner/autos/*.auto` — no code changes needed for new autos.
 
 ### Mirroring Autos
 
@@ -231,10 +249,6 @@ To mirror an auto for the opposite side of the field, create **new** path files 
 
 IronMaple library (`org.ironmaple.simulation`) + Dyn4j physics at 200Hz (5ms loop via `Notifier`). Includes full arena simulation with game pieces (`RebuiltFuelOnField`), `SwerveDriveSimulation`, and `IntakeSimulation`. Run with `./gradlew simulateJava`. Connect AdvantageScope to `localhost` for 3D viz. Vision returns null in sim.
 
-## Dependencies of Note
-
-- **Lombok** (`1.18.30`) — used for annotation-based code generation (`@Getter`, `@Builder`, etc.). Both `compileOnly` and `annotationProcessor` entries are in `build.gradle`.
-
 ## Utility Classes (`frc.lib`)
 
 - **CTREConfig** — Builder for CTRE devices: `.withName()`, `.withCanID()`, `.withBus()`, `.createDevice(TalonFX::new)`
@@ -263,4 +277,5 @@ See `docs/` for comprehensive reference:
 - `docs/subsystems.md` — Subsystem reference, templates
 - `docs/field-constants.md` — FieldConstants and GameElement reference
 - `docs/utilities.md` — CTREConfig, CTREUtil, TunableParameter, PS5Controller reference
+- `docs/getting-started.md` — Setup for new contributors
 - `docs/external-resources.md` — All vendor docs and links
