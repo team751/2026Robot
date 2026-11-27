@@ -10,7 +10,7 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.simulation.BatterySim;
 import edu.wpi.first.wpilibj.simulation.RoboRioSim;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.util.Dashboard;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
@@ -94,8 +94,8 @@ public class SimulatedBattery {
 
     RoboRioSim.setVInVoltage(batteryVoltageVolts);
 
-    SmartDashboard.putNumber("BatterySim/TotalCurrent (Amps)", totalCurrentAmps);
-    SmartDashboard.putNumber("BatterySim/BatteryVoltage (Volts)", batteryVoltageVolts);
+    Dashboard.putNumber("BatterySim/TotalCurrent (Amps)", totalCurrentAmps);
+    Dashboard.putNumber("BatterySim/BatteryVoltage (Volts)", batteryVoltageVolts);
   }
 
   /**

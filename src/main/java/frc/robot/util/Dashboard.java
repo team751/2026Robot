@@ -7,8 +7,8 @@ import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StringPublisher;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Single place for all dashboard (Elastic) values.
@@ -31,10 +31,11 @@ public final class Dashboard {
       NetworkTableInstance.getDefault().getTable("SmartDashboard");
 
   // Publishers are created once per key and reused; creating one every loop is slow.
-  private static final Map<String, DoublePublisher> doubles = new HashMap<>();
-  private static final Map<String, BooleanPublisher> booleans = new HashMap<>();
-  private static final Map<String, StringPublisher> strings = new HashMap<>();
-  private static final Map<String, DoubleArrayPublisher> fieldPoses = new HashMap<>();
+  // Concurrent maps because the maple-sim code calls this from the 200Hz sim Notifier thread.
+  private static final Map<String, DoublePublisher> doubles = new ConcurrentHashMap<>();
+  private static final Map<String, BooleanPublisher> booleans = new ConcurrentHashMap<>();
+  private static final Map<String, StringPublisher> strings = new ConcurrentHashMap<>();
+  private static final Map<String, DoubleArrayPublisher> fieldPoses = new ConcurrentHashMap<>();
 
   public static void putNumber(String key, double value) {
     doubles.computeIfAbsent(key, k -> table.getDoubleTopic(k).publish()).set(value);
