@@ -249,10 +249,6 @@ To mirror an auto for the opposite side of the field, create **new** path files 
 
 IronMaple library (`org.ironmaple.simulation`) + Dyn4j physics at 200Hz (5ms loop via `Notifier`). Includes full arena simulation with game pieces (`RebuiltFuelOnField`), `SwerveDriveSimulation`, and `IntakeSimulation`. Run with `./gradlew simulateJava`. Connect AdvantageScope to `localhost` for 3D viz. Vision returns null in sim.
 
-## Dependencies of Note
-
-- **Lombok** (`1.18.30`) — used for annotation-based code generation (`@Getter`, `@Builder`, etc.). Both `compileOnly` and `annotationProcessor` entries are in `build.gradle`.
-
 ## Utility Classes (`frc.lib`)
 
 - **CTREConfig** — Builder for CTRE devices: `.withName()`, `.withCanID()`, `.withBus()`, `.createDevice(TalonFX::new)`

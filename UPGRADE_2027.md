@@ -36,8 +36,6 @@ regenerates the Gradle files, and guessing those by hand would put wrong names i
    **Stop and report any library with no alpha 7 build**; the team will review it in person.
 4. The importer regenerates `build.gradle` and drops custom edits. **Re-apply these** (they are in
    the 2026 `build.gradle` in this branch):
-   - Lombok: `compileOnly` and `annotationProcessor 'org.projectlombok:lombok:1.18.30'`. Check that
-     this version supports Java 25 and bump it if not.
    - The AdvantageKit annotation processor: read `vendordeps/AdvantageKit.json` with `JsonSlurper`
      and add `annotationProcessor "org.littletonrobotics.akit:akit-autolog:$akitJson.version"`.
    - The `replayWatch` `JavaExec` task (`org.littletonrobotics.junction.ReplayWatch`).
